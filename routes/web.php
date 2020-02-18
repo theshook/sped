@@ -15,7 +15,16 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::get('/register', function () {
+    return view('auth.register');
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+//BACKEND (Provinces)
 Route::resource('/configure/provinces', 'ProvinceController');
+
+//BACKEND (Schools)
+Route::get('configure/schools', 'Backend\SchoolsController@index');

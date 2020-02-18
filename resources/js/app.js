@@ -3,12 +3,28 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
 require("./bootstrap");
 
-window.Vue = require("vue");
-import swal from "sweetalert2";
-window.swal = swal;
+//Vue
+import Vue from 'vue'
+
+//Sweetalert
+import Swal from 'sweetalert2'
+
+//Bootstrap-vue
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+//Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+//Vuelidate
+import Vuelidate from 'vuelidate'
+
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
+Vue.use(Vuelidate)
+
+// window.Vue = require("vue");
+window.swal = Swal;
 
 /**
  * The following block of code may be used to automatically register your
@@ -21,10 +37,12 @@ window.swal = swal;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component(
-    "province",
-    require("./components/provinces/Province.vue").default
-);
+
+//BACKEND (Provinces)
+Vue.component("province", require("./components/provinces/Province.vue").default);
+Vue.component("provinces-index", require("./components/backend/province/Index.vue").default);
+//BACKEND (Schools)
+Vue.component("schools-index", require("./components/backend/schools/Index.vue").default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

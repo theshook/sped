@@ -1,0 +1,25 @@
+/* CUSTOM BUTTON (BS4) */
+.btn-light {
+	color: #888 !important;
+	background: #eee !important;
+	border: solid 1px #eee;
+}
+
+/* TEXT */
+.text-sm {
+	font-size: .8rem !important;
+}
+
+/* PAGE CONTENT */
+.full-height {
+	min-height: 100vh !important;
+}
+
+.page-content {
+	padding-top: 7rem !important;
+}
+
+.page-title {
+	color: #777 !important;
+	font-weight: bolder;
+}
