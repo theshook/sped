@@ -21,10 +21,12 @@ class ProvinceController extends Controller
      */
     public function index()
     {
-        $data['row'] = $this->province->paginate(10);
-        $data['slug'] = 'configure';
-        $data['title'] = 'province';
-        return view('pages.province', $data);
+        // $data['row'] = $this->province->paginate(10);
+        // $data['slug'] = 'configure';
+        // $data['title'] = 'province';
+		// return view('pages.province', $data);
+		
+		return view('pages.backend.province.index');
     }
 
     /**
