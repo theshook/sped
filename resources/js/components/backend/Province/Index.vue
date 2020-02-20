@@ -129,6 +129,7 @@
 <script>
 import $ from 'jquery'
 export default {
+	name: 'ProvincesIndex',
 	props: ['host'],
     data() {
         return {

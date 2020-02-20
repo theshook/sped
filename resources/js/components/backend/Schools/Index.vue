@@ -17,7 +17,6 @@
 					<table class="table table-responsive-md">
 						<thead>
 							<th>Name</th>
-							<th>Address</th>
 							<th>Date added</th>
 							<th>
 								<span class="fa fa-ellipsis-h"></span>
@@ -130,6 +129,7 @@
 <script>
 import $ from 'jquery'
 export default {
+	name: 'SchoolsIndex',
 	props: ['host'],
     data() {
         return {
@@ -213,8 +213,7 @@ export default {
 			const schoolsAPI = `${this.host}/schools`
 			const data = {
 				province_id: 1,
-				name: this.name,
-				address: 'Tinio, Brgy. Bangkal, Makati City'
+				name: this.name
 			}
 			const config = {
 				headers: {
