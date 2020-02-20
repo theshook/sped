@@ -11,20 +11,27 @@
 |
 */
 
+// ADMIN LOGIN
 Route::get('/', function () {
     return view('auth.login');
 });
 
+// ADMIN REQUEST/REGISTER ACCOUNT
 Route::get('/register', function () {
     return view('auth.register');
 });
 
+//AUTH ROUTES
 Auth::routes();
 
+//ADMIN DASHBOARD
 Route::get('/home', 'HomeController@index')->name('home');
 
 //BACKEND (Provinces)
-Route::resource('/configure/provinces', 'ProvinceController');
+Route::get('/configure/provinces', 'Backend\ProvincesController@index')->name('admin.provinces');
 
 //BACKEND (Schools)
-Route::get('configure/schools', 'Backend\SchoolsController@index');
+Route::get('configure/schools', 'Backend\SchoolsController@index')->name('admin.schools');
+
+//BACKEND (Schools)
+Route::get('configure/pupils', 'Backend\PupilsController@index')->name('admin.pupils');
