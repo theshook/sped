@@ -35,12 +35,12 @@
 			<div id="collapesConfigure" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
 				<div class="bg-white py-2 collapse-inner rounded">
 					<h6 class="collapse-header">Assessment Centers</h6>
-					<a class="collapse-item" href="{{ route('provinces.index') }}">Provinces</a>
-					<a class="collapse-item" href="register.html">Schools</a>
-					<a class="collapse-item" href="forgot-password.html">Teachers</a>
+					<a class="collapse-item" href="{{ route('admin.provinces') }}">Provinces</a>
+					<a class="collapse-item" href="{{ route('admin.schools') }}">Schools</a>
+					{{-- <a class="collapse-item" href="{{ route('admin.teachers') }}">Teachers</a> --}}
 					<div class="collapse-divider"></div>
 					<h6 class="collapse-header">Students</h6>
-					<a class="collapse-item" href="404.html">Pupils</a>
+					<a class="collapse-item" href="{{ route('admin.pupils') }}">Pupils</a>
 				</div>
 			</div>
 		</li>
