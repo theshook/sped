@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSchoolsTable extends Migration
+class CreateChecklistsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateSchoolsTable extends Migration
      */
     public function up()
     {
-        Schema::create('schools', function (Blueprint $table) {
+        Schema::create('checklists', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->unsignedBigInteger('province_id');
-			$table->string('name')->unique();
+			$table->integer('content');
 			$table->timestamps();
 			
-			$table->foreign('province_id')->references('id')->on('provinces');
+			
         });
     }
 
@@ -30,6 +29,6 @@ class CreateSchoolsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('schools');
+        Schema::dropIfExists('checklists');
     }
 }

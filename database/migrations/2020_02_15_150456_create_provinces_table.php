@@ -17,7 +17,9 @@ class CreateProvincesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->softDeletes();
-            $table->timestamps();
+			$table->timestamps();
+
+			$table->index('id');
         });
     }
 
