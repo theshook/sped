@@ -4,10 +4,10 @@ namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\School;
-use App\Http\Resources\Backend\SchoolsResource;
+use App\Models\Checklist;
+use App\Http\Resources\Backend\ChecklistsResource;
 
-class SchoolsController extends Controller
+class ChecklistsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +16,8 @@ class SchoolsController extends Controller
      */
     public function index()
     {
-		$schools = School::paginate(10);
-		return SchoolsResource::collection($schools);
+		$checklists = Checklist::paginate(10);
+		return ChecklistsResource::collection($checklists);
     }
 
     /**
@@ -28,23 +28,20 @@ class SchoolsController extends Controller
      */
     public function store(Request $request)
     {
-		$school = new School;
-		$school->province_id = $request->input('province_id');
-		$school->name = $request->input('name');
+		$checklist = new Checklist;
+		$checklist->content = $request->input('content');
 
-		if($school->save()) {
+		if($checklist->save()) {
 			$response = array(
 				'status' => 201,
-				'message' => 'Successfully added school'
+				'message' => 'Checklist successfully added'
 			);
-
 			return response()->json($response, 201);
 		} else {
 			$response = array(
 				'status' => 500,
-				'message' => 'Failed to add school'
+				'message' => 'Failed to add checklist'
 			);
-
 			return response()->json($response, 500);
 		}
     }
@@ -57,15 +54,14 @@ class SchoolsController extends Controller
      */
     public function show($id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			return $school;
+        $checklist = Checklist::find($id);
+		if(!empty($checklist)) {
+			return $checklist;
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Checklist do not exist'
 			);
-
 			return response()->json($response, 404);
 		}
     }
@@ -79,33 +75,28 @@ class SchoolsController extends Controller
      */
     public function update(Request $request, $id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			$school->province_id = $request->input('province_id');
-			$school->name = $request->input('name');
-			$school->address = $request->input('address');
+        $checklist = Checklist::find($id);
+		if(!empty($checklist)) {
+			$checklist->content = $request->input('content');
 
-			if($school->save()) {
+			if($checklist->save()) {
 				$response = array(
 					'status' => 201,
-					'message' => 'Successfully updated school'
+					'message' => 'Checklist successfully added'
 				);
-
 				return response()->json($response, 201);
 			} else {
 				$response = array(
 					'status' => 500,
-					'message' => 'Failed to updated school'
+					'message' => 'Failed to add checklist'
 				);
-
 				return response()->json($response, 500);
 			}
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Checklist do not exist'
 			);
-
 			return response()->json($response, 404);
 		}
     }
@@ -118,31 +109,27 @@ class SchoolsController extends Controller
      */
     public function destroy($id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			if($school->delete()) {
+        $checklist = Checklist::find($id);
+		if(!empty($checklist)) {
+			if($checklist->delete()) {
 				$response = array(
 					'status' => 201,
-					'message' => 'Successfully deleted school'
+					'message' => 'Checklist successfully deleted'
 				);
-	
 				return response()->json($response, 201);
 			} else {
 				$response = array(
 					'status' => 500,
-					'message' => 'Failed to delete school'
+					'message' => 'Failed to deleted checklist'
 				);
-	
 				return response()->json($response, 500);
 			}
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Checklist do not exist'
 			);
-
 			return response()->json($response, 404);
 		}
-
     }
 }

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\School;
-use App\Http\Resources\Backend\SchoolsResource;
+use App\Models\Pupil;
+use App\Http\Resources\Backend\PupilsResource;
 
-class SchoolsController extends Controller
+class PupilsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +16,8 @@ class SchoolsController extends Controller
      */
     public function index()
     {
-		$schools = School::paginate(10);
-		return SchoolsResource::collection($schools);
+		$pupils = Pupil::paginate(10);
+		return PupilsResource::collection($pupils);
     }
 
     /**
@@ -28,21 +28,23 @@ class SchoolsController extends Controller
      */
     public function store(Request $request)
     {
-		$school = new School;
-		$school->province_id = $request->input('province_id');
-		$school->name = $request->input('name');
+		$pupil = new Pupil;
+		$pupil->school_id = $request->input('school_id');
+		$pupil->name = $request->input('name');
+		$pupil->age = $request->input('age');
+		$pupil->address = $request->input('address');
 
-		if($school->save()) {
+		if($pupil->delete()) {
 			$response = array(
-				'status' => 201,
-				'message' => 'Successfully added school'
+				'status' => 500,
+				'message' => 'Successfully added pupil'
 			);
 
 			return response()->json($response, 201);
 		} else {
 			$response = array(
 				'status' => 500,
-				'message' => 'Failed to add school'
+				'message' => 'Failed to add pupil'
 			);
 
 			return response()->json($response, 500);
@@ -57,13 +59,13 @@ class SchoolsController extends Controller
      */
     public function show($id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			return $school;
+		$pupil = Pupil::find($id);
+		if(!empty($pupil)) {
+			return $pupil;
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Pupil do not exist'
 			);
 
 			return response()->json($response, 404);
@@ -79,23 +81,24 @@ class SchoolsController extends Controller
      */
     public function update(Request $request, $id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			$school->province_id = $request->input('province_id');
-			$school->name = $request->input('name');
-			$school->address = $request->input('address');
+        $pupil = Pupil::find($id);
+		if(!empty($pupil)) {
+			$pupil->school_id = $request->input('school_id');
+			$pupil->name = $request->input('name');
+			$pupil->age = $request->input('age');
+			$pupil->address = $request->input('address');
 
-			if($school->save()) {
+			if($pupil->delete()) {
 				$response = array(
-					'status' => 201,
-					'message' => 'Successfully updated school'
+					'status' => 500,
+					'message' => 'Successfully added pupil'
 				);
 
 				return response()->json($response, 201);
 			} else {
 				$response = array(
 					'status' => 500,
-					'message' => 'Failed to updated school'
+					'message' => 'Failed to add pupil'
 				);
 
 				return response()->json($response, 500);
@@ -103,7 +106,7 @@ class SchoolsController extends Controller
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Pupil do not exist'
 			);
 
 			return response()->json($response, 404);
@@ -118,19 +121,19 @@ class SchoolsController extends Controller
      */
     public function destroy($id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			if($school->delete()) {
+        $pupil = Pupil::find($id);
+		if(!empty($pupil)) {
+			if($pupil->delete()) {
 				$response = array(
-					'status' => 201,
-					'message' => 'Successfully deleted school'
+					'status' => 500,
+					'message' => 'Successfully deleted pupil'
 				);
 	
 				return response()->json($response, 201);
 			} else {
 				$response = array(
 					'status' => 500,
-					'message' => 'Failed to delete school'
+					'message' => 'Failed to delete pupil'
 				);
 	
 				return response()->json($response, 500);
@@ -138,11 +141,10 @@ class SchoolsController extends Controller
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Pupil do not exist'
 			);
 
 			return response()->json($response, 404);
 		}
-
     }
 }
