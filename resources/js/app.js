@@ -43,6 +43,8 @@ Vue.component("province", require("./components/provinces/Province.vue").default
 Vue.component("provinces-index", require("./components/backend/province/Index.vue").default);
 //BACKEND (Schools)
 Vue.component("schools-index", require("./components/backend/schools/Index.vue").default);
+//BACKEND (Pupils)
+Vue.component("pupils-index", require("./components/backend/pupils/Index.vue").default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
