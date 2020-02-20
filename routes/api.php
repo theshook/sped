@@ -32,3 +32,21 @@ Route::post('/schools', 'API\Backend\SchoolsController@store');
 Route::get('/school/{id}', 'API\Backend\SchoolsController@show');
 Route::put('/school/{id}', 'API\Backend\SchoolsController@update');
 Route::delete('/school/{id}', 'API\Backend\SchoolsController@destroy');
+
+/* ========================================================================================================== */
+
+//BACKEND (PUPILS)
+Route::get('/pupils', 'API\Backend\PupilsController@index');
+Route::post('/pupils', 'API\Backend\PupilsController@store');
+Route::get('/pupil/{id}', 'API\Backend\PupilsController@show');
+Route::put('/pupil/{id}', 'API\Backend\PupilsController@update');
+Route::delete('/pupil/{id}', 'API\Backend\PupilsController@destroy');
+
+/* ========================================================================================================== */
+
+//BACKEND (CHECKLIST)
+Route::get('/checklists', 'API\Backend\ChecklistsController@index');
+Route::post('/checklists', 'API\Backend\ChecklistsController@store');
+Route::get('/checklist/{id}', 'API\Backend\ChecklistsController@show');
+Route::put('/checklist/{id}', 'API\Backend\ChecklistsController@update');
+Route::delete('/checklist/{id}', 'API\Backend\ChecklistsController@destroy');
