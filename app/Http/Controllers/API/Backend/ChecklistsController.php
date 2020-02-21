@@ -17,8 +17,9 @@ class ChecklistsController extends Controller
      */
     public function index()
     {
-		$checklists = Checklist::paginate(10);
-		return ChecklistsResource::collection($checklists);
+		// $checklists = Checklist::paginate(10);
+		// return ChecklistsResource::collection($checklists);
+		return Checklist::all();
     }
 
     /**

@@ -17,8 +17,10 @@ class PupilsController extends Controller
      */
     public function index()
     {
-		$pupils = Pupil::paginate(10);
-		return PupilsResource::collection($pupils);
+		// $pupils = Pupil::paginate(10);
+		// return PupilsResource::collection($pupils);
+
+		return Pupil::all();
     }
 
     /**

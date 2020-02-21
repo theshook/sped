@@ -17,8 +17,9 @@ class ProvincesController extends Controller
      */
     public function index()
     {
-		$provinces = Province::paginate(10);
-		return ProvincesResource::collection($provinces);
+		// $provinces = Province::paginate(10);
+		// return ProvincesResource::collection($provinces);
+		return Province::all();
     }
 
     /**
@@ -76,6 +77,7 @@ class ProvincesController extends Controller
      */
     public function update(ProvincesStoreRequest $request, $id)
     {
+		//return $id;
         $province = Province::find($id);
 		if(!empty($province)) {
 			$province->name = $request->input('name');

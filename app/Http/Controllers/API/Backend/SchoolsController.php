@@ -17,8 +17,9 @@ class SchoolsController extends Controller
      */
     public function index()
     {
-		$schools = School::paginate(10);
-		return SchoolsResource::collection($schools);
+		// $schools = School::paginate(10);
+		// return SchoolsResource::collection($schools);
+		return School::all();
     }
 
     /**
