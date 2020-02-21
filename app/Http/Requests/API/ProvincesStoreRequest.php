@@ -24,7 +24,7 @@ class ProvincesStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required'
+            'name' => 'required|min:3|unique:provinces' . $this->provinces
         ];
-	}
+    }
 }
