@@ -19,7 +19,7 @@
 						</b-container>
 					</b-card-header>
 
-					<b-table borderless striped hover :items="provinces" :fields="provinces_fields" responsive="md">
+					<b-table borderless striped hover small id="province-table" :items="provinces" :fields="provinces_fields" :current-page="currentPage" :per-page="perPage" :total-rows="totalRows" responsive="md">
 						<template v-slot:cell(name)="data">
 							{{data.item.name}}
 						</template>
@@ -36,6 +36,16 @@
 							</b-btn-group>
 						</template>
 					</b-table>
+
+					<b-container class="clearfix px-0" fluid>
+
+						<b-pagination
+						class="float-right"
+						v-model="currentPage"
+						:per-page="perPage"
+						:total-rows="totalRows"
+						aria-controls="province-table"></b-pagination>
+					</b-container>
 				</b-card-body>
 			</b-card>
 		</b-container>
@@ -92,6 +102,9 @@ export default {
 				}
 			],
 			province_list: [],
+			currentPage: 1,
+			perPage: 10,
+			totalRows: null,
 
 			// ADD
 			name: null,
@@ -114,11 +127,8 @@ export default {
 			const provincesAPI = `${this.host}/provinces`
 			axios.get(provincesAPI)
 			.then(response => {
-				this.provinces = response.data.data
-
-				for(let i = 0; i < this.provinces.length; i++) {
-					this.province_list.push(this.provinces[i].name)
-				}
+				this.provinces = response.data
+				this.totalRows = this.provinces.length
 			})
 			.catch(err => console.log(err))
 		},

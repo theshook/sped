@@ -19,7 +19,7 @@
 						</b-container>
 					</b-card-header>
 
-					<b-table borderless striped hover :items="schools" :fields="schools_fields" responsive="md">
+					<b-table borderless striped hover small id="schools-table" :items="schools" :fields="schools_fields" :current-page="currentPage" :per-page="perPage" :total-rows="totalRows" responsive="md">
 						<template v-slot:cell(name)="data">
 							{{data.item.name}}
 						</template>
@@ -40,6 +40,16 @@
 							</b-btn-group>
 						</template>
 					</b-table>
+
+					<b-container class="clearfix px-0" fluid>
+
+						<b-pagination
+						class="float-right"
+						v-model="currentPage"
+						:per-page="perPage"
+						:total-rows="totalRows"
+						aria-controls="schools-table"></b-pagination>
+					</b-container>
 				</b-card-body>
 			</b-card>
 		</b-container>
@@ -117,6 +127,9 @@ export default {
 
 			provinces: null,
 			provinces_list: [],
+			currentPage: 1,
+			perPage: 10,
+			totalRows: null,
 
 			// ADD
 			province: null,
@@ -145,7 +158,7 @@ export default {
 			const schoolsAPI = `${this.host}/schools`
 			axios.get(schoolsAPI)
 			.then(response => {
-				this.schools = response.data.data
+				this.schools = response.data
 			})
 			.catch(err => console.log(err))
 		},
@@ -154,11 +167,7 @@ export default {
 			const provincesAPI = `${this.host}/provinces`
 			axios.get(provincesAPI)
 			.then(response => {
-				this.provinces = response.data.data
-
-				for(let i = 0; i < this.provinces.length; i++) {
-					this.provinces_list.push(this.provinces[i].name)
-				}
+				this.provinces = response.data
 			})
 			.catch(err => console.log(err))
 		},
