@@ -52,8 +52,6 @@
 				<b-form-group
 				label="Name"
 				label-class="text-sm">
-					<!-- <b-form-input list="schools-list" id="school-name-input" v-model="name"></b-form-input>
-					<b-form-datalist id="schools-list" :options="schools_list"></b-form-datalist> -->
 					<b-form-input v-model="name"></b-form-input>
 				</b-form-group>
 
@@ -100,7 +98,6 @@ export default {
     data() {
         return {
 			schools: null,
-			schools_list: [],
 			schools_fields: [
 				{
 					key: 'name',
@@ -149,10 +146,6 @@ export default {
 			axios.get(schoolsAPI)
 			.then(response => {
 				this.schools = response.data.data
-
-				for(let i = 0; i < this.schools.length; i++) {
-					this.schools_list.push(this.schools[i].name)
-				}
 			})
 			.catch(err => console.log(err))
 		},
@@ -232,7 +225,8 @@ export default {
 			.then(response => {
 				if(response.status == 201) {
 					this.schools.push({
-						name: this.name
+						name: this.name,
+						province_id: this.province_id
 					})
 					this.name = null
 					this.province_id = null
