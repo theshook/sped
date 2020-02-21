@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\PupilsStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Pupil;
 use App\Http\Resources\Backend\PupilsResource;
@@ -26,13 +27,15 @@ class PupilsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PupilsStoreRequest $request)
     {
 		$pupil = new Pupil;
 		$pupil->school_id = $request->input('school_id');
-		$pupil->name = $request->input('name');
-		$pupil->age = $request->input('age');
-		$pupil->address = $request->input('address');
+		$pupil->first_name = $request->input('first_name');
+		$pupil->last_name = $request->input('last_name');
+		$pupil->middle_name = $request->input('middle_name');
+		$pupil->birth_date = $request->input('birth_date');
+		$pupil->prof_pic = $request->input('prof_pic');
 
 		if($pupil->delete()) {
 			$response = array(
@@ -79,14 +82,16 @@ class PupilsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PupilsStoreRequest $request, $id)
     {
         $pupil = Pupil::find($id);
 		if(!empty($pupil)) {
 			$pupil->school_id = $request->input('school_id');
-			$pupil->name = $request->input('name');
-			$pupil->age = $request->input('age');
-			$pupil->address = $request->input('address');
+			$pupil->first_name = $request->input('first_name');
+			$pupil->last_name = $request->input('last_name');
+			$pupil->middle_name = $request->input('middle_name');
+			$pupil->birth_date = $request->input('birth_date');
+			$pupil->prof_pic = $request->input('prof_pic');
 
 			if($pupil->delete()) {
 				$response = array(
