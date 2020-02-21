@@ -23,3 +23,8 @@
 	color: #777 !important;
 	font-weight: bolder;
 }
+
+.sidebar-container ul#accordionSidebar { min-height: 100vh !important; height: 100% !important; }
+
+/* BS4 OVERRIDES */
+.card { border: 0 !important; }
