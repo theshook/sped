@@ -25,9 +25,9 @@ class PupilsStoreRequest extends FormRequest
     {
         return [
 			'school_id' => 'required',
-			'first_name' => 'required|min:3|max:30',
-			'last_name' => 'required|min:3|max:30',
-			'middle_name' => 'required|min:3|max:30',
+			'first_name' => 'required',
+			'last_name' => 'required',
+			'middle_name' => 'required',
 			'birth_date' => 'required',
 			'prof_pic' => 'required'
         ];
