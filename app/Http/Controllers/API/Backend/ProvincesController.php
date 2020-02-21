@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\ProvincesStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Province;
 use App\Http\Resources\Backend\ProvincesResource;
@@ -26,7 +27,7 @@ class ProvincesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProvincesStoreRequest $request)
     {
 		$province = new Province;
 		$province->name = $request->input('name');
@@ -73,7 +74,7 @@ class ProvincesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProvincesStoreRequest $request, $id)
     {
         $province = Province::find($id);
 		if(!empty($province)) {
