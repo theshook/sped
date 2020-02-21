@@ -1,154 +1,147 @@
 <template>
     <div>
-		<section class="mt-2">
-			<div class="card shadow-sm">
-				<div class="card-header clearfix py-3">
-					<h4 class="text-primary font-weight-bold float-left">Schools</h4>
+		<b-container class="mt-2">
+			<b-card class="shadow-sm">
+				<b-card-body>
+					<b-card-header class="px-0">
+						<b-container class="clearfix px-2" fluid>
+							<h4 class="text-primary font-weight-bold float-left">Schools</h4>
 
-					<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#add-modal">
-						<small>
-							<span class="fa fa-fw fa-plus-circle"></span>
-							Add School
-						</small>
-					</button>
-				</div>
+							<b-button 
+							variant="primary"
+							size="sm"
+							v-b-modal.add-modal
+							class="float-right">
+								<b-icon icon="pencil"></b-icon>
+								<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
+								Add School
+							</b-button>
+						</b-container>
+					</b-card-header>
 
-				<div class="card-body">
-					<table class="table table-responsive-md">
-						<thead>
-							<th>Name</th>
-							<th>Date added</th>
-							<th>
-								<span class="fa fa-ellipsis-h"></span>
-							</th>
-						</thead>
+					<b-table borderless striped hover :items="schools" :fields="schools_fields" responsive="md">
+						<template v-slot:cell(name)="data">
+							{{data.item.name}}
+						</template>
 
-						<tbody v-for="(school, i) in schools" :key="i">
-							<tr>
-								<td>{{ school.name }}</td>
-								<td>{{ formatDate(i) }}</td>
-								<td>
-									<div class="btn-group">
-										<button class="btn btn-warning btn-sm text-white" data-toggle="modal" data-target="#edit-modal" @click="edit(i)">
-											<span class="fa fa-edit"></span>
-										</button>
+						<template v-slot:cell(province_id)="data">
+							{{data.item.province_id}}
+						</template>
 
-										<button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete-modal" @click="remove(i)">
-											<span class="fa fa-trash-alt"></span>
-										</button>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</section>
+						<template v-slot:cell(index)="data">
+							<b-btn-group>
+								<b-button v-b-modal.edit-modal size="sm" variant="warning" class="text-white" @click="edit(data.index)">
+									<b-icon icon="pencil"></b-icon>
+								</b-button>
+
+								<b-button v-b-modal.delete-modal size="sm" variant="danger" @click="remove(data.index)">
+									<b-icon icon="trash"></b-icon>
+								</b-button>
+							</b-btn-group>
+						</template>
+					</b-table>
+				</b-card-body>
+			</b-card>
+		</b-container>
 
 
 		<!-- MODALS -->
 		<!-- ADD -->
-		<div class="modal" id="add-modal" tabindex="1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5>Add</h5>
+		<b-modal id="add-modal" title="Add School" ok-title="Submit" ok-variant="success" ok-only @ok="add" button-size="sm">
+			<b-form>
+				<b-form-group
+				label="Name"
+				label-class="text-sm">
+					<!-- <b-form-input list="schools-list" id="school-name-input" v-model="name"></b-form-input>
+					<b-form-datalist id="schools-list" :options="schools_list"></b-form-datalist> -->
+					<b-form-input v-model="name"></b-form-input>
+				</b-form-group>
 
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-						<form>
-							<div class="form-group">
-								<small>Name</small>
-								<input type="text" v-model="name" class="form-control form-control-lg text-sm" placeholder="Enter school name">
-							</div>
-						</form>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-success btn-sm shadow-sm" @click="add()">Save</button>
-						<button type="button" class="btn btn-light btn-sm shadow-sm">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+				<b-form-group
+				label="Province"
+				label-class="text-sm">
+					<b-form-select v-model="province_id">
+						<b-form-select-option v-for="province in provinces" :key="province.id" :value="province.id">{{province.name}}</b-form-select-option>
+					</b-form-select>
+				</b-form-group>
+			</b-form>
+		</b-modal>
 
 		<!-- EDIT/UPDATE -->
-		<div class="modal" id="edit-modal" tabindex="1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5>Edit</h5>
+		<b-modal id="edit-modal" title="Update School Information" ok-title="Submit" ok-variant="success" ok-only @ok="update" button-size="sm">
+			<b-form>
+				<b-form-group
+				label="Name"
+				label-class="text-sm">
+					<b-form-input v-model="edit_name"></b-form-input>
+				</b-form-group>
 
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-						<form>
-							<input type="hidden" v-model="edit_id">
-							<div class="form-group">
-								<small>Name</small>
-								<input type="text" v-model="edit_name" class="form-control form-control-lg text-sm" placeholder="Enter school name">
-							</div>
-						</form>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-success btn-sm shadow-sm" @click="update()">Save Changes</button>
-						<button type="button" class="btn btn-light btn-sm shadow-sm" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+				<b-form-group
+				label="Province"
+				label-class="text-sm">
+					<b-form-select v-model="edit_province_id">
+						<b-form-select-option v-for="province in provinces" :key="province.id" :value="province.id">{{province.name}}</b-form-select-option>
+					</b-form-select>
+				</b-form-group>
+			</b-form>
+		</b-modal>
 
 		<!-- DELETE CONFIRM -->
-		<div class="modal" id="delete-modal" tabindex="1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5>Delete</h5>
-
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body text-center">
-						<p>Are you sure you want to remove this school?</p>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger btn-sm shadow-sm" @click="destroy()">Delete</button>
-						<button type="button" class="btn btn-light btn-sm shadow-sm" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<b-modal id="delete-modal" title="Confirm" ok-title="Continue" ok-variant="danger" @ok="destroy" ok-only button-size="sm">
+			<p class="text-center text-muted mb-1">Are you sure you want to remove this school?</p>
+		</b-modal>
     </div>
 </template>
 
 <script>
-import $ from 'jquery'
 export default {
 	name: 'SchoolsIndex',
 	props: ['host'],
     data() {
         return {
 			schools: null,
+			schools_list: [],
+			schools_fields: [
+				{
+					key: 'name',
+					label: 'Name',
+					sortable: true
+				},
+				{
+					key: 'province_id',
+					label: 'Province',
+					sortable: true
+				},
+				{
+					key: 'index',
+					label: 'Action'
+				}
+			],
+
+			provinces: null,
+			provinces_list: [],
 
 			// ADD
+			province: null,
+			province_id: null,
+			province_not_found: false,
 			name: null,
 
 			// EDIT
 			edit_id: null,
+			edit_index: null,
 			edit_name: null,
+			edit_province_id: null,
 
 			// DELETE
-			delete_id: null
+			delete_id: null,
+			delete_index: null
         }
 	},
 	computed: {},
     mounted() {
 		this.getSchools()
+		this.getProvinces()
 	},
     methods: {
 		getSchools: function() {
@@ -156,6 +149,23 @@ export default {
 			axios.get(schoolsAPI)
 			.then(response => {
 				this.schools = response.data.data
+
+				for(let i = 0; i < this.schools.length; i++) {
+					this.schools_list.push(this.schools[i].name)
+				}
+			})
+			.catch(err => console.log(err))
+		},
+
+		getProvinces: function() {
+			const provincesAPI = `${this.host}/provinces`
+			axios.get(provincesAPI)
+			.then(response => {
+				this.provinces = response.data.data
+
+				for(let i = 0; i < this.provinces.length; i++) {
+					this.provinces_list.push(this.provinces[i].name)
+				}
 			})
 			.catch(err => console.log(err))
 		},
@@ -211,25 +221,21 @@ export default {
 
 		add: function() {
 			const schoolsAPI = `${this.host}/schools`
+			
+
 			const data = {
-				province_id: 1,
+				province_id: this.province_id,
 				name: this.name
 			}
-			const config = {
-				headers: {
-					'Content-Type' : 'application/json'
-				}
-			}
-
-			// TODO - add default headers for axios (Content-Type: application/json)
-			axios.post(schoolsAPI, data, config)
+			
+			axios.post(schoolsAPI, data)
 			.then(response => {
 				if(response.status == 201) {
-					this.getSchools()
+					this.schools.push({
+						name: this.name
+					})
 					this.name = null
-					
-					$('#add-modal').modal('hide')
-					$('.modal-backdrop').removeClass('show').hide()
+					this.province_id = null
 
 					swal.fire({
 						icon: 'success',
@@ -251,23 +257,25 @@ export default {
 
 		edit: function(index) {
 			this.edit_id = this.schools[index].id
+			this.edit_index = index
 			this.edit_name = this.schools[index].name
+			this.edit_province_id = this.schools[index].province_id
 		}, 
 
 		update: function() {
 			const schoolsAPI = `${this.host}/school/${this.edit_id}`
 			const data = {
-				province_id: 5,
-				name: this.edit_name,
-				address: 'test address'
+				province_id: this.edit_province_id,
+				name: this.edit_name
 			}
+			
 			axios.put(schoolsAPI, data)
 			.then(response => {
-				if(response.status == 201) {
-					this.getSchools()
-					
-					$('#edit-modal').modal('hide')
-					$('.modal-backdrop').removeClass('show').hide()
+				if(response.data.status == 201) {
+					this.schools[this.edit_index].name = this.edit_name
+					this.schools[this.edit_index].province_id = this.edit_province_id
+					this.edit_name = null
+					this.edit_province_id = null
 
 					swal.fire({
 						icon: 'success',
@@ -289,17 +297,15 @@ export default {
 
 		remove: function(index) {
 			this.delete_id = this.schools[index].id
+			this.delete_index = index
 		},
 
-		destroy: function(index) {
+		destroy: function() {
 			const schoolsAPI = `${this.host}/school/${this.delete_id}`
 			axios.delete(schoolsAPI)
 			.then(response => {
-				if(response.status == 201) {
-					this.getSchools()
-					
-					$('#delete-modal').modal('hide')
-					$('.modal-backdrop').removeClass('show').hide()
+				if(response.data.status == 201) {
+					this.schools.splice(this.delete_index, 1)
 
 					swal.fire({
 						icon: 'success',
@@ -317,7 +323,7 @@ export default {
 				}
 			})
 			.catch(err => console.log(err))
-		},
+		}
 	},
 };
 </script>
