@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\ChecklistsStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Checklist;
 use App\Http\Resources\Backend\ChecklistsResource;
@@ -26,7 +27,7 @@ class ChecklistsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ChecklistsStoreRequest $request)
     {
 		$checklist = new Checklist;
 		$checklist->content = $request->input('content');
@@ -73,7 +74,7 @@ class ChecklistsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ChecklistsStoreRequest $request, $id)
     {
         $checklist = Checklist::find($id);
 		if(!empty($checklist)) {
