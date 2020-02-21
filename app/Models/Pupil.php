@@ -8,8 +8,10 @@ class Pupil extends Model
 {
     protected $fillable = [
 		'school_id',
-		'name',
-		'age',
-		'address'
+		'first_name',
+		'last_name',
+		'middle_name',
+		'birth_date',
+		'prof_pic'
 	];
 }
