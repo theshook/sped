@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\SchoolsStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\School;
 use App\Http\Resources\Backend\SchoolsResource;
@@ -26,7 +27,7 @@ class SchoolsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SchoolsStoreRequest $request)
     {
 		$school = new School;
 		$school->province_id = $request->input('province_id');
@@ -77,13 +78,12 @@ class SchoolsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SchoolsStoreRequest $request, $id)
     {
 		$school = School::find($id);
 		if(!empty($school)) {
 			$school->province_id = $request->input('province_id');
 			$school->name = $request->input('name');
-			$school->address = $request->input('address');
 
 			if($school->save()) {
 				$response = array(
