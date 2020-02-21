@@ -6,22 +6,22 @@
 require("./bootstrap");
 
 //Vue
-import Vue from 'vue'
+import Vue from "vue";
 
 //Sweetalert
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 //Bootstrap-vue
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 //Bootstrap
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
 //Vuelidate
-import Vuelidate from 'vuelidate'
+import Vuelidate from "vuelidate";
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-Vue.use(Vuelidate)
+Vue.use(Vuelidate);
 
 // window.Vue = require("vue");
 window.swal = Swal;
@@ -37,14 +37,21 @@ window.swal = Swal;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-
 //BACKEND (Provinces)
-Vue.component("province", require("./components/provinces/Province.vue").default);
-Vue.component("provinces-index", require("./components/backend/province/Index.vue").default);
+Vue.component(
+    "provinces-index",
+    require("./components/backend/province/Index.vue").default
+);
 //BACKEND (Schools)
-Vue.component("schools-index", require("./components/backend/schools/Index.vue").default);
+Vue.component(
+    "schools-index",
+    require("./components/backend/schools/Index.vue").default
+);
 //BACKEND (Pupils)
-Vue.component("pupils-index", require("./components/backend/pupils/Index.vue").default);
+Vue.component(
+    "pupils-index",
+    require("./components/backend/pupils/Index.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

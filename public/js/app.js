@@ -1908,8 +1908,6 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
@@ -2038,16 +2036,64 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['host'],
+  name: "ProvincesIndex",
+  props: ["host"],
   data: function data() {
     return {
+      search: "",
+      limit: 10,
+      current_page: 1,
       provinces: null,
+      provinces_fields: [// 'index',
+      {
+        key: "name",
+        label: "Name",
+        sortable: true
+      }, {
+        key: "index",
+        label: "Action"
+      }],
+      province_list: [],
+      response: {},
       // ADD
       name: null,
       // EDIT
       edit_id: null,
+      edit_index: null,
       edit_name: null,
       // DELETE
       delete_id: null
@@ -2058,12 +2104,14 @@ __webpack_require__.r(__webpack_exports__);
     this.getProvinces();
   },
   methods: {
-    getProvinces: function getProvinces() {
+    getProvinces: function getProvinces(page) {
       var _this = this;
 
-      var provincesAPI = "".concat(this.host, "/provinces");
+      var provincesAPI = "".concat(this.host, "/provinces?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
       axios.get(provincesAPI).then(function (response) {
+        console.log(response);
         _this.provinces = response.data.data;
+        _this.response = response.data;
       })["catch"](function (err) {
         return console.log(err);
       });
@@ -2071,58 +2119,58 @@ __webpack_require__.r(__webpack_exports__);
     formatDate: function formatDate(index) {
       var provinces = this.provinces; //return provinces[index].created_at.split('-')
 
-      var month = provinces[index].created_at.split('-')[1];
-      var dateDay = provinces[index].created_at.split('-')[2].split(' ')[0];
-      var dateYear = provinces[index].created_at.split('-')[0];
+      var month = provinces[index].created_at.split("-")[1];
+      var dateDay = provinces[index].created_at.split("-")[2].split(" ")[0];
+      var dateYear = provinces[index].created_at.split("-")[0];
       var dateMonth = null;
 
       switch (month) {
-        case '01':
-          dateMonth = 'January';
+        case "01":
+          dateMonth = "January";
           break;
 
-        case '02':
-          dateMonth = 'February';
+        case "02":
+          dateMonth = "February";
           break;
 
-        case '03':
-          dateMonth = 'March';
+        case "03":
+          dateMonth = "March";
           break;
 
-        case '04':
-          dateMonth = 'April';
+        case "04":
+          dateMonth = "April";
           break;
 
-        case '05':
-          dateMonth = 'May';
+        case "05":
+          dateMonth = "May";
           break;
 
-        case '06':
-          dateMonth = 'June';
+        case "06":
+          dateMonth = "June";
           break;
 
-        case '07':
-          dateMonth = 'July';
+        case "07":
+          dateMonth = "July";
           break;
 
-        case '08':
-          dateMonth = 'August';
+        case "08":
+          dateMonth = "August";
           break;
 
-        case '09':
-          dateMonth = 'September';
+        case "09":
+          dateMonth = "September";
           break;
 
-        case '10':
-          dateMonth = 'October';
+        case "10":
+          dateMonth = "October";
           break;
 
-        case '11':
-          dateMonth = 'November';
+        case "11":
+          dateMonth = "November";
           break;
 
-        case '12':
-          dateMonth = 'December';
+        case "12":
+          dateMonth = "December";
           break;
       }
 
@@ -2135,41 +2183,37 @@ __webpack_require__.r(__webpack_exports__);
       var data = {
         name: this.name
       };
-      var config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }; // TODO - add default headers for axios (Content-Type: application/json)
-
-      axios.post(provincesAPI, data, config).then(function (response) {
-        console.log(JSON.stringify(response));
-
-        if (response.status == 201) {
+      axios.post(provincesAPI, data).then(function (response) {
+        if (response.data.status == 201) {
           _this2.getProvinces();
 
           _this2.name = null;
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('#add-modal').modal('hide');
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('.modal-backdrop').removeClass('show').hide();
           swal.fire({
-            icon: 'success',
-            title: 'Added',
-            text: 'Province information successfully added',
+            icon: "success",
+            title: "Added",
+            text: "Province information successfully added",
             timer: 3000
           });
         } else {
           swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to add province information',
+            icon: "error",
+            title: "Error",
+            text: "Failed to add province information",
             timer: 3000
           });
         }
       })["catch"](function (err) {
-        return console.log(err);
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
       });
     },
     edit: function edit(index) {
       this.edit_id = this.provinces[index].id;
+      this.edit_index = index;
       this.edit_name = this.provinces[index].name;
     },
     update: function update() {
@@ -2180,22 +2224,19 @@ __webpack_require__.r(__webpack_exports__);
         name: this.edit_name
       };
       axios.put(provincesAPI, data).then(function (response) {
-        if (response.status == 201) {
-          _this3.getProvinces();
-
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('#edit-modal').modal('hide');
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('.modal-backdrop').removeClass('show').hide();
+        if (response.data.status == 201) {
+          _this3.provinces[_this3.edit_index].name = _this3.edit_name;
           swal.fire({
-            icon: 'success',
-            title: 'Updated',
-            text: 'Province information successfully updated',
+            icon: "success",
+            title: "Updated",
+            text: "Province information successfully updated",
             timer: 3000
           });
         } else {
           swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to update province information',
+            icon: "error",
+            title: "Error",
+            text: "Failed to update province information",
             timer: 3000
           });
         }
@@ -2211,25 +2252,141 @@ __webpack_require__.r(__webpack_exports__);
 
       var provincesAPI = "".concat(this.host, "/province/").concat(this.delete_id);
       axios["delete"](provincesAPI).then(function (response) {
-        if (response.status == 201) {
-          _this4.getProvinces();
+        if (response.data.status == 201) {
+          _this4.provinces.splice(index, 1);
 
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('#delete-modal').modal('hide');
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('.modal-backdrop').removeClass('show').hide();
           swal.fire({
-            icon: 'success',
-            title: 'Deleted',
-            text: 'Province information successfully deleted',
+            icon: "success",
+            title: "Deleted",
+            text: "Province information successfully deleted",
             timer: 3000
           });
         } else {
           swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to delete province information',
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete province information",
             timer: 3000
           });
         }
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/pupils/Index.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/pupils/Index.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'PupilsIndex',
+  props: ['host'],
+  data: function data() {
+    return {
+      pupils: null,
+      pupil_fields: [{
+        key: 'id',
+        label: 'ID',
+        sortable: true
+      }, {
+        key: 'first_name',
+        label: 'First name',
+        sortable: true
+      }, {
+        key: 'last_name',
+        label: 'Last name',
+        sortable: true
+      }, {
+        key: 'index',
+        label: 'Action'
+      }],
+      currentPage: 1,
+      perPage: 10,
+      totalRows: null
+    };
+  },
+  mounted: function mounted() {
+    this.getPupils();
+  },
+  methods: {
+    getPupils: function getPupils() {
+      var _this = this;
+
+      var pupilsAPI = "".concat(this.host, "/pupils");
+      axios.get(pupilsAPI).then(function (response) {
+        _this.pupils = response.data;
+        _this.totalRows = _this.pupils.length;
+        console.log(response.data);
       })["catch"](function (err) {
         return console.log(err);
       });
@@ -2248,8 +2405,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
@@ -2353,50 +2508,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'SchoolsIndex',
   props: ['host'],
   data: function data() {
     return {
       schools: null,
+      schools_fields: [{
+        key: 'name',
+        label: 'Name',
+        sortable: true
+      }, {
+        key: 'province_id',
+        label: 'Province',
+        sortable: true
+      }, {
+        key: 'index',
+        label: 'Action'
+      }],
+      provinces: null,
+      provinces_list: [],
+      currentPage: 1,
+      perPage: 10,
+      totalRows: null,
       // ADD
+      province: null,
+      province_id: null,
+      province_not_found: false,
       name: null,
       // EDIT
       edit_id: null,
+      edit_index: null,
       edit_name: null,
+      edit_province_id: null,
       // DELETE
-      delete_id: null
+      delete_id: null,
+      delete_index: null
     };
   },
   computed: {},
   mounted: function mounted() {
     this.getSchools();
+    this.getProvinces();
   },
   methods: {
     getSchools: function getSchools() {
@@ -2404,7 +2557,17 @@ __webpack_require__.r(__webpack_exports__);
 
       var schoolsAPI = "".concat(this.host, "/schools");
       axios.get(schoolsAPI).then(function (response) {
-        _this.schools = response.data.data;
+        _this.schools = response.data;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    getProvinces: function getProvinces() {
+      var _this2 = this;
+
+      var provincesAPI = "".concat(this.host, "/provinces");
+      axios.get(provincesAPI).then(function (response) {
+        _this2.provinces = response.data;
       })["catch"](function (err) {
         return console.log(err);
       });
@@ -2470,27 +2633,22 @@ __webpack_require__.r(__webpack_exports__);
       return "".concat(dateMonth, " ").concat(dateDay, ", ").concat(dateYear);
     },
     add: function add() {
-      var _this2 = this;
+      var _this3 = this;
 
       var schoolsAPI = "".concat(this.host, "/schools");
       var data = {
-        province_id: 1,
-        name: this.name,
-        address: 'Tinio, Brgy. Bangkal, Makati City'
+        province_id: this.province_id,
+        name: this.name
       };
-      var config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }; // TODO - add default headers for axios (Content-Type: application/json)
-
-      axios.post(schoolsAPI, data, config).then(function (response) {
+      axios.post(schoolsAPI, data).then(function (response) {
         if (response.status == 201) {
-          _this2.getSchools();
+          _this3.schools.push({
+            name: _this3.name,
+            province_id: _this3.province_id
+          });
 
-          _this2.name = null;
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('#add-modal').modal('hide');
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('.modal-backdrop').removeClass('show').hide();
+          _this3.name = null;
+          _this3.province_id = null;
           swal.fire({
             icon: 'success',
             title: 'Added',
@@ -2511,23 +2669,24 @@ __webpack_require__.r(__webpack_exports__);
     },
     edit: function edit(index) {
       this.edit_id = this.schools[index].id;
+      this.edit_index = index;
       this.edit_name = this.schools[index].name;
+      this.edit_province_id = this.schools[index].province_id;
     },
     update: function update() {
-      var _this3 = this;
+      var _this4 = this;
 
       var schoolsAPI = "".concat(this.host, "/school/").concat(this.edit_id);
       var data = {
-        province_id: 5,
-        name: this.edit_name,
-        address: 'test address'
+        province_id: this.edit_province_id,
+        name: this.edit_name
       };
       axios.put(schoolsAPI, data).then(function (response) {
-        if (response.status == 201) {
-          _this3.getSchools();
-
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('#edit-modal').modal('hide');
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('.modal-backdrop').removeClass('show').hide();
+        if (response.data.status == 201) {
+          _this4.schools[_this4.edit_index].name = _this4.edit_name;
+          _this4.schools[_this4.edit_index].province_id = _this4.edit_province_id;
+          _this4.edit_name = null;
+          _this4.edit_province_id = null;
           swal.fire({
             icon: 'success',
             title: 'Updated',
@@ -2548,17 +2707,16 @@ __webpack_require__.r(__webpack_exports__);
     },
     remove: function remove(index) {
       this.delete_id = this.schools[index].id;
+      this.delete_index = index;
     },
-    destroy: function destroy(index) {
-      var _this4 = this;
+    destroy: function destroy() {
+      var _this5 = this;
 
       var schoolsAPI = "".concat(this.host, "/school/").concat(this.delete_id);
       axios["delete"](schoolsAPI).then(function (response) {
-        if (response.status == 201) {
-          _this4.getSchools();
+        if (response.data.status == 201) {
+          _this5.schools.splice(_this5.delete_index, 1);
 
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('#delete-modal').modal('hide');
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()('.modal-backdrop').removeClass('show').hide();
           swal.fire({
             icon: 'success',
             title: 'Deleted',
@@ -2578,172 +2736,6 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
   }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/provinces/Province.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/provinces/Province.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["provinces"],
-  data: function data() {
-    return {
-      name: "",
-      rowProvinces: this.provinces.data
-    };
-  },
-  methods: {
-    submit: function submit() {
-      axios.post("/configure/provinces", {
-        name: this.name
-      }).then(function (res) {
-        swal.fire("Success!", res.data.message, "success").then(function (result) {
-          if (result) window.location.reload();
-        });
-      })["catch"](function (err) {
-        swal.fire("Sorry!", "Something went wrong!", "error").then(function (result) {
-          if (result) window.location.reload();
-        });
-      });
-    },
-    searchProvince: function searchProvince() {}
-  },
-  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -75750,368 +75742,624 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("section", { staticClass: "mt-2" }, [
-      _c("div", { staticClass: "card shadow-sm" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c("div", { staticClass: "card-body" }, [
+  return _c(
+    "div",
+    [
+      _c(
+        "b-container",
+        { staticClass: "mt-2" },
+        [
           _c(
-            "table",
-            { staticClass: "table table-responsive-md" },
+            "b-card",
+            { staticClass: "shadow-sm" },
             [
-              _vm._m(1),
-              _vm._v(" "),
-              _vm._l(_vm.provinces, function(province, i) {
-                return _c("tbody", { key: i }, [
-                  _c("tr", [
-                    _c("td", [_vm._v(_vm._s(province.name))]),
+              _c("div", { staticClass: "row align-items-center" }, [
+                _c(
+                  "div",
+                  { staticClass: "col-md-4" },
+                  [
+                    _c("b-form-input", {
+                      attrs: {
+                        id: "input-1",
+                        type: "text",
+                        placeholder: "Search here..."
+                      },
+                      on: { keyup: _vm.getProvinces },
+                      model: {
+                        value: _vm.search,
+                        callback: function($$v) {
+                          _vm.search = $$v
+                        },
+                        expression: "search"
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-6" }, [
+                  _c("div", { staticClass: "form-inline" }, [
+                    _c("label", { attrs: { for: "row-limit" } }, [
+                      _vm._v("Showing")
+                    ]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(_vm.formatDate(i)))]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c("div", { staticClass: "btn-group" }, [
-                        _c(
-                          "button",
+                    _c(
+                      "select",
+                      {
+                        directives: [
                           {
-                            staticClass: "btn btn-warning btn-sm text-white",
-                            attrs: {
-                              "data-toggle": "modal",
-                              "data-target": "#edit-modal"
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.limit,
+                            expression: "limit"
+                          }
+                        ],
+                        staticClass: "form-control w-25",
+                        attrs: { id: "row-limit" },
+                        on: {
+                          change: [
+                            function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.limit = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
                             },
-                            on: {
-                              click: function($event) {
-                                return _vm.edit(i)
-                              }
-                            }
-                          },
-                          [_c("span", { staticClass: "fa fa-edit" })]
-                        ),
+                            _vm.getProvinces
+                          ]
+                        }
+                      },
+                      [
+                        _c("option", { attrs: { value: "10" } }, [
+                          _vm._v("10")
+                        ]),
                         _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-danger btn-sm",
-                            attrs: {
-                              "data-toggle": "modal",
-                              "data-target": "#delete-modal"
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.remove(i)
-                              }
-                            }
-                          },
-                          [_c("span", { staticClass: "fa fa-trash-alt" })]
-                        )
-                      ])
+                        _c("option", { attrs: { value: "25" } }, [
+                          _vm._v("25")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "50" } }, [
+                          _vm._v("50")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "100" } }, [
+                          _vm._v("100")
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("label", { attrs: { for: "row-limit" } }, [
+                      _vm._v("Out of " + _vm._s(_vm.response.total) + " rows")
                     ])
                   ])
                 ])
-              })
+              ]),
+              _vm._v(" "),
+              _c(
+                "b-card-body",
+                [
+                  _c(
+                    "b-card-header",
+                    { staticClass: "px-0" },
+                    [
+                      _c(
+                        "b-container",
+                        { staticClass: "clearfix px-2", attrs: { fluid: "" } },
+                        [
+                          _c(
+                            "h4",
+                            {
+                              staticClass:
+                                "text-primary font-weight-bold float-left"
+                            },
+                            [
+                              _vm._v(
+                                "\n                            Provinces\n                        "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-button",
+                            {
+                              directives: [
+                                {
+                                  name: "b-modal",
+                                  rawName: "v-b-modal.add-modal",
+                                  modifiers: { "add-modal": true }
+                                }
+                              ],
+                              staticClass: "float-right",
+                              attrs: { variant: "primary", size: "sm" }
+                            },
+                            [
+                              _c("b-icon", { attrs: { icon: "pencil" } }),
+                              _vm._v(" "),
+                              _vm._v(
+                                "\n                            Add Province\n                        "
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("b-table", {
+                    attrs: {
+                      borderless: "",
+                      striped: "",
+                      hover: "",
+                      small: "",
+                      id: "province-table",
+                      items: _vm.provinces,
+                      fields: _vm.provinces_fields,
+                      responsive: "md"
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "cell(name)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(data.item.name) +
+                                "\n                    "
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(index)",
+                        fn: function(data) {
+                          return [
+                            _c(
+                              "b-btn-group",
+                              [
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.edit-modal",
+                                        modifiers: { "edit-modal": true }
+                                      }
+                                    ],
+                                    staticClass: "text-white",
+                                    attrs: { size: "sm", variant: "warning" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.edit(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "pencil" } })],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.delete-modal",
+                                        modifiers: { "delete-modal": true }
+                                      }
+                                    ],
+                                    attrs: { size: "sm", variant: "danger" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.remove(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "trash" } })],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-container",
+                    { staticClass: "clearfix px-0", attrs: { fluid: "" } },
+                    [
+                      _c("b-pagination", {
+                        staticClass: "float-right",
+                        attrs: {
+                          "per-page": Number(_vm.response.per_page),
+                          "total-rows": Number(_vm.response.total),
+                          "aria-controls": "province-table"
+                        },
+                        on: { change: _vm.getProvinces },
+                        model: {
+                          value: _vm.current_page,
+                          callback: function($$v) {
+                            _vm.current_page = $$v
+                          },
+                          expression: "current_page"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
             ],
-            2
+            1
           )
-        ])
-      ])
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "modal", attrs: { id: "add-modal", tabindex: "1" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content" }, [
-            _vm._m(2),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-body" }, [
-              _c("form", [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("small", [_vm._v("Name")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.name,
-                        expression: "name"
-                      }
-                    ],
-                    staticClass: "form-control form-control-lg text-sm",
-                    attrs: { type: "text", placeholder: "Enter province name" },
-                    domProps: { value: _vm.name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.name = $event.target.value
-                      }
-                    }
-                  })
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-success btn-sm shadow-sm",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function($event) {
-                      return _vm.add()
-                    }
-                  }
-                },
-                [_vm._v("Save")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-light btn-sm shadow-sm",
-                  attrs: { type: "button" }
-                },
-                [_vm._v("Close")]
-              )
-            ])
-          ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "modal", attrs: { id: "edit-modal", tabindex: "1" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content" }, [
-            _vm._m(3),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-body" }, [
-              _c("form", [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.edit_id,
-                      expression: "edit_id"
-                    }
-                  ],
-                  attrs: { type: "hidden" },
-                  domProps: { value: _vm.edit_id },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.edit_id = $event.target.value
-                    }
-                  }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group" }, [
-                  _c("small", [_vm._v("Name")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.edit_name,
-                        expression: "edit_name"
-                      }
-                    ],
-                    staticClass: "form-control form-control-lg text-sm",
-                    attrs: { type: "text", placeholder: "Enter province name" },
-                    domProps: { value: _vm.edit_name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.edit_name = $event.target.value
-                      }
-                    }
-                  })
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-success btn-sm shadow-sm",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function($event) {
-                      return _vm.update()
-                    }
-                  }
-                },
-                [_vm._v("Save Changes")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-light btn-sm shadow-sm",
-                  attrs: { type: "button", "data-dismiss": "modal" }
-                },
-                [_vm._v("Close")]
-              )
-            ])
-          ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "modal", attrs: { id: "delete-modal", tabindex: "1" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content" }, [
-            _vm._m(4),
-            _vm._v(" "),
-            _vm._m(5),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-danger btn-sm shadow-sm",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function($event) {
-                      return _vm.destroy()
-                    }
-                  }
-                },
-                [_vm._v("Delete")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-light btn-sm shadow-sm",
-                  attrs: { type: "button", "data-dismiss": "modal" }
-                },
-                [_vm._v("Close")]
-              )
-            ])
-          ])
-        ])
-      ]
-    )
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header clearfix py-3" }, [
-      _c("h4", { staticClass: "text-primary font-weight-bold float-left" }, [
-        _vm._v("Provinces")
-      ]),
+        ],
+        1
+      ),
       _vm._v(" "),
       _c(
-        "button",
+        "b-modal",
         {
-          staticClass: "btn btn-primary float-right",
           attrs: {
-            type: "button",
-            "data-toggle": "modal",
-            "data-target": "#add-modal"
-          }
+            id: "add-modal",
+            title: "Add Province",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.add }
         },
         [
-          _c("small", [
-            _c("span", { staticClass: "fa fa-fw fa-plus-circle" }),
-            _vm._v("\n\t\t\t\t\t\t\tAdd Province\n\t\t\t\t\t\t")
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Name", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.name,
+                      callback: function($$v) {
+                        _vm.name = $$v
+                      },
+                      expression: "name"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "edit-modal",
+            title: "Update Province Information",
+            "ok-title": "Save Changes",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.update }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.edit_id,
+                    expression: "edit_id"
+                  }
+                ],
+                attrs: { type: "hidden" },
+                domProps: { value: _vm.edit_id },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.edit_id = $event.target.value
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Name", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.edit_name,
+                      callback: function($$v) {
+                        _vm.edit_name = $$v
+                      },
+                      expression: "edit_name"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "delete-modal",
+            title: "Confirm",
+            "ok-title": "Continue",
+            "ok-variant": "danger",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.destroy }
+        },
+        [
+          _c("p", { staticClass: "text-center text-muted mb-1" }, [
+            _vm._v(
+              "\n            Are you sure you want to remove this province?\n        "
+            )
           ])
         ]
       )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("th", [_vm._v("Name")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Date added")]),
-      _vm._v(" "),
-      _c("th", [_c("span", { staticClass: "fa fa-ellipsis-h" })])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", [_vm._v("Add")]),
-      _vm._v(" "),
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/pupils/Index.vue?vue&type=template&id=4b0b2c64&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/pupils/Index.vue?vue&type=template&id=4b0b2c64& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
       _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("×")]
+        "b-container",
+        { staticClass: "full-height mt-2" },
+        [
+          _c(
+            "b-card",
+            { staticClass: "shadow-sm" },
+            [
+              _c(
+                "b-card-body",
+                [
+                  _c(
+                    "b-card-header",
+                    { staticClass: "px-0" },
+                    [
+                      _c(
+                        "b-container",
+                        { staticClass: "clearfix px-2", attrs: { fluid: "" } },
+                        [
+                          _c(
+                            "h4",
+                            {
+                              staticClass:
+                                "text-primary font-weight-bold float-left"
+                            },
+                            [_vm._v("Pupils")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-button",
+                            {
+                              directives: [
+                                {
+                                  name: "b-modal",
+                                  rawName: "v-b-modal.add-modal",
+                                  modifiers: { "add-modal": true }
+                                }
+                              ],
+                              staticClass: "float-right",
+                              attrs: { variant: "primary", size: "sm" }
+                            },
+                            [
+                              _c("b-icon", { attrs: { icon: "pencil" } }),
+                              _vm._v(" "),
+                              _vm._v("\n\t\t\t\t\t\t\tAdd Pupil\n\t\t\t\t\t\t")
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("b-table", {
+                    attrs: {
+                      borderless: "",
+                      striped: "",
+                      hover: "",
+                      small: "",
+                      id: "pupils-table",
+                      items: _vm.pupils,
+                      fields: _vm.pupil_fields,
+                      "current-page": _vm.currentPage,
+                      "per-page": _vm.perPage,
+                      "total-rows": _vm.totalRows,
+                      responsive: "md"
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "cell(id)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t" +
+                                _vm._s(data.item.id) +
+                                "\n\t\t\t\t\t"
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(first_name)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t" +
+                                _vm._s(data.item.first_name) +
+                                "\n\t\t\t\t\t"
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(last_name)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t" +
+                                _vm._s(data.item.last_name) +
+                                "\n\t\t\t\t\t"
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(index)",
+                        fn: function(data) {
+                          return [
+                            _c(
+                              "b-btn-group",
+                              [
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.edit-modal",
+                                        modifiers: { "edit-modal": true }
+                                      }
+                                    ],
+                                    staticClass: "text-white",
+                                    attrs: { size: "sm", variant: "warning" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.edit(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "pencil" } })],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.delete-modal",
+                                        modifiers: { "delete-modal": true }
+                                      }
+                                    ],
+                                    attrs: { size: "sm", variant: "danger" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.remove(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "trash" } })],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-container",
+                    { staticClass: "clearfix px-0", attrs: { fluid: "" } },
+                    [
+                      _c("b-pagination", {
+                        staticClass: "float-right",
+                        attrs: {
+                          "per-page": _vm.perPage,
+                          "total-rows": _vm.totalRows,
+                          "aria-controls": "pupils-table"
+                        },
+                        model: {
+                          value: _vm.currentPage,
+                          callback: function($$v) {
+                            _vm.currentPage = $$v
+                          },
+                          expression: "currentPage"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
       )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", [_vm._v("Edit")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("×")]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", [_vm._v("Delete")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("×")]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-body text-center" }, [
-      _c("p", [_vm._v("Are you sure you want to remove this province?")])
-    ])
-  }
-]
+    ],
+    1
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -76133,653 +76381,355 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("section", { staticClass: "mt-2" }, [
-      _c("div", { staticClass: "card shadow-sm" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c("div", { staticClass: "card-body" }, [
+  return _c(
+    "div",
+    [
+      _c(
+        "b-container",
+        { staticClass: "mt-2" },
+        [
           _c(
-            "table",
-            { staticClass: "table table-responsive-md" },
+            "b-card",
+            { staticClass: "shadow-sm" },
             [
-              _vm._m(1),
-              _vm._v(" "),
-              _vm._l(_vm.schools, function(school, i) {
-                return _c("tbody", { key: i }, [
-                  _c("tr", [
-                    _c("td", [_vm._v(_vm._s(school.name))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(_vm.formatDate(i)))]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c("div", { staticClass: "btn-group" }, [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-warning btn-sm text-white",
-                            attrs: {
-                              "data-toggle": "modal",
-                              "data-target": "#edit-modal"
+              _c(
+                "b-card-body",
+                [
+                  _c(
+                    "b-card-header",
+                    { staticClass: "px-0" },
+                    [
+                      _c(
+                        "b-container",
+                        { staticClass: "clearfix px-2", attrs: { fluid: "" } },
+                        [
+                          _c(
+                            "h4",
+                            {
+                              staticClass:
+                                "text-primary font-weight-bold float-left"
                             },
-                            on: {
-                              click: function($event) {
-                                return _vm.edit(i)
-                              }
-                            }
-                          },
-                          [_c("span", { staticClass: "fa fa-edit" })]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-danger btn-sm",
-                            attrs: {
-                              "data-toggle": "modal",
-                              "data-target": "#delete-modal"
+                            [_vm._v("Schools")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-button",
+                            {
+                              directives: [
+                                {
+                                  name: "b-modal",
+                                  rawName: "v-b-modal.add-modal",
+                                  modifiers: { "add-modal": true }
+                                }
+                              ],
+                              staticClass: "float-right",
+                              attrs: { variant: "primary", size: "sm" }
                             },
-                            on: {
-                              click: function($event) {
-                                return _vm.remove(i)
-                              }
-                            }
-                          },
-                          [_c("span", { staticClass: "fa fa-trash-alt" })]
-                        )
-                      ])
+                            [
+                              _c("b-icon", { attrs: { icon: "pencil" } }),
+                              _vm._v(" "),
+                              _vm._v(
+                                "\n\t\t\t\t\t\t\t\tAdd School\n\t\t\t\t\t\t\t"
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("b-table", {
+                    attrs: {
+                      borderless: "",
+                      striped: "",
+                      hover: "",
+                      small: "",
+                      id: "schools-table",
+                      items: _vm.schools,
+                      fields: _vm.schools_fields,
+                      "current-page": _vm.currentPage,
+                      "per-page": _vm.perPage,
+                      "total-rows": _vm.totalRows,
+                      responsive: "md"
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "cell(name)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t\t" +
+                                _vm._s(data.item.name) +
+                                "\n\t\t\t\t\t\t"
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(province_id)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t\t" +
+                                _vm._s(data.item.province_id) +
+                                "\n\t\t\t\t\t\t"
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(index)",
+                        fn: function(data) {
+                          return [
+                            _c(
+                              "b-btn-group",
+                              [
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.edit-modal",
+                                        modifiers: { "edit-modal": true }
+                                      }
+                                    ],
+                                    staticClass: "text-white",
+                                    attrs: { size: "sm", variant: "warning" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.edit(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "pencil" } })],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.delete-modal",
+                                        modifiers: { "delete-modal": true }
+                                      }
+                                    ],
+                                    attrs: { size: "sm", variant: "danger" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.remove(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "trash" } })],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
                     ])
-                  ])
-                ])
-              })
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-container",
+                    { staticClass: "clearfix px-0", attrs: { fluid: "" } },
+                    [
+                      _c("b-pagination", {
+                        staticClass: "float-right",
+                        attrs: {
+                          "per-page": _vm.perPage,
+                          "total-rows": _vm.totalRows,
+                          "aria-controls": "schools-table"
+                        },
+                        model: {
+                          value: _vm.currentPage,
+                          callback: function($$v) {
+                            _vm.currentPage = $$v
+                          },
+                          expression: "currentPage"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
             ],
-            2
+            1
           )
-        ])
-      ])
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "modal", attrs: { id: "add-modal", tabindex: "1" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content" }, [
-            _vm._m(2),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-body" }, [
-              _c("form", [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("small", [_vm._v("Name")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.name,
-                        expression: "name"
-                      }
-                    ],
-                    staticClass: "form-control form-control-lg text-sm",
-                    attrs: { type: "text", placeholder: "Enter school name" },
-                    domProps: { value: _vm.name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.name = $event.target.value
-                      }
-                    }
-                  })
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-success btn-sm shadow-sm",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function($event) {
-                      return _vm.add()
-                    }
-                  }
-                },
-                [_vm._v("Save")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-light btn-sm shadow-sm",
-                  attrs: { type: "button" }
-                },
-                [_vm._v("Close")]
-              )
-            ])
-          ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "modal", attrs: { id: "edit-modal", tabindex: "1" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content" }, [
-            _vm._m(3),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-body" }, [
-              _c("form", [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.edit_id,
-                      expression: "edit_id"
-                    }
-                  ],
-                  attrs: { type: "hidden" },
-                  domProps: { value: _vm.edit_id },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.edit_id = $event.target.value
-                    }
-                  }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group" }, [
-                  _c("small", [_vm._v("Name")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.edit_name,
-                        expression: "edit_name"
-                      }
-                    ],
-                    staticClass: "form-control form-control-lg text-sm",
-                    attrs: { type: "text", placeholder: "Enter school name" },
-                    domProps: { value: _vm.edit_name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.edit_name = $event.target.value
-                      }
-                    }
-                  })
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-success btn-sm shadow-sm",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function($event) {
-                      return _vm.update()
-                    }
-                  }
-                },
-                [_vm._v("Save Changes")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-light btn-sm shadow-sm",
-                  attrs: { type: "button", "data-dismiss": "modal" }
-                },
-                [_vm._v("Close")]
-              )
-            ])
-          ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "modal", attrs: { id: "delete-modal", tabindex: "1" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content" }, [
-            _vm._m(4),
-            _vm._v(" "),
-            _vm._m(5),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-danger btn-sm shadow-sm",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function($event) {
-                      return _vm.destroy()
-                    }
-                  }
-                },
-                [_vm._v("Delete")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-light btn-sm shadow-sm",
-                  attrs: { type: "button", "data-dismiss": "modal" }
-                },
-                [_vm._v("Close")]
-              )
-            ])
-          ])
-        ])
-      ]
-    )
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header clearfix py-3" }, [
-      _c("h4", { staticClass: "text-primary font-weight-bold float-left" }, [
-        _vm._v("Schools")
-      ]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-primary float-right",
-          attrs: {
-            type: "button",
-            "data-toggle": "modal",
-            "data-target": "#add-modal"
-          }
-        },
-        [
-          _c("small", [
-            _c("span", { staticClass: "fa fa-fw fa-plus-circle" }),
-            _vm._v("\n\t\t\t\t\t\t\tAdd School\n\t\t\t\t\t\t")
-          ])
-        ]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("th", [_vm._v("Name")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Address")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Date added")]),
-      _vm._v(" "),
-      _c("th", [_c("span", { staticClass: "fa fa-ellipsis-h" })])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", [_vm._v("Add")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("×")]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", [_vm._v("Edit")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("×")]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", [_vm._v("Delete")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("×")]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-body text-center" }, [
-      _c("p", [_vm._v("Are you sure you want to remove this school?")])
-    ])
-  }
-]
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/provinces/Province.vue?vue&type=template&id=48524027&":
-/*!*********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/provinces/Province.vue?vue&type=template&id=48524027& ***!
-  \*********************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "col-md-10" }, [
-    _c("div", { staticClass: "card" }, [
-      _vm._m(0),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _vm._m(1),
-        _vm._v(" "),
-        _c("table", { staticClass: "table table-striped" }, [
-          _vm._m(2),
-          _vm._v(" "),
-          _c(
-            "tbody",
-            _vm._l(_vm.rowProvinces, function(prov) {
-              return _c("tr", { key: prov.id }, [
-                _c("th", { attrs: { scope: "row" } }, [
-                  _vm._v(_vm._s(prov.name))
-                ]),
-                _vm._v(" "),
-                _vm._m(3, true)
-              ])
-            }),
-            0
-          )
-        ]),
-        _vm._v(" "),
-        _vm._m(4)
-      ])
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass: "modal fade",
-        attrs: {
-          id: "provinceModal",
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "provinceModalLabel",
-          "aria-hidden": "true"
-        }
-      },
-      [
-        _c(
-          "div",
-          { staticClass: "modal-dialog", attrs: { role: "document" } },
-          [
-            _c("div", { staticClass: "modal-content" }, [
-              _vm._m(5),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-body" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.name,
-                      expression: "name"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: {
-                    type: "text",
-                    name: "name",
-                    placeholder: "Province name..."
-                  },
-                  domProps: { value: _vm.name },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.name = $event.target.value
-                    }
-                  }
-                })
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-secondary",
-                    attrs: { type: "button", "data-dismiss": "modal" }
-                  },
-                  [
-                    _vm._v(
-                      "\n                        Close\n                    "
-                    )
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    attrs: { type: "button" },
-                    on: { click: _vm.submit }
-                  },
-                  [
-                    _vm._v(
-                      "\n                        Save changes\n                    "
-                    )
-                  ]
-                )
-              ])
-            ])
-          ]
-        )
-      ]
-    )
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c(
-        "div",
-        {
-          staticClass: "row d-flex justify-content-between align-items-center"
-        },
-        [
-          _c("h5", { staticClass: "m-0 font-weight-bold text-primary" }, [
-            _vm._v("Provinces")
-          ]),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary",
-              attrs: { "data-toggle": "modal", "data-target": "#provinceModal" }
-            },
-            [_vm._v("\n                    New\n                ")]
-          )
-        ]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass:
-          "row d-flex justify-content-between align-items-center pb-3"
-      },
-      [
-        _c("input", {
-          staticClass: "form-control w-25",
-          attrs: { type: "text", placeholder: "Search here..." }
-        })
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Name")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("div", { staticClass: "row d-flex justify-content-end" }, [
-        _c("button", { staticClass: "btn btn-sm btn-secondary mx-1" }, [
-          _vm._v(
-            "\n                                    Edit\n                                "
-          )
-        ]),
-        _vm._v(" "),
-        _c("button", { staticClass: "btn btn-sm btn-danger mx-1" }, [
-          _vm._v(
-            "\n                                    Delete\n                                "
-          )
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
-      _c(
-        "ul",
-        { staticClass: "pagination pagination-sm justify-content-end" },
-        [
-          _c("li", { staticClass: "page-item" }, [
-            _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
-              _vm._v("Previous")
-            ])
-          ]),
-          _vm._v(" "),
-          _c("li", { staticClass: "page-item" }, [
-            _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
-              _vm._v("1")
-            ])
-          ]),
-          _vm._v(" "),
-          _c("li", { staticClass: "page-item" }, [
-            _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
-              _vm._v("2")
-            ])
-          ]),
-          _vm._v(" "),
-          _c("li", { staticClass: "page-item" }, [
-            _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
-              _vm._v("3")
-            ])
-          ]),
-          _vm._v(" "),
-          _c("li", { staticClass: "page-item" }, [
-            _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
-              _vm._v("Next")
-            ])
-          ])
-        ]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c(
-        "h5",
-        { staticClass: "modal-title", attrs: { id: "provinceModalLabel" } },
-        [
-          _vm._v(
-            "\n                        Add New Province\n                    "
-          )
-        ]
+        ],
+        1
       ),
       _vm._v(" "),
       _c(
-        "button",
+        "b-modal",
         {
-          staticClass: "close",
           attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
+            id: "add-modal",
+            title: "Add School",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.add }
         },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Name", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.name,
+                      callback: function($$v) {
+                        _vm.name = $$v
+                      },
+                      expression: "name"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Province", "label-class": "text-sm" } },
+                [
+                  _c(
+                    "b-form-select",
+                    {
+                      model: {
+                        value: _vm.province_id,
+                        callback: function($$v) {
+                          _vm.province_id = $$v
+                        },
+                        expression: "province_id"
+                      }
+                    },
+                    _vm._l(_vm.provinces, function(province) {
+                      return _c(
+                        "b-form-select-option",
+                        { key: province.id, attrs: { value: province.id } },
+                        [_vm._v(_vm._s(province.name))]
+                      )
+                    }),
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "edit-modal",
+            title: "Update School Information",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.update }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Name", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.edit_name,
+                      callback: function($$v) {
+                        _vm.edit_name = $$v
+                      },
+                      expression: "edit_name"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Province", "label-class": "text-sm" } },
+                [
+                  _c(
+                    "b-form-select",
+                    {
+                      model: {
+                        value: _vm.edit_province_id,
+                        callback: function($$v) {
+                          _vm.edit_province_id = $$v
+                        },
+                        expression: "edit_province_id"
+                      }
+                    },
+                    _vm._l(_vm.provinces, function(province) {
+                      return _c(
+                        "b-form-select-option",
+                        { key: province.id, attrs: { value: province.id } },
+                        [_vm._v(_vm._s(province.name))]
+                      )
+                    }),
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "delete-modal",
+            title: "Confirm",
+            "ok-title": "Continue",
+            "ok-variant": "danger",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.destroy }
+        },
+        [
+          _c("p", { staticClass: "text-center text-muted mb-1" }, [
+            _vm._v("Are you sure you want to remove this school?")
+          ])
+        ]
       )
-    ])
-  }
-]
+    ],
+    1
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -89947,7 +89897,7 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js"); //Vue
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(bootstrap_vue__WEBPACK_IMPORTED_MODULE_2__["BootstrapVue"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(bootstrap_vue__WEBPACK_IMPORTED_MODULE_2__["IconsPlugin"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(bootstrap_vue__WEBPACK_IMPORTED_MODULE_2__["BootstrapVueIcons"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuelidate__WEBPACK_IMPORTED_MODULE_5___default.a); // window.Vue = require("vue");
 
 window.swal = sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a;
@@ -89962,10 +89912,11 @@ window.swal = sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a;
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 //BACKEND (Provinces)
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("province", __webpack_require__(/*! ./components/provinces/Province.vue */ "./resources/js/components/provinces/Province.vue")["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("provinces-index", __webpack_require__(/*! ./components/backend/province/Index.vue */ "./resources/js/components/backend/province/Index.vue")["default"]); //BACKEND (Schools)
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("schools-index", __webpack_require__(/*! ./components/backend/schools/Index.vue */ "./resources/js/components/backend/schools/Index.vue")["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("schools-index", __webpack_require__(/*! ./components/backend/schools/Index.vue */ "./resources/js/components/backend/schools/Index.vue")["default"]); //BACKEND (Pupils)
+
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("pupils-index", __webpack_require__(/*! ./components/backend/pupils/Index.vue */ "./resources/js/components/backend/pupils/Index.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -90092,6 +90043,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/backend/pupils/Index.vue":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/backend/pupils/Index.vue ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Index_vue_vue_type_template_id_4b0b2c64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=4b0b2c64& */ "./resources/js/components/backend/pupils/Index.vue?vue&type=template&id=4b0b2c64&");
+/* harmony import */ var _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js& */ "./resources/js/components/backend/pupils/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Index_vue_vue_type_template_id_4b0b2c64___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Index_vue_vue_type_template_id_4b0b2c64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/backend/pupils/Index.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/pupils/Index.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/backend/pupils/Index.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/pupils/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/pupils/Index.vue?vue&type=template&id=4b0b2c64&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/backend/pupils/Index.vue?vue&type=template&id=4b0b2c64& ***!
+  \*****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_4b0b2c64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=template&id=4b0b2c64& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/pupils/Index.vue?vue&type=template&id=4b0b2c64&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_4b0b2c64___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_4b0b2c64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/backend/schools/Index.vue":
 /*!***********************************************************!*\
   !*** ./resources/js/components/backend/schools/Index.vue ***!
@@ -90161,75 +90181,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/provinces/Province.vue":
-/*!********************************************************!*\
-  !*** ./resources/js/components/provinces/Province.vue ***!
-  \********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Province_vue_vue_type_template_id_48524027___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Province.vue?vue&type=template&id=48524027& */ "./resources/js/components/provinces/Province.vue?vue&type=template&id=48524027&");
-/* harmony import */ var _Province_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Province.vue?vue&type=script&lang=js& */ "./resources/js/components/provinces/Province.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _Province_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Province_vue_vue_type_template_id_48524027___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Province_vue_vue_type_template_id_48524027___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/provinces/Province.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/provinces/Province.vue?vue&type=script&lang=js&":
-/*!*********************************************************************************!*\
-  !*** ./resources/js/components/provinces/Province.vue?vue&type=script&lang=js& ***!
-  \*********************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Province_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Province.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/provinces/Province.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Province_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/provinces/Province.vue?vue&type=template&id=48524027&":
-/*!***************************************************************************************!*\
-  !*** ./resources/js/components/provinces/Province.vue?vue&type=template&id=48524027& ***!
-  \***************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Province_vue_vue_type_template_id_48524027___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Province.vue?vue&type=template&id=48524027& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/provinces/Province.vue?vue&type=template&id=48524027&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Province_vue_vue_type_template_id_48524027___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Province_vue_vue_type_template_id_48524027___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
 /***/ "./resources/sass/app.scss":
 /*!*********************************!*\
   !*** ./resources/sass/app.scss ***!
@@ -90248,8 +90199,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Patrick\Desktop\DESKTOP\Project-web\SpedAssessment\sped\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\Patrick\Desktop\DESKTOP\Project-web\SpedAssessment\sped\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\Laragon\www\sped-assessmentPHP\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\Laragon\www\sped-assessmentPHP\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

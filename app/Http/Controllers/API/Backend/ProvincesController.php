@@ -10,30 +10,34 @@ use App\Http\Resources\Backend\ProvincesResource;
 
 class ProvincesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function index(Request $request)
+	{
 		// $provinces = Province::paginate(10);
 		// return ProvincesResource::collection($provinces);
-		return Province::all();
-    }
+		$search = $request->search;
+		$limit = $request->limit;
+		return ($search) ? Province::where('name', 'like', "$search%")->paginate($limit) : Province::paginate($limit);
+	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(ProvincesStoreRequest $request)
-    {
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function store(ProvincesStoreRequest $request)
+	{
+		$validated = $request->validated();
+
 		$province = new Province;
-		$province->name = $request->input('name');
+		$province->name = $request->name;
 
-		if($province->save()) {
+		if ($province->save()) {
 			$response = array(
 				'status' => 201,
 				'message' => 'Province successfully added'
@@ -46,18 +50,18 @@ class ProvincesController extends Controller
 			);
 			return response()->json($response, 500);
 		}
-    }
+	}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function show($id)
+	{
 		$province = Province::find($id);
-		if(!empty($province)) {
+		if (!empty($province)) {
 			return $province;
 		} else {
 			$response = array(
@@ -66,22 +70,22 @@ class ProvincesController extends Controller
 			);
 			return response()->json($response, 404);
 		}
-    }
+	}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(ProvincesStoreRequest $request, $id)
-    {
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function update(ProvincesStoreRequest $request, $id)
+	{
 		//return $id;
-        $province = Province::find($id);
-		if(!empty($province)) {
+		$province = Province::find($id);
+		if (!empty($province)) {
 			$province->name = $request->input('name');
-			if($province->save()) {
+			if ($province->save()) {
 				$response = array(
 					'status' => 201,
 					'message' => 'Province successfully updated'
@@ -101,19 +105,19 @@ class ProvincesController extends Controller
 			);
 			return response()->json($response, 404);
 		}
-    }
+	}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $province = Province::find($id);
-		if(!empty($province)) {
-			if($province->delete()) {
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy($id)
+	{
+		$province = Province::find($id);
+		if (!empty($province)) {
+			if ($province->delete()) {
 				$response = array(
 					'status' => 201,
 					'message' => 'Province successfully deleted'
@@ -133,5 +137,5 @@ class ProvincesController extends Controller
 			);
 			return response()->json($response, 404);
 		}
-    }
+	}
 }
