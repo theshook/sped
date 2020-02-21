@@ -1,149 +1,108 @@
 <template>
     <div>
-		<section class="mt-2">
-			<div class="card shadow-sm">
-				<div class="card-header clearfix py-3">
-					<h4 class="text-primary font-weight-bold float-left">Provinces</h4>
+		<b-container class="mt-2">
+			<b-card class="shadow-sm">
+				<b-card-body>
+					<b-card-header class="px-0">
+						<b-container class="clearfix px-2" fluid>
+							<h4 class="text-primary font-weight-bold float-left">Provinces</h4>
 
-					<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#add-modal">
-						<small>
-							<span class="fa fa-fw fa-plus-circle"></span>
-							Add Province
-						</small>
-					</button>
-				</div>
+							<b-button 
+							variant="primary"
+							size="sm"
+							v-b-modal.add-modal
+							class="float-right">
+								<b-icon icon="pencil"></b-icon>
+								<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
+								Add Province
+							</b-button>
+						</b-container>
+					</b-card-header>
 
-				<div class="card-body">
-					<table class="table table-responsive-md">
-						<thead>
-							<th>Name</th>
-							<th>Date added</th>
-							<th>
-								<span class="fa fa-ellipsis-h"></span>
-							</th>
-						</thead>
+					<b-table borderless striped hover :items="provinces" :fields="provinces_fields" responsive="md">
+						<template v-slot:cell(name)="data">
+							{{data.item.name}}
+						</template>
 
-						<tbody v-for="(province, i) in provinces" :key="i">
-							<tr>
-								<td>{{ province.name }}</td>
-								<td>{{ formatDate(i) }}</td>
-								<td>
-									<div class="btn-group">
-										<button class="btn btn-warning btn-sm text-white" data-toggle="modal" data-target="#edit-modal" @click="edit(i)">
-											<span class="fa fa-edit"></span>
-										</button>
+						<template v-slot:cell(index)="data">
+							<b-btn-group>
+								<b-button v-b-modal.edit-modal size="sm" variant="warning" class="text-white" @click="edit(data.index)">
+									<b-icon icon="pencil"></b-icon>
+								</b-button>
 
-										<button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete-modal" @click="remove(i)">
-											<span class="fa fa-trash-alt"></span>
-										</button>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</section>
+								<b-button v-b-modal.delete-modal size="sm" variant="danger" @click="remove(data.index)">
+									<b-icon icon="trash"></b-icon>
+								</b-button>
+							</b-btn-group>
+						</template>
+					</b-table>
+				</b-card-body>
+			</b-card>
+		</b-container>
 
 
 		<!-- MODALS -->
 		<!-- ADD -->
-		<div class="modal" id="add-modal" tabindex="1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5>Add</h5>
-
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-						<form>
-							<div class="form-group">
-								<small>Name</small>
-								<input type="text" v-model="name" class="form-control form-control-lg text-sm" placeholder="Enter province name">
-							</div>
-						</form>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-success btn-sm shadow-sm" @click="add()">Save</button>
-						<button type="button" class="btn btn-light btn-sm shadow-sm">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<b-modal id="add-modal" title="Add Province" ok-title="Submit" ok-variant="success" ok-only @ok="add" button-size="sm">
+			<b-form>
+				<b-form-group
+				label="Name"
+				label-class="text-sm">
+					<b-form-input v-model="name"></b-form-input>
+				</b-form-group>
+			</b-form>
+		</b-modal>
 
 		<!-- EDIT/UPDATE -->
-		<div class="modal" id="edit-modal" tabindex="1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5>Edit</h5>
-
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-						<form>
-							<input type="hidden" v-model="edit_id">
-							<div class="form-group">
-								<small>Name</small>
-								<input type="text" v-model="edit_name" class="form-control form-control-lg text-sm" placeholder="Enter province name">
-							</div>
-						</form>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-success btn-sm shadow-sm" @click="update()">Save Changes</button>
-						<button type="button" class="btn btn-light btn-sm shadow-sm" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<b-modal id="edit-modal" title="Update Province Information" ok-title="Save Changes" ok-variant="success" ok-only @ok="update" button-size="sm">
+			<b-form>
+				<input type="hidden" v-model="edit_id">
+				<b-form-group
+				label="Name"
+				label-class="text-sm">
+					<b-form-input v-model="edit_name"></b-form-input>
+				</b-form-group>
+			</b-form>
+		</b-modal>
 
 		<!-- DELETE CONFIRM -->
-		<div class="modal" id="delete-modal" tabindex="1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5>Delete</h5>
-
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body text-center">
-						<p>Are you sure you want to remove this province?</p>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger btn-sm shadow-sm" @click="destroy()">Delete</button>
-						<button type="button" class="btn btn-light btn-sm shadow-sm" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<b-modal id="delete-modal" title="Confirm" ok-title="Continue" ok-variant="danger" @ok="destroy" ok-only button-size="sm">
+			<p class="text-center text-muted mb-1">Are you sure you want to remove this province?</p>
+		</b-modal>
     </div>
 </template>
 
 <script>
-import $ from 'jquery'
 export default {
 	name: 'ProvincesIndex',
 	props: ['host'],
     data() {
         return {
 			provinces: null,
+			provinces_fields: [
+				// 'index',
+				{
+					key: 'name',
+					label: 'Name',
+					sortable: true
+				},
+				{
+					key: 'index',
+					label: 'Action'
+				}
+			],
+			province_list: [],
 
 			// ADD
 			name: null,
 
 			// EDIT
 			edit_id: null,
+			edit_index: null,
 			edit_name: null,
 
 			// DELETE
-			delete_id: null
+			delete_id: null,
         }
 	},
 	computed: {},
@@ -156,6 +115,10 @@ export default {
 			axios.get(provincesAPI)
 			.then(response => {
 				this.provinces = response.data.data
+
+				for(let i = 0; i < this.provinces.length; i++) {
+					this.province_list.push(this.provinces[i].name)
+				}
 			})
 			.catch(err => console.log(err))
 		},
@@ -214,22 +177,12 @@ export default {
 			const data = {
 				name: this.name
 			}
-			const config = {
-				headers: {
-					'Content-Type' : 'application/json'
-				}
-			}
 
-			// TODO - add default headers for axios (Content-Type: application/json)
-			axios.post(provincesAPI, data, config)
+			axios.post(provincesAPI, data)
 			.then(response => {
-				console.log(JSON.stringify(response))
-				if(response.status == 201) {
+				if(response.data.status == 201) {
 					this.getProvinces()
 					this.name = null
-					
-					$('#add-modal').modal('hide')
-					$('.modal-backdrop').removeClass('show').hide()
 
 					swal.fire({
 						icon: 'success',
@@ -251,6 +204,7 @@ export default {
 
 		edit: function(index) {
 			this.edit_id = this.provinces[index].id
+			this.edit_index = index
 			this.edit_name = this.provinces[index].name
 		}, 
 
@@ -261,11 +215,8 @@ export default {
 			}
 			axios.put(provincesAPI, data)
 			.then(response => {
-				if(response.status == 201) {
-					this.getProvinces()
-					
-					$('#edit-modal').modal('hide')
-					$('.modal-backdrop').removeClass('show').hide()
+				if(response.data.status == 201) {
+					this.provinces[this.edit_index].name = this.edit_name
 
 					swal.fire({
 						icon: 'success',
@@ -293,11 +244,8 @@ export default {
 			const provincesAPI = `${this.host}/province/${this.delete_id}`
 			axios.delete(provincesAPI)
 			.then(response => {
-				if(response.status == 201) {
-					this.getProvinces()
-					
-					$('#delete-modal').modal('hide')
-					$('.modal-backdrop').removeClass('show').hide()
+				if(response.data.status == 201) {
+					this.provinces.splice(index, 1)
 
 					swal.fire({
 						icon: 'success',
