@@ -15,10 +15,13 @@ class SchoolsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-		// $schools = School::paginate(10);
-		// return SchoolsResource::collection($schools);
+		$search = $request->search;
+		$limit = $request->limit;
+
+		return ($search) ? School::where("name", "like", "%$search%")->paginate($limit) : School::paginate(10);
+		
 		return School::all();
     }
 
