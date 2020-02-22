@@ -2,63 +2,82 @@
     <div>
         <b-container class="mt-2">
             <b-card class="shadow-sm">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <b-form-input
-                            id="input-1"
-                            v-model="search"
-                            @keyup="getProvinces"
-                            type="text"
-                            placeholder="Search here..."
-                        ></b-form-input>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-inline">
-                            <label for="row-limit">Showing</label>
-                            <select
-                                class="form-control w-25"
-                                id="row-limit"
-                                @change="getProvinces"
-                                v-model="limit"
-                            >
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <label for="row-limit"
-                                >Out of {{ response.total }} rows</label
-                            >
-                        </div>
-                    </div>
-                </div>
                 <b-card-body>
-                    <b-card-header class="px-0">
-                        <b-container class="clearfix px-2" fluid>
-                            <h4
-                                class="text-primary font-weight-bold float-left"
-                            >
-                                Provinces
-                            </h4>
+					<b-row>
+						<b-col lg="6">
+							<h2
+								class="text-primary font-weight-bold"
+							>
+								Provinces
+							</h2>
+						</b-col>
 
-                            <b-button
-                                variant="primary"
-                                size="sm"
-                                v-b-modal.add-modal
-                                class="float-right"
-                            >
-                                <b-icon icon="pencil"></b-icon>
-                                <!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-                                Add Province
-                            </b-button>
-                        </b-container>
-                    </b-card-header>
+						<b-col lg="6">
+							<div class="d-flex justify-content-end align-baseline">
+								<b-button
+									variant="primary"
+									size="sm"
+									v-b-modal.add-modal
+								>
+									<b-icon icon="pencil"></b-icon>
+									<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
+									Add Province
+								</b-button>
+							</div>
+						</b-col>
+					</b-row>
+					
+
+					<b-row
+					class="mb-2">
+						<b-col lg="6">
+							<!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
+							@change="getProvinces"
+							v-model="limit">
+								<b-form-select-option value="10" selected>10</b-form-select-option>
+								<b-form-select-option value="25">25</b-form-select-option>
+								<b-form-select-option value="50">50</b-form-select-option>
+								<b-form-select-option value="100">100</b-form-select-option>
+							</b-form-select> -->
+
+							<b-form
+							class="text-muted text-md"
+							inline>
+								<small>Show</small>
+								<select
+									class="form-control form-control-sm text-sm col-sm-2 mx-1"
+									id="row-limit"
+									@change="getProvinces"
+									v-model="limit"
+								>
+									<option value="10">10</option>
+									<option value="25">25</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+								</select>
+								<small>entries</small>
+							</b-form>
+						</b-col>
+
+						<b-col lg="6"
+						class="d-flex justify-content-end align-content-end">
+							<b-form
+							class="col-sm-12 col-md-6 px-0">
+								<b-form-input
+								size="sm"
+								v-model="search"
+								@input="getProvinces"
+								placeholder="Search"></b-form-input>
+							</b-form>
+						</b-col>
+					</b-row>
 
                     <b-table
-                        borderless
-                        striped
+                        bordered
+						striped
                         hover
                         small
+						class="shadow-sm"
                         id="province-table"
                         :items="provinces"
                         :fields="provinces_fields"
@@ -95,6 +114,7 @@
                     <b-container class="clearfix px-0" fluid>
                         <b-pagination
                             class="float-right"
+							size="sm"
                             v-model="current_page"
                             :per-page="Number(response.per_page)"
                             :total-rows="Number(response.total)"
@@ -166,11 +186,10 @@ export default {
     data() {
         return {
             search: "",
-            limit: 10,
+			limit: 10,
             current_page: 1,
             provinces: null,
             provinces_fields: [
-                // 'index',
                 {
                     key: "name",
                     label: "Name",
@@ -206,9 +225,10 @@ export default {
             axios
                 .get(provincesAPI)
                 .then(response => {
-                    console.log(response);
                     this.provinces = response.data.data;
-                    this.response = response.data;
+					this.response = response.data;
+					
+					console.log(provincesAPI)
                 })
                 .catch(err => console.log(err));
         },
@@ -334,7 +354,14 @@ export default {
                         });
                     }
                 })
-                .catch(err => console.log(err));
+                .catch(err =>
+                    swal.fire({
+                        icon: "error",
+                        title: err.response.data.message,
+                        text: err.response.data.errors.name[0],
+                        timer: 3000
+                    })
+                );
         },
 
         remove: function(index) {
@@ -344,27 +371,34 @@ export default {
         destroy: function(index) {
             const provincesAPI = `${this.host}/province/${this.delete_id}`;
             axios
-                .delete(provincesAPI)
-                .then(response => {
-                    if (response.data.status == 201) {
-                        this.provinces.splice(index, 1);
+			.delete(provincesAPI)
+			.then(response => {
+				if (response.data.status == 201) {
+					this.provinces.splice(index, 1);
 
-                        swal.fire({
-                            icon: "success",
-                            title: "Deleted",
-                            text: "Province information successfully deleted",
-                            timer: 3000
-                        });
-                    } else {
-                        swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "Failed to delete province information",
-                            timer: 3000
-                        });
-                    }
-                })
-                .catch(err => console.log(err));
+					swal.fire({
+						icon: "success",
+						title: "Deleted",
+						text: "Province information successfully deleted",
+						timer: 3000
+					});
+				} else {
+					swal.fire({
+						icon: "error",
+						title: "Error",
+						text: "Failed to delete province information",
+						timer: 3000
+					});
+				}
+			})
+			.catch(err =>
+				swal.fire({
+					icon: "error",
+					title: err.response.data.message,
+					text: err.response.data.errors.name[0],
+					timer: 3000
+				})
+			);
         }
     }
 };
