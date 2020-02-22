@@ -3,23 +3,82 @@
 		<b-container class="mt-2">
 			<b-card class="shadow-sm">
 				<b-card-body>
-					<b-card-header class="px-0">
-						<b-container class="clearfix px-2" fluid>
-							<h4 class="text-primary font-weight-bold float-left">Schools</h4>
+					<b-row>
+						<b-col lg="6">
+							<h2
+								class="text-primary font-weight-bold"
+							>
+								Schools
+							</h2>
+						</b-col>
 
-							<b-button 
-							variant="primary"
-							size="sm"
-							v-b-modal.add-modal
-							class="float-right">
-								<b-icon icon="pencil"></b-icon>
-								<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-								Add School
-							</b-button>
-						</b-container>
-					</b-card-header>
+						<b-col lg="6">
+							<div class="d-flex justify-content-end align-baseline">
+								<b-button
+									variant="primary"
+									size="sm"
+									v-b-modal.add-modal
+								>
+									<b-icon icon="pencil"></b-icon>
+									<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
+									Add School
+								</b-button>
+							</div>
+						</b-col>
+					</b-row>
 
-					<b-table borderless striped hover small id="schools-table" :items="schools" :fields="schools_fields" :current-page="currentPage" :per-page="perPage" :total-rows="totalRows" responsive="md">
+					<b-row
+					class="mb-2">
+						<b-col lg="6">
+							<!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
+							@change="getProvinces"
+							v-model="limit">
+								<b-form-select-option value="10" selected>10</b-form-select-option>
+								<b-form-select-option value="25">25</b-form-select-option>
+								<b-form-select-option value="50">50</b-form-select-option>
+								<b-form-select-option value="100">100</b-form-select-option>
+							</b-form-select> -->
+
+							<b-form
+							class="text-muted text-md"
+							inline>
+								<small>Show</small>
+								<select
+									class="form-control form-control-sm text-sm col-sm-2 mx-1"
+									id="row-limit"
+									@change="getSchools"
+									v-model="limit"
+								>
+									<option value="10">10</option>
+									<option value="25">25</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+								</select>
+								<small>entries</small>
+							</b-form>
+						</b-col>
+
+						<b-col lg="6"
+						class="d-flex justify-content-end align-content-end">
+							<b-form
+							class="col-sm-12 col-md-6 px-0">
+								<b-form-input
+								size="sm"
+								v-model="search"
+								@input="getSchools"
+								placeholder="Search"></b-form-input>
+							</b-form>
+						</b-col>
+					</b-row>
+
+					<b-table 
+					borderless 
+					striped 
+					hover 
+					id="schools-table" 
+					:items="schools" 
+					:fields="schools_fields" 
+					responsive="md">
 						<template v-slot:cell(name)="data">
 							{{data.item.name}}
 						</template>
@@ -42,13 +101,15 @@
 					</b-table>
 
 					<b-container class="clearfix px-0" fluid>
-
 						<b-pagination
-						class="float-right"
-						v-model="currentPage"
-						:per-page="perPage"
-						:total-rows="totalRows"
-						aria-controls="schools-table"></b-pagination>
+                            class="float-right"
+							size="sm"
+                            v-model="current_page"
+                            :per-page="Number(response.per_page)"
+                            :total-rows="Number(response.total)"
+                            @change="getSchools"
+                            aria-controls="schools-table"
+                        ></b-pagination>
 					</b-container>
 				</b-card-body>
 			</b-card>
@@ -127,9 +188,11 @@ export default {
 
 			provinces: null,
 			provinces_list: [],
-			currentPage: 1,
+			search: "",
+			limit: 10,
+			current_page: 1,
 			perPage: 10,
-			totalRows: null,
+			response: {},
 
 			// ADD
 			province: null,
@@ -154,20 +217,23 @@ export default {
 		this.getProvinces()
 	},
     methods: {
-		getSchools: function() {
-			const schoolsAPI = `${this.host}/schools`
+		getSchools: function(page) {
+			const schoolsAPI = `${this.host}/schools?search=${this.search}&limit=${this.limit}&page=${page}`
 			axios.get(schoolsAPI)
 			.then(response => {
-				this.schools = response.data
+				this.schools = response.data.data
+				this.response = response.data
+
+
 			})
 			.catch(err => console.log(err))
 		},
 
 		getProvinces: function() {
-			const provincesAPI = `${this.host}/provinces`
+			const provincesAPI = `${this.host}/provinces/raw`
 			axios.get(provincesAPI)
 			.then(response => {
-				this.provinces = response.data.data
+				this.provinces = response.data
 			})
 			.catch(err => console.log(err))
 		},
@@ -255,7 +321,14 @@ export default {
 					})
 				}
 			})
-			.catch(err => console.log(err))
+			.catch(err =>
+				swal.fire({
+					icon: "error",
+					title: err.response.data.message,
+					text: err.response.data.errors.name[0],
+					timer: 3000
+				})
+			);
 		},
 
 		edit: function(index) {
@@ -295,7 +368,14 @@ export default {
 					})
 				}
 			})
-			.catch(err => console.log(err))
+			.catch(err =>
+				swal.fire({
+					icon: "error",
+					title: err.response.data.message,
+					text: err.response.data.errors.name[0],
+					timer: 3000
+				})
+			);
 		},
 
 		remove: function(index) {
@@ -325,7 +405,14 @@ export default {
 					})
 				}
 			})
-			.catch(err => console.log(err))
+			.catch(err =>
+				swal.fire({
+					icon: "error",
+					title: err.response.data.message,
+					text: err.response.data.errors.name[0],
+					timer: 3000
+				})
+			);
 		}
 	},
 };
