@@ -24,6 +24,10 @@ class ProvincesController extends Controller
 		return ($search) ? Province::where('name', 'like', "$search%")->paginate($limit) : Province::paginate($limit);
 	}
 
+	public function index_raw() {
+		return Province::all();
+	}
+
 	/**
 	 * Store a newly created resource in storage.
 	 *
