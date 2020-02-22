@@ -24,6 +24,26 @@
 	font-weight: bolder;
 }
 
+/* TABLE */
+
+table > thead {
+	background: #fff !important;
+}
+
+table > thead th {
+	color: #777 !important;
+	padding: .9rem .7rem !important;
+	font-size: .8rem !important;
+}
+
+table > tbody tr > td {
+	color: #888 !important;
+	padding: .7rem !important;
+	font-size: .8rem !important;
+}
+
+
+/* SB-ADMIN OVERRIEDS */
 .sidebar-container ul#accordionSidebar { min-height: 100vh !important; height: 100% !important; }
 
 /* BS4 OVERRIDES */
