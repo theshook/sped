@@ -3,23 +3,82 @@
 		<b-container class="full-height mt-2">
 			<b-card class="shadow-sm">
 				<b-card-body>
-					<b-card-header class="px-0">
-						<b-container class="clearfix px-2" fluid>
-							<h4 class="text-primary font-weight-bold float-left">Pupils</h4>
+					<b-row>
+						<b-col lg="6">
+							<h2
+								class="text-primary font-weight-bold"
+							>
+								Pupils
+							</h2>
+						</b-col>
 
-							<b-button 
-							variant="primary"
-							size="sm"
-							v-b-modal.add-modal
-							class="float-right">
-								<b-icon icon="pencil"></b-icon>
-								<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-								Add Pupil
-							</b-button>
-						</b-container>
-					</b-card-header>
+						<b-col lg="6">
+							<div class="d-flex justify-content-end align-baseline">
+								<b-button
+									variant="primary"
+									size="sm"
+									v-b-modal.add-modal
+								>
+									<b-icon icon="pencil"></b-icon>
+									<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
+									Add Pupil
+								</b-button>
+							</div>
+						</b-col>
+					</b-row>
 
-					<b-table borderless striped hover small id="pupils-table" :items="pupils" :fields="pupil_fields" :current-page="currentPage" :per-page="perPage" :total-rows="totalRows" responsive="md">
+					<b-row
+					class="mb-2">
+						<b-col lg="6">
+							<!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
+							@change="getProvinces"
+							v-model="limit">
+								<b-form-select-option value="10" selected>10</b-form-select-option>
+								<b-form-select-option value="25">25</b-form-select-option>
+								<b-form-select-option value="50">50</b-form-select-option>
+								<b-form-select-option value="100">100</b-form-select-option>
+							</b-form-select> -->
+
+							<b-form
+							class="text-muted text-md"
+							inline>
+								<small>Show</small>
+								<select
+									class="form-control form-control-sm text-sm col-sm-2 mx-1"
+									id="row-limit"
+									@change="getPupils"
+									v-model="limit"
+								>
+									<option value="10">10</option>
+									<option value="25">25</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+								</select>
+								<small>entries</small>
+							</b-form>
+						</b-col>
+
+						<b-col lg="6"
+						class="d-flex justify-content-end align-content-end">
+							<b-form
+							class="col-sm-12 col-md-6 px-0">
+								<b-form-input
+								size="sm"
+								v-model="search"
+								@input="getPupils"
+								placeholder="Search"></b-form-input>
+							</b-form>
+						</b-col>
+					</b-row>
+
+					<b-table 
+					borderless 
+					striped 
+					hover 
+					id="pupils-table" 
+					:items="pupils" 
+					:fields="pupil_fields" 
+					responsive="md">
 						<template v-slot:cell(id)="data">
 							{{data.item.id}}
 						</template>
@@ -46,17 +105,74 @@
 					</b-table>
 
 					<b-container class="clearfix px-0" fluid>
-
 						<b-pagination
-						class="float-right"
-						v-model="currentPage"
-						:per-page="perPage"
-						:total-rows="totalRows"
-						aria-controls="pupils-table"></b-pagination>
+                            class="float-right"
+							size="sm"
+                            v-model="current_page"
+                            :per-page="Number(response.per_page)"
+                            :total-rows="Number(response.total)"
+                            @change="getPupils"
+                            aria-controls="pupils-table"
+                        ></b-pagination>
 					</b-container>
 				</b-card-body>
 			</b-card>
 		</b-container>
+
+		<!-- MODALS -->
+        <!-- ADD -->
+        <b-modal
+            id="add-modal"
+			size="lg"
+            title="Add Pupil"
+            ok-title="Submit"
+            ok-variant="success"
+            ok-only
+            @ok="add"
+            button-size="sm"
+        >
+            <b-form>
+                <b-row>
+					<b-col lg="6"></b-col>
+					<b-col lg="6"></b-col>
+				</b-row>
+            </b-form>
+        </b-modal>
+
+		<!-- EDIT -->
+        <b-modal
+            id="edit-modal"
+			size="lg"
+            title="Update Pupil Information"
+            ok-title="Submit"
+            ok-variant="success"
+            ok-only
+            @ok="update"
+            button-size="sm"
+        >
+            <b-form>
+                <b-row>
+					<b-col lg="6"></b-col>
+					<b-col lg="6"></b-col>
+				</b-row>
+            </b-form>
+        </b-modal>
+
+		<!-- DELETE CONFIRM -->
+        <b-modal
+            id="delete-modal"
+            title="Confirm"
+            ok-title="Continue"
+            ok-variant="danger"
+            @ok="destroy"
+            ok-only
+            button-size="sm"
+        >
+            <p class="text-center text-muted mb-1">
+                Are you sure you want to remove this pupil?
+            </p>
+        </b-modal>
+
 	</div>
 </template>
 <script>
@@ -65,6 +181,8 @@
 		props: ['host'],
 		data() {
 			return {
+				search: "",
+				limit: 10,
 				pupils: null,
 				pupil_fields: [
 					{
@@ -87,25 +205,88 @@
 						label: 'Action'
 					},
 				],
-				currentPage: 1,
-				perPage: 10,
-				totalRows: null
+				current_page: 1,
+				response: {},
+
+				// ADD
+				first_name: null,
+				last_name: null,
+				middle_name: null,
+				birth_date: null,
+
+				 // EDIT
+				edit_id: null,
+				edit_index: null,
+				edit_fname: null,
+				edit_lname: null,
+				edit_mname: null,
+				edit_bday: null,
+
+				// DELETE
+				delete_id: null
 			}
 		}, 
 		mounted() {
 			this.getPupils()
 		},
 		methods: {
-			getPupils: function() {
-				let pupilsAPI = `${this.host}/pupils`
+			getPupils: function(page) {
+				let pupilsAPI = `${this.host}/pupils?search=${this.search}&limit=${this.limit}&page=${page}`
 				axios.get(pupilsAPI)
 				.then(response => {
-					this.pupils = response.data
-					this.totalRows = this.pupils.length
-
-					console.log(response.data)
+					this.pupils = response.data.data
+					this.response = response.data
 				})
 				.catch(err => console.log(err))
+			},
+
+			add: function() {
+
+			},
+
+			edit: function(index) {
+				this.edit_id = this.pupils[index].id
+				this.edit_index = index
+				this.edit_fname = this.pupils[index].first_name
+				this.edit_lname = this.pupils[index].last_name
+				this.edit_mname = this.pupils[index].middle_name
+				this.edit_bday = this.pupils[index].birth_date
+			},
+
+			update: function() {
+
+			},
+
+			remove: function(index) {
+				this.delete_id = this.pupils[index].id
+			},
+
+			destroy: function(index) {
+				const pupilsAPI = `${this.host}/pupil/${this.delete_id}`;
+				axios
+				.delete(pupilsAPI)
+				.then(response => {
+					if (response.data.status == 201) {
+						this.pupils.splice(index, 1);
+
+						swal.fire({
+							icon: "success",
+							title: "Deleted",
+							text: "Pupil successfully deleted",
+							timer: 3000
+						});
+					} else {
+						swal.fire({
+							icon: "error",
+							title: "Error",
+							text: "Failed to delete pupil",
+							timer: 3000
+						});
+					}
+				})
+				.catch(err =>
+					console.log(err.response)
+				);
 			}
 		}
 	}

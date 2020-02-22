@@ -15,12 +15,12 @@ class PupilsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-		// $pupils = Pupil::paginate(10);
-		// return PupilsResource::collection($pupils);
+		$search = $request->search;
+		$limit = $request->limit;
 
-		return Pupil::all();
+		return ($search) ? Pupil::where('first_name', 'like', "$search%")->orWhere('last_name', 'like', "$search%")->paginate($limit) : Pupil::paginate($limit);
     }
 
     /**
@@ -41,7 +41,7 @@ class PupilsController extends Controller
 
 		if($pupil->delete()) {
 			$response = array(
-				'status' => 500,
+				'status' => 201,
 				'message' => 'Successfully added pupil'
 			);
 
@@ -97,7 +97,7 @@ class PupilsController extends Controller
 
 			if($pupil->delete()) {
 				$response = array(
-					'status' => 500,
+					'status' => 201,
 					'message' => 'Successfully added pupil'
 				);
 
@@ -132,7 +132,7 @@ class PupilsController extends Controller
 		if(!empty($pupil)) {
 			if($pupil->delete()) {
 				$response = array(
-					'status' => 500,
+					'status' => 201,
 					'message' => 'Successfully deleted pupil'
 				);
 	
