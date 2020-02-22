@@ -19,10 +19,8 @@ class SchoolsController extends Controller
     {
 		$search = $request->search;
 		$limit = $request->limit;
-
-		return ($search) ? School::where("name", "like", "%$search%")->paginate($limit) : School::paginate(10);
 		
-		return School::all();
+		return ($search) ? School::where('name', 'like', "$search%")->paginate($limit) : School::paginate($limit);
     }
 
     /**
