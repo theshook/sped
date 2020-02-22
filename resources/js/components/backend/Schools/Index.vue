@@ -167,7 +167,7 @@ export default {
 			const provincesAPI = `${this.host}/provinces`
 			axios.get(provincesAPI)
 			.then(response => {
-				this.provinces = response.data
+				this.provinces = response.data.data
 			})
 			.catch(err => console.log(err))
 		},
