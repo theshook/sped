@@ -223,8 +223,6 @@ export default {
 			.then(response => {
 				this.schools = response.data.data
 				this.response = response.data
-
-
 			})
 			.catch(err => console.log(err))
 		},
@@ -406,12 +404,7 @@ export default {
 				}
 			})
 			.catch(err =>
-				swal.fire({
-					icon: "error",
-					title: err.response.data.message,
-					text: err.response.data.errors.name[0],
-					timer: 3000
-				})
+				console.log(err.response)
 			);
 		}
 	},

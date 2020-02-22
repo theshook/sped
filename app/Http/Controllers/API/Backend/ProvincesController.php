@@ -17,10 +17,9 @@ class ProvincesController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		// $provinces = Province::paginate(10);
-		// return ProvincesResource::collection($provinces);
 		$search = $request->search;
 		$limit = $request->limit;
+
 		return ($search) ? Province::where('name', 'like', "$search%")->paginate($limit) : Province::paginate($limit);
 	}
 

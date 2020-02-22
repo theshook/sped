@@ -73,11 +73,9 @@
 					</b-row>
 
                     <b-table
-                        bordered
+                        borderless
 						striped
                         hover
-                        small
-						class="shadow-sm"
                         id="province-table"
                         :items="provinces"
                         :fields="provinces_fields"
@@ -227,8 +225,6 @@ export default {
                 .then(response => {
                     this.provinces = response.data.data;
 					this.response = response.data;
-					
-					console.log(provincesAPI)
                 })
                 .catch(err => console.log(err));
         },
