@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 //BACKEND (PROVINCES)
 Route::get('/provinces', 'API\Backend\ProvincesController@index');
+Route::get('/provinces/raw', 'API\Backend\ProvincesController@index_raw');
 Route::post('/provinces', 'API\Backend\ProvincesController@store');
 Route::get('/province/{id}', 'API\Backend\ProvincesController@show');
 Route::put('/province/{id}', 'API\Backend\ProvincesController@update');
