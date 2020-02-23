@@ -31,6 +31,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/configure/provinces', 'Backend\ProvincesController@index')->name('admin.provinces');
 
 //BACKEND (Schools)
+
 Route::get('configure/schools', 'Backend\SchoolsController@index')->name('admin.schools');
 
 //BACKEND (Schools)
@@ -39,3 +40,9 @@ Route::get('configure/pupils', 'Backend\PupilsController@index')->name('admin.pu
 /** Checklists */
 Route::get('configure/categories', 'Backend\PagesController@checklistCategoriesIndex')->name('admin.categories');
 Route::get('configure/checklists', 'Backend\PagesController@checklistsIndex')->name('admin.checklists');
+//BACKEND (Reports)
+Route::get('/configure/reports', 'Backend\ReportsController@index')->name('admin.reports');
+
+//Progress Reports
+Route::get('/report/printPDF', 'Backend\ReportsController@printPDF')->name('report.printpdf');
+Route::get('/report/viewPDF', 'Backend\ReportsController@viewPDF')->name('report.viewpdf');

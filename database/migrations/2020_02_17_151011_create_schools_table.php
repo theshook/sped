@@ -17,6 +17,7 @@ class CreateSchoolsTable extends Migration
 			$table->bigIncrements('id');
 			$table->unsignedBigInteger('province_id');
 			$table->string('name')->unique();
+			$table->softDeletes();
 			$table->timestamps();
 			
 			$table->foreign('province_id')->references('id')->on('provinces');

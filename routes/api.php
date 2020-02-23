@@ -61,3 +61,5 @@ Route::post('/checklists/categories', 'API\Backend\ChecklistCategoriesController
 Route::get('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@show');
 Route::put('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@update');
 Route::delete('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@destroy');
+//BACKEND (REPORTS)
+Route::get('/reports', 'API\Backend\ChecklistsController@index');

@@ -63,6 +63,11 @@ Vue.component(
     require("./components/backend/Checklists/Index.vue").default
 );
 /** END ChecklistCategories & Checklists */
+//BACKEND (Reports)
+Vue.component(
+    "reports-index",
+    require("./components/backend/reports/Index.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

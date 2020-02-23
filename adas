@@ -1,0 +1,227 @@
+[33mcommit 33d0f2cc0eb9109533cb07466ce2ed85c4b3c473[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 3d94b33 29ff635
+Author: Haji Fernandez <hjefernandez@gmail.com>
+Date:   Sat Feb 22 02:06:33 2020 +0800
+
+    Merge pull request #1 from theshook/Haji/Feature
+    
+    Added search, pagination and remove some stuff in province
+
+[33mcommit 29ff6351816af63800d35ed980852b392774cf7c[m[33m ([m[1;31morigin/Haji/Feature[m[33m)[m
+Author: theshook <hjefernandez@gmail.com>
+Date:   Sat Feb 22 02:04:03 2020 +0800
+
+    Added search, pagination and remove some stuff in province
+
+[33mcommit 3d94b33f5243cbedd5adfec644b2063c5a9d59a7[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 22:13:08 2020 +0800
+
+    Update app.blade.php
+
+[33mcommit 1640f4649d9784828c18b382077debaf7f46d0b9[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 22:12:52 2020 +0800
+
+    Added pagination to data tables
+    
+    Pupils table still undone
+
+[33mcommit d903aa4ecd355f61fb2d759c12bc4a66ca486a4f[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 22:12:19 2020 +0800
+
+    fixed sidebar ui bug
+
+[33mcommit 5a69edeeeda104015062b5aecbb40a1b2906635e[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 22:12:03 2020 +0800
+
+    removed API resource and data pagination
+
+[33mcommit d93566c56315d4e9fb1c734ed01282ca1c2d9f42[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 19:23:57 2020 +0800
+
+    schools component update
+
+[33mcommit 68168ef36a16aed2ebb08b016f7f6121020b6c20[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 19:23:29 2020 +0800
+
+    Pupils component
+
+[33mcommit acd068b9934dd9ee2e42ee744a9e085524509539[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 19:23:18 2020 +0800
+
+    pupils dummy data factory
+
+[33mcommit c996b71df1bcb84670b4f82dd4d66df0692f3acd[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 19:22:56 2020 +0800
+
+    pupils api request validation update
+
+[33mcommit 884021ae8bde0112c95042140e305e965cbec4f5[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 18:00:28 2020 +0800
+
+    Schools vue component - 100% Bootstrap-vue tags
+    
+    Some bug on table after add and update
+
+[33mcommit bae6f2a4eb85c79acb7c2e8a212e57002de35dbd[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 18:00:04 2020 +0800
+
+    Province vue component - 100% Bootstrap-vue tags
+
+[33mcommit 6583926574949d26b48f3227062d4cf721612719[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 17:59:35 2020 +0800
+
+    app.js added boostrap-vue icon plugin
+
+[33mcommit 6949f8f88aaf75a5bd95510e99723503fdfdfeb6[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 17:59:13 2020 +0800
+
+    deleted font-awesome in public/css folder
+
+[33mcommit 79cc24b9a5ee6ae1b557b0757c17e7461b4caee8[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 17:58:53 2020 +0800
+
+    updated pupil model
+
+[33mcommit 85a860c41656e3c8d95f9a0abc977ec6df1f18c0[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 17:58:39 2020 +0800
+
+    Schools API, added validation (store/update)
+
+[33mcommit c33e41cb61a3a9224e0f60bae5f217e4e5218969[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 17:58:25 2020 +0800
+
+    Pupils API, added validation (store/update)
+
+[33mcommit 502457b8166add8e9eb0d056774bf67e129c24af[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 17:57:56 2020 +0800
+
+    Provinces API, added API validation (store/update)
+
+[33mcommit cf9237b208528bbc70c1d22eac7ed007b45087ac[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Fri Feb 21 17:57:28 2020 +0800
+
+    Checklist API, added API request (store, post) validation
+
+[33mcommit cab0a36431f45330f6a8eab920e4e3ddbe1bbe55[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:02:42 2020 +0800
+
+    Routes, added route name
+
+[33mcommit ec707907dbe4bac107566c2e8763aaf48c0dcffd[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:02:26 2020 +0800
+
+    API Routes
+
+[33mcommit b3e224c5e9828fe9af6fd452c910ff0ba80be53c[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:02:16 2020 +0800
+
+    app.js added new vue components
+
+[33mcommit 1b2d5259cd30faa7a97fa294e0ba3d21e1858eaa[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:01:56 2020 +0800
+
+    Checklist & Pupils resource for API
+
+[33mcommit 8b151f564633c46a626fdde89d80f509d23a070d[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:01:40 2020 +0800
+
+    blade views files
+
+[33mcommit 495a05a477e73a649361a7c8c211eba9166e35af[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:01:20 2020 +0800
+
+    Backend vue components (Province, Pupils, Schools
+
+[33mcommit cd970d58831b60215892e14261fb8ecccd0ad4ec[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:00:49 2020 +0800
+
+    Checklist, Pupil, School, Teacher MODELS
+    
+    wala pa relationships
+
+[33mcommit bad969615075e136e2205ce1fd391af1ffcec0c9[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 09:00:15 2020 +0800
+
+    Backend Controllers
+
+[33mcommit a7c4dffe172d4da7fb7d719ac01ab985e741d492[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 08:59:57 2020 +0800
+
+    Backend Controllers API
+
+[33mcommit 5368c4886942b7605576ebe08c132830780c2d5f[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Thu Feb 20 08:59:10 2020 +0800
+
+    Database
+    
+    > Backend Database - create migration files with appropriate Primary keys and Foreign keys
+    > Backend Database - (dummy data) factories & seeder for (Provinces, Pupils, Teachers)
+
+[33mcommit 38d518bf551bc9f92c8835c65a4f2c3fad86b0fe[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Tue Feb 18 09:38:44 2020 +0800
+
+    Plugins (removed datatables, added fontawesome)
+
+[33mcommit 133389ccfa9e5dcb11bd4009c253d419f7dd8e10[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Tue Feb 18 09:36:49 2020 +0800
+
+    Sessions table (php artisan session:table)
+
+[33mcommit 07effd00691e6316c9e50c3c047be420546412b7[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Tue Feb 18 09:36:28 2020 +0800
+
+    PagesController-backend (still blank)
+
+[33mcommit d73f88361345c7e3008d13538f7b79e0b2669006[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Tue Feb 18 09:36:04 2020 +0800
+
+    ProvinceController (Old -resource)
+
+[33mcommit daa7b71a73f375a6420738839117e09f6e0ecd19[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Tue Feb 18 09:35:40 2020 +0800
+
+    Schools CRUD (API, Vue component, Realtime data table)
+
+[33mcommit 25df4937fe2195c8844658ee98f85ff25a3bfedb[m
+Author: Patrick Policarpio <patrickpolicarpio08@gmail.com>
+Date:   Tue Feb 18 09:34:02 2020 +0800
+
+    Provinces - CRUD (API, Vue components, realtime data table)
+
+[33mcommit 32e0c3421279a215e621d6e371ee997723350608[m
+Author: theshook <hjefernandez@gmail.com>
+Date:   Sun Feb 16 02:16:42 2020 +0800
+
+    Initialize with theme, login, province
