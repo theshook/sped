@@ -4,39 +4,41 @@ namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ChecklistsStoreRequest;
-use Illuminate\Http\Request;
 use App\Models\Checklist;
-use App\Http\Resources\Backend\ChecklistsResource;
+use Symfony\Component\HttpFoundation\Request;
 
 class ChecklistsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-		// $checklists = Checklist::paginate(10);
-		// return ChecklistsResource::collection($checklists);
-		return Checklist::all();
-    }
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function index(Request $request)
+	{
+		$search = $request->search;
+		$limit = $request->limit;
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(ChecklistsStoreRequest $request)
-    {
+		return ($search) ? Checklist::with('category')->where('content', 'like', "$search%")->paginate($limit) : Checklist::with('category')->paginate($limit);
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function store(ChecklistsStoreRequest $request)
+	{
 		$checklist = new Checklist;
-		$checklist->content = $request->input('content');
+		$checklist->content = $request->content;
+		$checklist->checklist_categories_id = $request->checklist_categories_id;
 
-		if($checklist->save()) {
+		if ($checklist->save()) {
 			$response = array(
 				'status' => 201,
-				'message' => 'Checklist successfully added'
+				'message' => 'Checklist successfully added',
+				'checklist' => $checklist->category
 			);
 			return response()->json($response, 201);
 		} else {
@@ -46,18 +48,18 @@ class ChecklistsController extends Controller
 			);
 			return response()->json($response, 500);
 		}
-    }
+	}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $checklist = Checklist::find($id);
-		if(!empty($checklist)) {
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function show($id)
+	{
+		$checklist = Checklist::find($id);
+		if (!empty($checklist)) {
 			return $checklist;
 		} else {
 			$response = array(
@@ -66,25 +68,26 @@ class ChecklistsController extends Controller
 			);
 			return response()->json($response, 404);
 		}
-    }
+	}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(ChecklistsStoreRequest $request, $id)
-    {
-        $checklist = Checklist::find($id);
-		if(!empty($checklist)) {
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function update(ChecklistsStoreRequest $request, $id)
+	{
+		$checklist = Checklist::find($id);
+		if (!empty($checklist)) {
 			$checklist->content = $request->input('content');
-
-			if($checklist->save()) {
+			$checklist->checklist_categories_id = $request->checklist_categories_id;
+			if ($checklist->save()) {
 				$response = array(
 					'status' => 201,
-					'message' => 'Checklist successfully added'
+					'message' => 'Checklist successfully added',
+					'checklist' => $checklist->category
 				);
 				return response()->json($response, 201);
 			} else {
@@ -101,19 +104,19 @@ class ChecklistsController extends Controller
 			);
 			return response()->json($response, 404);
 		}
-    }
+	}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $checklist = Checklist::find($id);
-		if(!empty($checklist)) {
-			if($checklist->delete()) {
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy($id)
+	{
+		$checklist = Checklist::find($id);
+		if (!empty($checklist)) {
+			if ($checklist->delete()) {
 				$response = array(
 					'status' => 201,
 					'message' => 'Checklist successfully deleted'
@@ -133,5 +136,5 @@ class ChecklistsController extends Controller
 			);
 			return response()->json($response, 404);
 		}
-    }
+	}
 }

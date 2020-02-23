@@ -23,8 +23,9 @@ class ProvincesController extends Controller
 		return ($search) ? Province::where('name', 'like', "$search%")->paginate($limit) : Province::paginate($limit);
 	}
 
-	public function index_raw() {
-		return Province::all();
+	public function index_raw()
+	{
+		return Province::orderBy('name', 'ASC')->get();
 	}
 
 	/**
@@ -35,8 +36,6 @@ class ProvincesController extends Controller
 	 */
 	public function store(ProvincesStoreRequest $request)
 	{
-		$validated = $request->validated();
-
 		$province = new Province;
 		$province->name = $request->name;
 

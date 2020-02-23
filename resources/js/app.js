@@ -53,6 +53,17 @@ Vue.component(
     require("./components/backend/pupils/Index.vue").default
 );
 
+/** ChecklistCategories & Checklists */
+Vue.component(
+    "checklist-categories-index",
+    require("./components/backend/ChecklistCategories/Index.vue").default
+);
+Vue.component(
+    "checklists-index",
+    require("./components/backend/Checklists/Index.vue").default
+);
+/** END ChecklistCategories & Checklists */
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

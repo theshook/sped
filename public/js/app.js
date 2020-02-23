@@ -1899,6 +1899,846 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "ChecklistCategoriedIndex",
+  props: ["host"],
+  data: function data() {
+    return {
+      search: "",
+      limit: 10,
+      current_page: 1,
+      categories: null,
+      categories_fields: [{
+        key: "name",
+        label: "Name",
+        sortable: true
+      }, {
+        key: "index",
+        label: "Action"
+      }],
+      categories_list: [],
+      response: {},
+      // ADD
+      name: null,
+      // EDIT
+      edit_id: null,
+      edit_index: null,
+      edit_name: null,
+      // DELETE
+      delete_id: null
+    };
+  },
+  computed: {},
+  mounted: function mounted() {
+    this.getChecklistCategories();
+  },
+  methods: {
+    getChecklistCategories: function getChecklistCategories(page) {
+      var _this = this;
+
+      var categoriesAPI = "".concat(this.host, "/checklists/categories?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
+      axios.get(categoriesAPI).then(function (response) {
+        _this.categories = response.data.data;
+        _this.response = response.data;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    formatDate: function formatDate(index) {
+      var categories = this.categories; //return provinces[index].created_at.split('-')
+
+      var month = categories[index].created_at.split("-")[1];
+      var dateDay = categories[index].created_at.split("-")[2].split(" ")[0];
+      var dateYear = categories[index].created_at.split("-")[0];
+      var dateMonth = null;
+
+      switch (month) {
+        case "01":
+          dateMonth = "January";
+          break;
+
+        case "02":
+          dateMonth = "February";
+          break;
+
+        case "03":
+          dateMonth = "March";
+          break;
+
+        case "04":
+          dateMonth = "April";
+          break;
+
+        case "05":
+          dateMonth = "May";
+          break;
+
+        case "06":
+          dateMonth = "June";
+          break;
+
+        case "07":
+          dateMonth = "July";
+          break;
+
+        case "08":
+          dateMonth = "August";
+          break;
+
+        case "09":
+          dateMonth = "September";
+          break;
+
+        case "10":
+          dateMonth = "October";
+          break;
+
+        case "11":
+          dateMonth = "November";
+          break;
+
+        case "12":
+          dateMonth = "December";
+          break;
+      }
+
+      return "".concat(dateMonth, " ").concat(dateDay, ", ").concat(dateYear);
+    },
+    add: function add() {
+      var _this2 = this;
+
+      var checklistCategoriesAPI = "".concat(this.host, "/checklists/categories");
+      var data = {
+        name: this.name
+      };
+      axios.post(checklistCategoriesAPI, data).then(function (response) {
+        if (response.data.status == 201) {
+          _this2.getChecklistCategories();
+
+          _this2.name = null;
+          swal.fire({
+            icon: "success",
+            title: "Added",
+            text: "Category information successfully added",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to add category information",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
+      });
+    },
+    edit: function edit(index) {
+      this.edit_id = this.categories[index].id;
+      this.edit_index = index;
+      this.edit_name = this.categories[index].name;
+    },
+    update: function update() {
+      var _this3 = this;
+
+      var categoriesAPI = "".concat(this.host, "/checklist/categories/").concat(this.edit_id);
+      var data = {
+        name: this.edit_name
+      };
+      axios.put(categoriesAPI, data).then(function (response) {
+        if (response.data.status == 201) {
+          _this3.categories[_this3.edit_index].name = _this3.edit_name;
+          swal.fire({
+            icon: "success",
+            title: "Updated",
+            text: "Category information successfully updated",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to update category information",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
+      });
+    },
+    remove: function remove(index) {
+      this.delete_id = this.categories[index].id;
+    },
+    destroy: function destroy(index) {
+      var _this4 = this;
+
+      var categoriesAPI = "".concat(this.host, "/checklist/categories/").concat(this.delete_id);
+      axios["delete"](categoriesAPI).then(function (response) {
+        if (response.data.status == 201) {
+          _this4.categories.splice(index, 1);
+
+          swal.fire({
+            icon: "success",
+            title: "Deleted",
+            text: "Category information successfully deleted",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete category information",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Checklists/Index.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Checklists/Index.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "ChecklistsIndex",
+  props: ["host"],
+  data: function data() {
+    return {
+      checklists: null,
+      checklists_fields: [{
+        key: "content",
+        label: "Content",
+        sortable: true
+      }, {
+        key: "category",
+        label: "Category",
+        sortable: true
+      }, {
+        key: "index",
+        label: "Action"
+      }],
+      checklist_categories: null,
+      checklist_categories_list: [],
+      search: "",
+      limit: 10,
+      current_page: 1,
+      perPage: 10,
+      response: {},
+      // ADD
+      checklists_categories: null,
+      checklists_categories_id: null,
+      checklists_categories_not_found: false,
+      content: null,
+      // EDIT
+      edit_id: null,
+      edit_index: null,
+      edit_content: null,
+      edit_checklists_categories_id: null,
+      // DELETE
+      delete_id: null,
+      delete_index: null
+    };
+  },
+  computed: {},
+  mounted: function mounted() {
+    this.getChecklists();
+    this.getChecklistsCategories();
+  },
+  methods: {
+    getChecklists: function getChecklists(page) {
+      var _this = this;
+
+      var checklistsAPI = "".concat(this.host, "/checklists?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
+      axios.get(checklistsAPI).then(function (response) {
+        _this.checklists = response.data.data;
+        _this.response = response.data;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    getChecklistsCategories: function getChecklistsCategories() {
+      var _this2 = this;
+
+      var categoriesAPI = "".concat(this.host, "/checklists/categories/raw");
+      axios.get(categoriesAPI).then(function (response) {
+        _this2.checklist_categories = response.data;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    formatDate: function formatDate(index) {
+      var checklists = this.checklists;
+      var month = checklists[index].created_at.split("-")[1];
+      var dateDay = checklists[index].created_at.split("-")[2].split(" ")[0];
+      var dateYear = checklists[index].created_at.split("-")[0];
+      var dateMonth = null;
+
+      switch (month) {
+        case "01":
+          dateMonth = "January";
+          break;
+
+        case "02":
+          dateMonth = "February";
+          break;
+
+        case "03":
+          dateMonth = "March";
+          break;
+
+        case "04":
+          dateMonth = "April";
+          break;
+
+        case "05":
+          dateMonth = "May";
+          break;
+
+        case "06":
+          dateMonth = "June";
+          break;
+
+        case "07":
+          dateMonth = "July";
+          break;
+
+        case "08":
+          dateMonth = "August";
+          break;
+
+        case "09":
+          dateMonth = "September";
+          break;
+
+        case "10":
+          dateMonth = "October";
+          break;
+
+        case "11":
+          dateMonth = "November";
+          break;
+
+        case "12":
+          dateMonth = "December";
+          break;
+      }
+
+      return "".concat(dateMonth, " ").concat(dateDay, ", ").concat(dateYear);
+    },
+    add: function add() {
+      var _this3 = this;
+
+      var checklistsAPI = "".concat(this.host, "/checklists");
+      var data = {
+        checklist_categories_id: this.checklists_categories_id,
+        content: this.content
+      };
+      axios.post(checklistsAPI, data).then(function (response) {
+        if (response.status == 201) {
+          _this3.checklists.push({
+            content: _this3.content,
+            checklist_categories_id: _this3.checklists_categories_id,
+            category: response.data.checklist
+          });
+
+          _this3.content = null;
+          _this3.checklists_categories_id = null;
+          swal.fire({
+            icon: "success",
+            title: "Added",
+            text: "Checklists information successfully added",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to add checklists information",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.content[0],
+          timer: 3000
+        });
+      });
+    },
+    edit: function edit(index) {
+      this.edit_id = this.checklists[index].id;
+      this.edit_index = index;
+      this.edit_content = this.checklists[index].content;
+      this.edit_checklists_categories_id = this.checklists[index].checklist_categories_id;
+    },
+    update: function update() {
+      var _this4 = this;
+
+      var checklistsAPI = "".concat(this.host, "/checklist/").concat(this.edit_id);
+      var data = {
+        checklist_categories_id: this.edit_checklists_categories_id,
+        content: this.edit_content
+      };
+      axios.put(checklistsAPI, data).then(function (response) {
+        if (response.data.status == 201) {
+          _this4.checklists[_this4.edit_index].content = _this4.edit_content;
+          _this4.checklists[_this4.edit_index].checklist_categories_id = _this4.edit_checklists_categories_id;
+          _this4.checklists[_this4.edit_index].category = response.data.checklist;
+          _this4.edit_content = null;
+          _this4.edit_checklists_categories_id = null;
+          swal.fire({
+            icon: "success",
+            title: "Updated",
+            text: "Checklists information successfully updated",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to update checklists information",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.content[0],
+          timer: 3000
+        });
+      });
+    },
+    remove: function remove(index) {
+      this.delete_id = this.checklists[index].id;
+      this.delete_index = index;
+    },
+    destroy: function destroy() {
+      var _this5 = this;
+
+      var checklistsAPI = "".concat(this.host, "/checklist/").concat(this.delete_id);
+      axios["delete"](checklistsAPI).then(function (response) {
+        if (response.data.status == 201) {
+          _this5.checklists.splice(_this5.delete_index, 1);
+
+          swal.fire({
+            icon: "success",
+            title: "Deleted",
+            text: "Checklists information successfully deleted",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete checklists information",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return console.log(err.response);
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/province/Index.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/province/Index.vue?vue&type=script&lang=js& ***!
@@ -2069,6 +2909,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ProvincesIndex",
   props: ["host"],
@@ -2078,8 +2936,7 @@ __webpack_require__.r(__webpack_exports__);
       limit: 10,
       current_page: 1,
       provinces: null,
-      provinces_fields: [// 'index',
-      {
+      provinces_fields: [{
         key: "name",
         label: "Name",
         sortable: true
@@ -2109,7 +2966,6 @@ __webpack_require__.r(__webpack_exports__);
 
       var provincesAPI = "".concat(this.host, "/provinces?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
       axios.get(provincesAPI).then(function (response) {
-        console.log(response);
         _this.provinces = response.data.data;
         _this.response = response.data;
       })["catch"](function (err) {
@@ -2241,7 +3097,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (err) {
-        return console.log(err);
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
       });
     },
     remove: function remove(index) {
@@ -2270,7 +3131,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (err) {
-        return console.log(err);
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
       });
     }
   }
@@ -2348,11 +3214,129 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'PupilsIndex',
   props: ['host'],
   data: function data() {
     return {
+      search: "",
+      limit: 10,
       pupils: null,
       pupil_fields: [{
         key: 'id',
@@ -2370,25 +3354,76 @@ __webpack_require__.r(__webpack_exports__);
         key: 'index',
         label: 'Action'
       }],
-      currentPage: 1,
-      perPage: 10,
-      totalRows: null
+      current_page: 1,
+      response: {},
+      // ADD
+      first_name: null,
+      last_name: null,
+      middle_name: null,
+      birth_date: null,
+      // EDIT
+      edit_id: null,
+      edit_index: null,
+      edit_fname: null,
+      edit_lname: null,
+      edit_mname: null,
+      edit_bday: null,
+      // DELETE
+      delete_id: null
     };
   },
   mounted: function mounted() {
     this.getPupils();
   },
   methods: {
-    getPupils: function getPupils() {
+    getPupils: function getPupils(page) {
       var _this = this;
 
-      var pupilsAPI = "".concat(this.host, "/pupils");
+      var pupilsAPI = "".concat(this.host, "/pupils?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
       axios.get(pupilsAPI).then(function (response) {
-        _this.pupils = response.data;
-        _this.totalRows = _this.pupils.length;
-        console.log(response.data);
+        _this.pupils = response.data.data;
+        _this.response = response.data;
       })["catch"](function (err) {
         return console.log(err);
+      });
+    },
+    add: function add() {},
+    edit: function edit(index) {
+      this.edit_id = this.pupils[index].id;
+      this.edit_index = index;
+      this.edit_fname = this.pupils[index].first_name;
+      this.edit_lname = this.pupils[index].last_name;
+      this.edit_mname = this.pupils[index].middle_name;
+      this.edit_bday = this.pupils[index].birth_date;
+    },
+    update: function update() {},
+    remove: function remove(index) {
+      this.delete_id = this.pupils[index].id;
+    },
+    destroy: function destroy(index) {
+      var _this2 = this;
+
+      var pupilsAPI = "".concat(this.host, "/pupil/").concat(this.delete_id);
+      axios["delete"](pupilsAPI).then(function (response) {
+        if (response.data.status == 201) {
+          _this2.pupils.splice(index, 1);
+
+          swal.fire({
+            icon: "success",
+            title: "Deleted",
+            text: "Pupil successfully deleted",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete pupil",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return console.log(err.response);
       });
     }
   }
@@ -2508,29 +3543,130 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'SchoolsIndex',
-  props: ['host'],
+  name: "SchoolsIndex",
+  props: ["host"],
   data: function data() {
     return {
       schools: null,
       schools_fields: [{
-        key: 'name',
-        label: 'Name',
+        key: "name",
+        label: "Name",
         sortable: true
       }, {
-        key: 'province_id',
-        label: 'Province',
+        key: "province_id",
+        label: "Province",
         sortable: true
       }, {
-        key: 'index',
-        label: 'Action'
+        key: "index",
+        label: "Action"
       }],
       provinces: null,
       provinces_list: [],
-      currentPage: 1,
+      search: "",
+      limit: 10,
+      current_page: 1,
       perPage: 10,
-      totalRows: null,
+      response: {},
       // ADD
       province: null,
       province_id: null,
@@ -2552,12 +3688,13 @@ __webpack_require__.r(__webpack_exports__);
     this.getProvinces();
   },
   methods: {
-    getSchools: function getSchools() {
+    getSchools: function getSchools(page) {
       var _this = this;
 
-      var schoolsAPI = "".concat(this.host, "/schools");
+      var schoolsAPI = "".concat(this.host, "/schools?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
       axios.get(schoolsAPI).then(function (response) {
-        _this.schools = response.data;
+        _this.schools = response.data.data;
+        _this.response = response.data;
       })["catch"](function (err) {
         return console.log(err);
       });
@@ -2565,7 +3702,7 @@ __webpack_require__.r(__webpack_exports__);
     getProvinces: function getProvinces() {
       var _this2 = this;
 
-      var provincesAPI = "".concat(this.host, "/provinces");
+      var provincesAPI = "".concat(this.host, "/provinces/raw");
       axios.get(provincesAPI).then(function (response) {
         _this2.provinces = response.data;
       })["catch"](function (err) {
@@ -2575,58 +3712,58 @@ __webpack_require__.r(__webpack_exports__);
     formatDate: function formatDate(index) {
       var schools = this.schools; //return schools[index].created_at.split('-')
 
-      var month = schools[index].created_at.split('-')[1];
-      var dateDay = schools[index].created_at.split('-')[2].split(' ')[0];
-      var dateYear = schools[index].created_at.split('-')[0];
+      var month = schools[index].created_at.split("-")[1];
+      var dateDay = schools[index].created_at.split("-")[2].split(" ")[0];
+      var dateYear = schools[index].created_at.split("-")[0];
       var dateMonth = null;
 
       switch (month) {
-        case '01':
-          dateMonth = 'January';
+        case "01":
+          dateMonth = "January";
           break;
 
-        case '02':
-          dateMonth = 'February';
+        case "02":
+          dateMonth = "February";
           break;
 
-        case '03':
-          dateMonth = 'March';
+        case "03":
+          dateMonth = "March";
           break;
 
-        case '04':
-          dateMonth = 'April';
+        case "04":
+          dateMonth = "April";
           break;
 
-        case '05':
-          dateMonth = 'May';
+        case "05":
+          dateMonth = "May";
           break;
 
-        case '06':
-          dateMonth = 'June';
+        case "06":
+          dateMonth = "June";
           break;
 
-        case '07':
-          dateMonth = 'July';
+        case "07":
+          dateMonth = "July";
           break;
 
-        case '08':
-          dateMonth = 'August';
+        case "08":
+          dateMonth = "August";
           break;
 
-        case '09':
-          dateMonth = 'September';
+        case "09":
+          dateMonth = "September";
           break;
 
-        case '10':
-          dateMonth = 'October';
+        case "10":
+          dateMonth = "October";
           break;
 
-        case '11':
-          dateMonth = 'November';
+        case "11":
+          dateMonth = "November";
           break;
 
-        case '12':
-          dateMonth = 'December';
+        case "12":
+          dateMonth = "December";
           break;
       }
 
@@ -2650,21 +3787,26 @@ __webpack_require__.r(__webpack_exports__);
           _this3.name = null;
           _this3.province_id = null;
           swal.fire({
-            icon: 'success',
-            title: 'Added',
-            text: 'School information successfully added',
+            icon: "success",
+            title: "Added",
+            text: "School information successfully added",
             timer: 3000
           });
         } else {
           swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to add school information',
+            icon: "error",
+            title: "Error",
+            text: "Failed to add school information",
             timer: 3000
           });
         }
       })["catch"](function (err) {
-        return console.log(err);
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
       });
     },
     edit: function edit(index) {
@@ -2688,21 +3830,26 @@ __webpack_require__.r(__webpack_exports__);
           _this4.edit_name = null;
           _this4.edit_province_id = null;
           swal.fire({
-            icon: 'success',
-            title: 'Updated',
-            text: 'Province information successfully updated',
+            icon: "success",
+            title: "Updated",
+            text: "Province information successfully updated",
             timer: 3000
           });
         } else {
           swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to update province information',
+            icon: "error",
+            title: "Error",
+            text: "Failed to update province information",
             timer: 3000
           });
         }
       })["catch"](function (err) {
-        return console.log(err);
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
       });
     },
     remove: function remove(index) {
@@ -2718,21 +3865,21 @@ __webpack_require__.r(__webpack_exports__);
           _this5.schools.splice(_this5.delete_index, 1);
 
           swal.fire({
-            icon: 'success',
-            title: 'Deleted',
-            text: 'School information successfully deleted',
+            icon: "success",
+            title: "Deleted",
+            text: "School information successfully deleted",
             timer: 3000
           });
         } else {
           swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to delete school information',
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete school information",
             timer: 3000
           });
         }
       })["catch"](function (err) {
-        return console.log(err);
+        return console.log(err.response);
       });
     }
   }
@@ -75727,10 +76874,10 @@ var e=function(){return(e=Object.assign||function(e){for(var t,r=1,s=arguments.l
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/province/Index.vue?vue&type=template&id=e2f22a0e&":
-/*!*************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/province/Index.vue?vue&type=template&id=e2f22a0e& ***!
-  \*************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=template&id=2ecb1f2f&":
+/*!************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=template&id=2ecb1f2f& ***!
+  \************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -75753,137 +76900,162 @@ var render = function() {
             "b-card",
             { staticClass: "shadow-sm" },
             [
-              _c("div", { staticClass: "row align-items-center" }, [
-                _c(
-                  "div",
-                  { staticClass: "col-md-4" },
-                  [
-                    _c("b-form-input", {
-                      attrs: {
-                        id: "input-1",
-                        type: "text",
-                        placeholder: "Search here..."
-                      },
-                      on: { keyup: _vm.getProvinces },
-                      model: {
-                        value: _vm.search,
-                        callback: function($$v) {
-                          _vm.search = $$v
-                        },
-                        expression: "search"
-                      }
-                    })
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-md-6" }, [
-                  _c("div", { staticClass: "form-inline" }, [
-                    _c("label", { attrs: { for: "row-limit" } }, [
-                      _vm._v("Showing")
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "select",
-                      {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.limit,
-                            expression: "limit"
-                          }
-                        ],
-                        staticClass: "form-control w-25",
-                        attrs: { id: "row-limit" },
-                        on: {
-                          change: [
-                            function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.limit = $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            },
-                            _vm.getProvinces
-                          ]
-                        }
-                      },
-                      [
-                        _c("option", { attrs: { value: "10" } }, [
-                          _vm._v("10")
-                        ]),
-                        _vm._v(" "),
-                        _c("option", { attrs: { value: "25" } }, [
-                          _vm._v("25")
-                        ]),
-                        _vm._v(" "),
-                        _c("option", { attrs: { value: "50" } }, [
-                          _vm._v("50")
-                        ]),
-                        _vm._v(" "),
-                        _c("option", { attrs: { value: "100" } }, [
-                          _vm._v("100")
-                        ])
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c("label", { attrs: { for: "row-limit" } }, [
-                      _vm._v("Out of " + _vm._s(_vm.response.total) + " rows")
-                    ])
-                  ])
-                ])
-              ]),
-              _vm._v(" "),
               _c(
                 "b-card-body",
                 [
                   _c(
-                    "b-card-header",
-                    { staticClass: "px-0" },
+                    "b-row",
+                    [
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "h2",
+                          { staticClass: "text-primary font-weight-bold" },
+                          [
+                            _vm._v(
+                              "\n                            Checklist Categories\n                        "
+                            )
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "d-flex justify-content-end align-baseline"
+                          },
+                          [
+                            _c(
+                              "b-button",
+                              {
+                                directives: [
+                                  {
+                                    name: "b-modal",
+                                    rawName: "v-b-modal.add-modal",
+                                    modifiers: { "add-modal": true }
+                                  }
+                                ],
+                                attrs: { variant: "primary", size: "sm" }
+                              },
+                              [
+                                _c("b-icon", { attrs: { icon: "pencil" } }),
+                                _vm._v(
+                                  "\n                                Add Checklist Categories\n                            "
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-row",
+                    { staticClass: "mb-2" },
                     [
                       _c(
-                        "b-container",
-                        { staticClass: "clearfix px-2", attrs: { fluid: "" } },
+                        "b-col",
+                        { attrs: { lg: "6" } },
                         [
                           _c(
-                            "h4",
+                            "b-form",
                             {
-                              staticClass:
-                                "text-primary font-weight-bold float-left"
+                              staticClass: "text-muted text-md",
+                              attrs: { inline: "" }
                             },
                             [
-                              _vm._v(
-                                "\n                            Provinces\n                        "
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "b-button",
-                            {
-                              directives: [
-                                {
-                                  name: "b-modal",
-                                  rawName: "v-b-modal.add-modal",
-                                  modifiers: { "add-modal": true }
-                                }
-                              ],
-                              staticClass: "float-right",
-                              attrs: { variant: "primary", size: "sm" }
-                            },
-                            [
-                              _c("b-icon", { attrs: { icon: "pencil" } }),
+                              _c("small", [_vm._v("Show")]),
                               _vm._v(" "),
-                              _vm._v(
-                                "\n                            Add Province\n                        "
-                              )
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.limit,
+                                      expression: "limit"
+                                    }
+                                  ],
+                                  staticClass:
+                                    "form-control form-control-sm text-sm col-sm-2 mx-1",
+                                  attrs: { id: "row-limit" },
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.limit = $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      },
+                                      _vm.getChecklistCategories
+                                    ]
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { value: "10" } }, [
+                                    _vm._v("10")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "25" } }, [
+                                    _vm._v("25")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "50" } }, [
+                                    _vm._v("50")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "100" } }, [
+                                    _vm._v("100")
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("small", [_vm._v("entries")])
+                            ]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        {
+                          staticClass:
+                            "d-flex justify-content-end align-content-end",
+                          attrs: { lg: "6" }
+                        },
+                        [
+                          _c(
+                            "b-form",
+                            { staticClass: "col-sm-12 col-md-6 px-0" },
+                            [
+                              _c("b-form-input", {
+                                attrs: { size: "sm", placeholder: "Search" },
+                                on: { input: _vm.getChecklistCategories },
+                                model: {
+                                  value: _vm.search,
+                                  callback: function($$v) {
+                                    _vm.search = $$v
+                                  },
+                                  expression: "search"
+                                }
+                              })
                             ],
                             1
                           )
@@ -75899,10 +77071,9 @@ var render = function() {
                       borderless: "",
                       striped: "",
                       hover: "",
-                      small: "",
                       id: "province-table",
-                      items: _vm.provinces,
-                      fields: _vm.provinces_fields,
+                      items: _vm.categories,
+                      fields: _vm.categories_fields,
                       responsive: "md"
                     },
                     scopedSlots: _vm._u([
@@ -75983,6 +77154,927 @@ var render = function() {
                       _c("b-pagination", {
                         staticClass: "float-right",
                         attrs: {
+                          size: "sm",
+                          "per-page": Number(_vm.response.per_page),
+                          "total-rows": Number(_vm.response.total),
+                          "aria-controls": "province-table"
+                        },
+                        on: { change: _vm.getChecklistCategories },
+                        model: {
+                          value: _vm.current_page,
+                          callback: function($$v) {
+                            _vm.current_page = $$v
+                          },
+                          expression: "current_page"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "add-modal",
+            title: "Add Checklist Category",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.add }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Name", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.name,
+                      callback: function($$v) {
+                        _vm.name = $$v
+                      },
+                      expression: "name"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "edit-modal",
+            title: "Update Checklist Category Information",
+            "ok-title": "Save Changes",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.update }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.edit_id,
+                    expression: "edit_id"
+                  }
+                ],
+                attrs: { type: "hidden" },
+                domProps: { value: _vm.edit_id },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.edit_id = $event.target.value
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Name", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.edit_name,
+                      callback: function($$v) {
+                        _vm.edit_name = $$v
+                      },
+                      expression: "edit_name"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "delete-modal",
+            title: "Confirm",
+            "ok-title": "Continue",
+            "ok-variant": "danger",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.destroy }
+        },
+        [
+          _c("p", { staticClass: "text-center text-muted mb-1" }, [
+            _vm._v(
+              "\n            Are you sure you want to remove this province?\n        "
+            )
+          ])
+        ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Checklists/Index.vue?vue&type=template&id=b48b6894&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Checklists/Index.vue?vue&type=template&id=b48b6894& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "b-container",
+        { staticClass: "mt-2" },
+        [
+          _c(
+            "b-card",
+            { staticClass: "shadow-sm" },
+            [
+              _c(
+                "b-card-body",
+                [
+                  _c(
+                    "b-row",
+                    [
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "h2",
+                          { staticClass: "text-primary font-weight-bold" },
+                          [
+                            _vm._v(
+                              "\n                            Checklists\n                        "
+                            )
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "d-flex justify-content-end align-baseline"
+                          },
+                          [
+                            _c(
+                              "b-button",
+                              {
+                                directives: [
+                                  {
+                                    name: "b-modal",
+                                    rawName: "v-b-modal.add-modal",
+                                    modifiers: { "add-modal": true }
+                                  }
+                                ],
+                                attrs: { variant: "primary", size: "sm" }
+                              },
+                              [
+                                _c("b-icon", { attrs: { icon: "pencil" } }),
+                                _vm._v(
+                                  "\n                                Add Checklists\n                            "
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-row",
+                    { staticClass: "mb-2" },
+                    [
+                      _c(
+                        "b-col",
+                        { attrs: { lg: "6" } },
+                        [
+                          _c(
+                            "b-form",
+                            {
+                              staticClass: "text-muted text-md",
+                              attrs: { inline: "" }
+                            },
+                            [
+                              _c("small", [_vm._v("Show")]),
+                              _vm._v(" "),
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.limit,
+                                      expression: "limit"
+                                    }
+                                  ],
+                                  staticClass:
+                                    "form-control form-control-sm text-sm col-sm-2 mx-1",
+                                  attrs: { id: "row-limit" },
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.limit = $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      },
+                                      _vm.getChecklists
+                                    ]
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { value: "10" } }, [
+                                    _vm._v("10")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "25" } }, [
+                                    _vm._v("25")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "50" } }, [
+                                    _vm._v("50")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "100" } }, [
+                                    _vm._v("100")
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("small", [_vm._v("entries")])
+                            ]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        {
+                          staticClass:
+                            "d-flex justify-content-end align-content-end",
+                          attrs: { lg: "6" }
+                        },
+                        [
+                          _c(
+                            "b-form",
+                            { staticClass: "col-sm-12 col-md-6 px-0" },
+                            [
+                              _c("b-form-input", {
+                                attrs: { size: "sm", placeholder: "Search" },
+                                on: { input: _vm.getChecklists },
+                                model: {
+                                  value: _vm.search,
+                                  callback: function($$v) {
+                                    _vm.search = $$v
+                                  },
+                                  expression: "search"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("b-table", {
+                    attrs: {
+                      borderless: "",
+                      striped: "",
+                      hover: "",
+                      id: "schools-table",
+                      items: _vm.checklists,
+                      fields: _vm.checklists_fields,
+                      responsive: "md"
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "cell(content)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(data.item.content) +
+                                "\n                    "
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(category)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(data.item.category.name) +
+                                "\n                    "
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(index)",
+                        fn: function(data) {
+                          return [
+                            _c(
+                              "b-btn-group",
+                              [
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.edit-modal",
+                                        modifiers: { "edit-modal": true }
+                                      }
+                                    ],
+                                    staticClass: "text-white",
+                                    attrs: { size: "sm", variant: "warning" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.edit(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "pencil" } })],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.delete-modal",
+                                        modifiers: { "delete-modal": true }
+                                      }
+                                    ],
+                                    attrs: { size: "sm", variant: "danger" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.remove(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "trash" } })],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-container",
+                    { staticClass: "clearfix px-0", attrs: { fluid: "" } },
+                    [
+                      _c("b-pagination", {
+                        staticClass: "float-right",
+                        attrs: {
+                          size: "sm",
+                          "per-page": Number(_vm.response.per_page),
+                          "total-rows": Number(_vm.response.total),
+                          "aria-controls": "schools-table"
+                        },
+                        on: { change: _vm.getChecklists },
+                        model: {
+                          value: _vm.current_page,
+                          callback: function($$v) {
+                            _vm.current_page = $$v
+                          },
+                          expression: "current_page"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "add-modal",
+            title: "Add School",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.add }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Content", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.content,
+                      callback: function($$v) {
+                        _vm.content = $$v
+                      },
+                      expression: "content"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Categories", "label-class": "text-sm" } },
+                [
+                  _c("b-form-select", {
+                    staticClass: "mb-3",
+                    attrs: {
+                      options: _vm.checklist_categories,
+                      "value-field": "id",
+                      "text-field": "name",
+                      "disabled-field": "notEnabled"
+                    },
+                    model: {
+                      value: _vm.checklists_categories_id,
+                      callback: function($$v) {
+                        _vm.checklists_categories_id = $$v
+                      },
+                      expression: "checklists_categories_id"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "edit-modal",
+            title: "Update Checklists Information",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.update }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Content", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    model: {
+                      value: _vm.edit_content,
+                      callback: function($$v) {
+                        _vm.edit_content = $$v
+                      },
+                      expression: "edit_content"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Categories", "label-class": "text-sm" } },
+                [
+                  _c("b-form-select", {
+                    staticClass: "mb-3",
+                    attrs: {
+                      options: _vm.checklist_categories,
+                      "value-field": "id",
+                      "text-field": "name",
+                      "disabled-field": "notEnabled"
+                    },
+                    model: {
+                      value: _vm.edit_checklists_categories_id,
+                      callback: function($$v) {
+                        _vm.edit_checklists_categories_id = $$v
+                      },
+                      expression: "edit_checklists_categories_id"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "delete-modal",
+            title: "Confirm",
+            "ok-title": "Continue",
+            "ok-variant": "danger",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.destroy }
+        },
+        [
+          _c("p", { staticClass: "text-center text-muted mb-1" }, [
+            _vm._v(
+              "\n            Are you sure you want to remove this checklists?\n        "
+            )
+          ])
+        ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/province/Index.vue?vue&type=template&id=e2f22a0e&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/province/Index.vue?vue&type=template&id=e2f22a0e& ***!
+  \*************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "b-container",
+        { staticClass: "mt-2" },
+        [
+          _c(
+            "b-card",
+            { staticClass: "shadow-sm" },
+            [
+              _c(
+                "b-card-body",
+                [
+                  _c(
+                    "b-row",
+                    [
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "h2",
+                          { staticClass: "text-primary font-weight-bold" },
+                          [
+                            _vm._v(
+                              "\n\t\t\t\t\t\t\t\tProvinces\n\t\t\t\t\t\t\t"
+                            )
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "d-flex justify-content-end align-baseline"
+                          },
+                          [
+                            _c(
+                              "b-button",
+                              {
+                                directives: [
+                                  {
+                                    name: "b-modal",
+                                    rawName: "v-b-modal.add-modal",
+                                    modifiers: { "add-modal": true }
+                                  }
+                                ],
+                                attrs: { variant: "primary", size: "sm" }
+                              },
+                              [
+                                _c("b-icon", { attrs: { icon: "pencil" } }),
+                                _vm._v(" "),
+                                _vm._v(
+                                  "\n\t\t\t\t\t\t\t\t\tAdd Province\n\t\t\t\t\t\t\t\t"
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-row",
+                    { staticClass: "mb-2" },
+                    [
+                      _c(
+                        "b-col",
+                        { attrs: { lg: "6" } },
+                        [
+                          _c(
+                            "b-form",
+                            {
+                              staticClass: "text-muted text-md",
+                              attrs: { inline: "" }
+                            },
+                            [
+                              _c("small", [_vm._v("Show")]),
+                              _vm._v(" "),
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.limit,
+                                      expression: "limit"
+                                    }
+                                  ],
+                                  staticClass:
+                                    "form-control form-control-sm text-sm col-sm-2 mx-1",
+                                  attrs: { id: "row-limit" },
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.limit = $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      },
+                                      _vm.getProvinces
+                                    ]
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { value: "10" } }, [
+                                    _vm._v("10")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "25" } }, [
+                                    _vm._v("25")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "50" } }, [
+                                    _vm._v("50")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "100" } }, [
+                                    _vm._v("100")
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("small", [_vm._v("entries")])
+                            ]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        {
+                          staticClass:
+                            "d-flex justify-content-end align-content-end",
+                          attrs: { lg: "6" }
+                        },
+                        [
+                          _c(
+                            "b-form",
+                            { staticClass: "col-sm-12 col-md-6 px-0" },
+                            [
+                              _c("b-form-input", {
+                                attrs: { size: "sm", placeholder: "Search" },
+                                on: { input: _vm.getProvinces },
+                                model: {
+                                  value: _vm.search,
+                                  callback: function($$v) {
+                                    _vm.search = $$v
+                                  },
+                                  expression: "search"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("b-table", {
+                    attrs: {
+                      borderless: "",
+                      striped: "",
+                      hover: "",
+                      id: "province-table",
+                      items: _vm.provinces,
+                      fields: _vm.provinces_fields,
+                      responsive: "md"
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "cell(name)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(data.item.name) +
+                                "\n                        "
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(index)",
+                        fn: function(data) {
+                          return [
+                            _c(
+                              "b-btn-group",
+                              [
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.edit-modal",
+                                        modifiers: { "edit-modal": true }
+                                      }
+                                    ],
+                                    staticClass: "text-white",
+                                    attrs: { size: "sm", variant: "warning" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.edit(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "pencil" } })],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.delete-modal",
+                                        modifiers: { "delete-modal": true }
+                                      }
+                                    ],
+                                    attrs: { size: "sm", variant: "danger" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.remove(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "trash" } })],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-container",
+                    { staticClass: "clearfix px-0", attrs: { fluid: "" } },
+                    [
+                      _c("b-pagination", {
+                        staticClass: "float-right",
+                        attrs: {
+                          size: "sm",
                           "per-page": Number(_vm.response.per_page),
                           "total-rows": Number(_vm.response.total),
                           "aria-controls": "province-table"
@@ -76126,7 +78218,7 @@ var render = function() {
         [
           _c("p", { staticClass: "text-center text-muted mb-1" }, [
             _vm._v(
-              "\n            Are you sure you want to remove this province?\n        "
+              "\n                Are you sure you want to remove this province?\n            "
             )
           ])
         ]
@@ -76172,39 +78264,155 @@ var render = function() {
                 "b-card-body",
                 [
                   _c(
-                    "b-card-header",
-                    { staticClass: "px-0" },
+                    "b-row",
+                    [
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "h2",
+                          { staticClass: "text-primary font-weight-bold" },
+                          [_vm._v("\n\t\t\t\t\t\t\t\tPupils\n\t\t\t\t\t\t\t")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "d-flex justify-content-end align-baseline"
+                          },
+                          [
+                            _c(
+                              "b-button",
+                              {
+                                directives: [
+                                  {
+                                    name: "b-modal",
+                                    rawName: "v-b-modal.add-modal",
+                                    modifiers: { "add-modal": true }
+                                  }
+                                ],
+                                attrs: { variant: "primary", size: "sm" }
+                              },
+                              [
+                                _c("b-icon", { attrs: { icon: "pencil" } }),
+                                _vm._v(" "),
+                                _vm._v(
+                                  "\n\t\t\t\t\t\t\t\t\tAdd Pupil\n\t\t\t\t\t\t\t\t"
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-row",
+                    { staticClass: "mb-2" },
                     [
                       _c(
-                        "b-container",
-                        { staticClass: "clearfix px-2", attrs: { fluid: "" } },
+                        "b-col",
+                        { attrs: { lg: "6" } },
                         [
                           _c(
-                            "h4",
+                            "b-form",
                             {
-                              staticClass:
-                                "text-primary font-weight-bold float-left"
-                            },
-                            [_vm._v("Pupils")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "b-button",
-                            {
-                              directives: [
-                                {
-                                  name: "b-modal",
-                                  rawName: "v-b-modal.add-modal",
-                                  modifiers: { "add-modal": true }
-                                }
-                              ],
-                              staticClass: "float-right",
-                              attrs: { variant: "primary", size: "sm" }
+                              staticClass: "text-muted text-md",
+                              attrs: { inline: "" }
                             },
                             [
-                              _c("b-icon", { attrs: { icon: "pencil" } }),
+                              _c("small", [_vm._v("Show")]),
                               _vm._v(" "),
-                              _vm._v("\n\t\t\t\t\t\t\tAdd Pupil\n\t\t\t\t\t\t")
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.limit,
+                                      expression: "limit"
+                                    }
+                                  ],
+                                  staticClass:
+                                    "form-control form-control-sm text-sm col-sm-2 mx-1",
+                                  attrs: { id: "row-limit" },
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.limit = $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      },
+                                      _vm.getPupils
+                                    ]
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { value: "10" } }, [
+                                    _vm._v("10")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "25" } }, [
+                                    _vm._v("25")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "50" } }, [
+                                    _vm._v("50")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "100" } }, [
+                                    _vm._v("100")
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("small", [_vm._v("entries")])
+                            ]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        {
+                          staticClass:
+                            "d-flex justify-content-end align-content-end",
+                          attrs: { lg: "6" }
+                        },
+                        [
+                          _c(
+                            "b-form",
+                            { staticClass: "col-sm-12 col-md-6 px-0" },
+                            [
+                              _c("b-form-input", {
+                                attrs: { size: "sm", placeholder: "Search" },
+                                on: { input: _vm.getPupils },
+                                model: {
+                                  value: _vm.search,
+                                  callback: function($$v) {
+                                    _vm.search = $$v
+                                  },
+                                  expression: "search"
+                                }
+                              })
                             ],
                             1
                           )
@@ -76220,13 +78428,9 @@ var render = function() {
                       borderless: "",
                       striped: "",
                       hover: "",
-                      small: "",
                       id: "pupils-table",
                       items: _vm.pupils,
                       fields: _vm.pupil_fields,
-                      "current-page": _vm.currentPage,
-                      "per-page": _vm.perPage,
-                      "total-rows": _vm.totalRows,
                       responsive: "md"
                     },
                     scopedSlots: _vm._u([
@@ -76235,9 +78439,9 @@ var render = function() {
                         fn: function(data) {
                           return [
                             _vm._v(
-                              "\n\t\t\t\t\t\t" +
+                              "\n\t\t\t\t\t\t\t" +
                                 _vm._s(data.item.id) +
-                                "\n\t\t\t\t\t"
+                                "\n\t\t\t\t\t\t"
                             )
                           ]
                         }
@@ -76247,9 +78451,9 @@ var render = function() {
                         fn: function(data) {
                           return [
                             _vm._v(
-                              "\n\t\t\t\t\t\t" +
+                              "\n\t\t\t\t\t\t\t" +
                                 _vm._s(data.item.first_name) +
-                                "\n\t\t\t\t\t"
+                                "\n\t\t\t\t\t\t"
                             )
                           ]
                         }
@@ -76259,9 +78463,9 @@ var render = function() {
                         fn: function(data) {
                           return [
                             _vm._v(
-                              "\n\t\t\t\t\t\t" +
+                              "\n\t\t\t\t\t\t\t" +
                                 _vm._s(data.item.last_name) +
-                                "\n\t\t\t\t\t"
+                                "\n\t\t\t\t\t\t"
                             )
                           ]
                         }
@@ -76331,16 +78535,18 @@ var render = function() {
                       _c("b-pagination", {
                         staticClass: "float-right",
                         attrs: {
-                          "per-page": _vm.perPage,
-                          "total-rows": _vm.totalRows,
+                          size: "sm",
+                          "per-page": Number(_vm.response.per_page),
+                          "total-rows": Number(_vm.response.total),
                           "aria-controls": "pupils-table"
                         },
+                        on: { change: _vm.getPupils },
                         model: {
-                          value: _vm.currentPage,
+                          value: _vm.current_page,
                           callback: function($$v) {
-                            _vm.currentPage = $$v
+                            _vm.current_page = $$v
                           },
-                          expression: "currentPage"
+                          expression: "current_page"
                         }
                       })
                     ],
@@ -76354,6 +78560,96 @@ var render = function() {
           )
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "add-modal",
+            size: "lg",
+            title: "Add Pupil",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.add }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-row",
+                [
+                  _c("b-col", { attrs: { lg: "6" } }),
+                  _vm._v(" "),
+                  _c("b-col", { attrs: { lg: "6" } })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "edit-modal",
+            size: "lg",
+            title: "Update Pupil Information",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.update }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-row",
+                [
+                  _c("b-col", { attrs: { lg: "6" } }),
+                  _vm._v(" "),
+                  _c("b-col", { attrs: { lg: "6" } })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "delete-modal",
+            title: "Confirm",
+            "ok-title": "Continue",
+            "ok-variant": "danger",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.destroy }
+        },
+        [
+          _c("p", { staticClass: "text-center text-muted mb-1" }, [
+            _vm._v(
+              "\n                Are you sure you want to remove this pupil?\n            "
+            )
+          ])
+        ]
       )
     ],
     1
@@ -76396,41 +78692,159 @@ var render = function() {
                 "b-card-body",
                 [
                   _c(
-                    "b-card-header",
-                    { staticClass: "px-0" },
+                    "b-row",
+                    [
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "h2",
+                          { staticClass: "text-primary font-weight-bold" },
+                          [
+                            _vm._v(
+                              "\n                                Schools\n                            "
+                            )
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "d-flex justify-content-end align-baseline"
+                          },
+                          [
+                            _c(
+                              "b-button",
+                              {
+                                directives: [
+                                  {
+                                    name: "b-modal",
+                                    rawName: "v-b-modal.add-modal",
+                                    modifiers: { "add-modal": true }
+                                  }
+                                ],
+                                attrs: { variant: "primary", size: "sm" }
+                              },
+                              [
+                                _c("b-icon", { attrs: { icon: "pencil" } }),
+                                _vm._v(" "),
+                                _vm._v(
+                                  "\n                                    Add School\n                                "
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-row",
+                    { staticClass: "mb-2" },
                     [
                       _c(
-                        "b-container",
-                        { staticClass: "clearfix px-2", attrs: { fluid: "" } },
+                        "b-col",
+                        { attrs: { lg: "6" } },
                         [
                           _c(
-                            "h4",
+                            "b-form",
                             {
-                              staticClass:
-                                "text-primary font-weight-bold float-left"
-                            },
-                            [_vm._v("Schools")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "b-button",
-                            {
-                              directives: [
-                                {
-                                  name: "b-modal",
-                                  rawName: "v-b-modal.add-modal",
-                                  modifiers: { "add-modal": true }
-                                }
-                              ],
-                              staticClass: "float-right",
-                              attrs: { variant: "primary", size: "sm" }
+                              staticClass: "text-muted text-md",
+                              attrs: { inline: "" }
                             },
                             [
-                              _c("b-icon", { attrs: { icon: "pencil" } }),
+                              _c("small", [_vm._v("Show")]),
                               _vm._v(" "),
-                              _vm._v(
-                                "\n\t\t\t\t\t\t\t\tAdd School\n\t\t\t\t\t\t\t"
-                              )
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.limit,
+                                      expression: "limit"
+                                    }
+                                  ],
+                                  staticClass:
+                                    "form-control form-control-sm text-sm col-sm-2 mx-1",
+                                  attrs: { id: "row-limit" },
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.limit = $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      },
+                                      _vm.getSchools
+                                    ]
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { value: "10" } }, [
+                                    _vm._v("10")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "25" } }, [
+                                    _vm._v("25")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "50" } }, [
+                                    _vm._v("50")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "100" } }, [
+                                    _vm._v("100")
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("small", [_vm._v("entries")])
+                            ]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        {
+                          staticClass:
+                            "d-flex justify-content-end align-content-end",
+                          attrs: { lg: "6" }
+                        },
+                        [
+                          _c(
+                            "b-form",
+                            { staticClass: "col-sm-12 col-md-6 px-0" },
+                            [
+                              _c("b-form-input", {
+                                attrs: { size: "sm", placeholder: "Search" },
+                                on: { input: _vm.getSchools },
+                                model: {
+                                  value: _vm.search,
+                                  callback: function($$v) {
+                                    _vm.search = $$v
+                                  },
+                                  expression: "search"
+                                }
+                              })
                             ],
                             1
                           )
@@ -76446,13 +78860,9 @@ var render = function() {
                       borderless: "",
                       striped: "",
                       hover: "",
-                      small: "",
                       id: "schools-table",
                       items: _vm.schools,
                       fields: _vm.schools_fields,
-                      "current-page": _vm.currentPage,
-                      "per-page": _vm.perPage,
-                      "total-rows": _vm.totalRows,
                       responsive: "md"
                     },
                     scopedSlots: _vm._u([
@@ -76461,9 +78871,9 @@ var render = function() {
                         fn: function(data) {
                           return [
                             _vm._v(
-                              "\n\t\t\t\t\t\t\t" +
+                              "\n                            " +
                                 _vm._s(data.item.name) +
-                                "\n\t\t\t\t\t\t"
+                                "\n                        "
                             )
                           ]
                         }
@@ -76473,9 +78883,9 @@ var render = function() {
                         fn: function(data) {
                           return [
                             _vm._v(
-                              "\n\t\t\t\t\t\t\t" +
+                              "\n                            " +
                                 _vm._s(data.item.province_id) +
-                                "\n\t\t\t\t\t\t"
+                                "\n                        "
                             )
                           ]
                         }
@@ -76545,16 +78955,18 @@ var render = function() {
                       _c("b-pagination", {
                         staticClass: "float-right",
                         attrs: {
-                          "per-page": _vm.perPage,
-                          "total-rows": _vm.totalRows,
+                          size: "sm",
+                          "per-page": Number(_vm.response.per_page),
+                          "total-rows": Number(_vm.response.total),
                           "aria-controls": "schools-table"
                         },
+                        on: { change: _vm.getSchools },
                         model: {
-                          value: _vm.currentPage,
+                          value: _vm.current_page,
                           callback: function($$v) {
-                            _vm.currentPage = $$v
+                            _vm.current_page = $$v
                           },
-                          expression: "currentPage"
+                          expression: "current_page"
                         }
                       })
                     ],
@@ -76721,7 +79133,9 @@ var render = function() {
         },
         [
           _c("p", { staticClass: "text-center text-muted mb-1" }, [
-            _vm._v("Are you sure you want to remove this school?")
+            _vm._v(
+              "\n                Are you sure you want to remove this school?\n            "
+            )
           ])
         ]
       )
@@ -89917,6 +92331,12 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("provinces-index", __webpac
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("schools-index", __webpack_require__(/*! ./components/backend/schools/Index.vue */ "./resources/js/components/backend/schools/Index.vue")["default"]); //BACKEND (Pupils)
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("pupils-index", __webpack_require__(/*! ./components/backend/pupils/Index.vue */ "./resources/js/components/backend/pupils/Index.vue")["default"]);
+/** ChecklistCategories & Checklists */
+
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("checklist-categories-index", __webpack_require__(/*! ./components/backend/ChecklistCategories/Index.vue */ "./resources/js/components/backend/ChecklistCategories/Index.vue")["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("checklists-index", __webpack_require__(/*! ./components/backend/Checklists/Index.vue */ "./resources/js/components/backend/Checklists/Index.vue")["default"]);
+/** END ChecklistCategories & Checklists */
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -89971,6 +92391,144 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/ChecklistCategories/Index.vue":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/backend/ChecklistCategories/Index.vue ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Index_vue_vue_type_template_id_2ecb1f2f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=2ecb1f2f& */ "./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=template&id=2ecb1f2f&");
+/* harmony import */ var _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js& */ "./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Index_vue_vue_type_template_id_2ecb1f2f___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Index_vue_vue_type_template_id_2ecb1f2f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/backend/ChecklistCategories/Index.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************!*\
+  !*** ./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=template&id=2ecb1f2f&":
+/*!******************************************************************************************************!*\
+  !*** ./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=template&id=2ecb1f2f& ***!
+  \******************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_2ecb1f2f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=template&id=2ecb1f2f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/ChecklistCategories/Index.vue?vue&type=template&id=2ecb1f2f&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_2ecb1f2f___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_2ecb1f2f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Checklists/Index.vue":
+/*!**************************************************************!*\
+  !*** ./resources/js/components/backend/Checklists/Index.vue ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Index_vue_vue_type_template_id_b48b6894___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=b48b6894& */ "./resources/js/components/backend/Checklists/Index.vue?vue&type=template&id=b48b6894&");
+/* harmony import */ var _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js& */ "./resources/js/components/backend/Checklists/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Index_vue_vue_type_template_id_b48b6894___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Index_vue_vue_type_template_id_b48b6894___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/backend/Checklists/Index.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Checklists/Index.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/components/backend/Checklists/Index.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Checklists/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Checklists/Index.vue?vue&type=template&id=b48b6894&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/backend/Checklists/Index.vue?vue&type=template&id=b48b6894& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_b48b6894___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=template&id=b48b6894& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Checklists/Index.vue?vue&type=template&id=b48b6894&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_b48b6894___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_b48b6894___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 
