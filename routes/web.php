@@ -37,6 +37,9 @@ Route::get('configure/schools', 'Backend\SchoolsController@index')->name('admin.
 //BACKEND (Schools)
 Route::get('configure/pupils', 'Backend\PupilsController@index')->name('admin.pupils');
 
+/** Checklists */
+Route::get('configure/categories', 'Backend\PagesController@checklistCategoriesIndex')->name('admin.categories');
+Route::get('configure/checklists', 'Backend\PagesController@checklistsIndex')->name('admin.checklists');
 //BACKEND (Reports)
 Route::get('/configure/reports', 'Backend\ReportsController@index')->name('admin.reports');
 

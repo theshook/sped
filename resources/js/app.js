@@ -53,6 +53,16 @@ Vue.component(
     require("./components/backend/pupils/Index.vue").default
 );
 
+/** ChecklistCategories & Checklists */
+Vue.component(
+    "checklist-categories-index",
+    require("./components/backend/ChecklistCategories/Index.vue").default
+);
+Vue.component(
+    "checklists-index",
+    require("./components/backend/Checklists/Index.vue").default
+);
+/** END ChecklistCategories & Checklists */
 //BACKEND (Reports)
 Vue.component(
     "reports-index",
