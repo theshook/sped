@@ -132,12 +132,29 @@
             ok-title="Submit"
             ok-variant="success"
             ok-only
-            @ok="add"
+            @ok="submitAdd"
             button-size="sm"
+
         >
+			<b-alert
+			variant="error"
+			v-if="$v.form.$error">
+				<p>
+					<strong><b-icon name="alert-triangle"></b-icon></strong>
+					The form is invalid, please try again.
+				</p>
+			</b-alert>
             <b-form>
                 <b-form-group label="Name" label-class="text-sm">
-                    <b-form-input v-model="name"></b-form-input>
+                    <b-form-input
+					v-model="$v.form.name.$model"
+					:state="validateState('name')"
+					aria-describedby="invalid-input-name"></b-form-input>
+
+					<b-form-invalid-feedback
+					id="invalid-input-name">
+						This field is required and must be atleast 3 characters.
+					</b-form-invalid-feedback>
                 </b-form-group>
             </b-form>
         </b-modal>
@@ -149,13 +166,22 @@
             ok-title="Save Changes"
             ok-variant="success"
             ok-only
-            @ok="update"
+            @ok="submitUpdate"
             button-size="sm"
         >
-            <b-form>
+            <b-form
+			ref="form">
                 <input type="hidden" v-model="edit_id" />
                 <b-form-group label="Name" label-class="text-sm">
-                    <b-form-input v-model="edit_name"></b-form-input>
+                    <b-form-input
+					v-model="$v.form.name.$model"
+					:state="validateState('name')"
+					aria-describedby="invalid-input-name"></b-form-input>
+
+					<b-form-invalid-feedback
+					id="invalid-input-name">
+						This field is required and must be atleast 3 characters.
+					</b-form-invalid-feedback>
                 </b-form-group>
             </b-form>
         </b-modal>
@@ -178,6 +204,7 @@
 </template>
 
 <script>
+import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 export default {
     name: "ProvincesIndex",
     props: ["host"],
@@ -199,10 +226,12 @@ export default {
                 }
             ],
             province_list: [],
-            response: {},
+			response: {},
 
             // ADD
-            name: null,
+            form: {
+				name: ''
+			},
 
             // EDIT
             edit_id: null,
@@ -212,12 +241,26 @@ export default {
             // DELETE
             delete_id: null
         };
-    },
+	},
+	validations: {
+		form: {
+			name: {
+				required, 
+				minLength: minLength(3),
+				maxLength: maxLength(60)
+			}
+		}
+	},
     computed: {},
     mounted() {
         this.getProvinces();
     },
     methods: {
+		validateState: function(name) {
+			const { $dirty, $error } = this.$v.form[name]
+			return $dirty ? !$error : null
+		},
+
         getProvinces: function(page) {
             const provincesAPI = `${this.host}/provinces?search=${this.search}&limit=${this.limit}&page=${page}`;
             axios
@@ -278,86 +321,111 @@ export default {
             }
 
             return `${dateMonth} ${dateDay}, ${dateYear}`;
-        },
+		},
+		
+		submitAdd: function(event) {
+			event.preventDefault()
+			this.$v.form.$touch()
+			if(this.$v.form.$anyError) {
+				return
+			} else {
+				this.add()
+			}
+		},
 
         add: function() {
             const provincesAPI = `${this.host}/provinces`;
             const data = {
-                name: this.name
-            };
+                name: this.form.name
+			};
+			
+			axios
+			.post(provincesAPI, data)
+			.then(response => {
+				if (response.data.status == 201) {
+					this.getProvinces();
+					this.form.name = null
+					this.$bvModal.hide('add-modal')
+					this.$v.$reset()
 
-            axios
-                .post(provincesAPI, data)
-                .then(response => {
-                    if (response.data.status == 201) {
-                        this.getProvinces();
-                        this.name = null;
-
-                        swal.fire({
-                            icon: "success",
-                            title: "Added",
-                            text: "Province information successfully added",
-                            timer: 3000
-                        });
-                    } else {
-                        swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "Failed to add province information",
-                            timer: 3000
-                        });
-                    }
-                })
-                .catch(err =>
-                    swal.fire({
-                        icon: "error",
-                        title: err.response.data.message,
-                        text: err.response.data.errors.name[0],
-                        timer: 3000
-                    })
-                );
+					swal.fire({
+						icon: "success",
+						title: "Added",
+						text: "Province information successfully added",
+						timer: 3000
+					});
+				} else {
+					swal.fire({
+						icon: "error",
+						title: "Error",
+						text: "Failed to add province information",
+						timer: 3000
+					});
+				}
+			})
+			.catch(err =>
+				swal.fire({
+					icon: "error",
+					title: err.response.data.message,
+					text: err.response.data.errors.name[0],
+					timer: 3000
+				})
+			);
         },
 
         edit: function(index) {
             this.edit_id = this.provinces[index].id;
             this.edit_index = index;
-            this.edit_name = this.provinces[index].name;
-        },
+			this.form.name = this.provinces[index].name;
+		},
+		
+		submitUpdate: function(event) {
+			event.preventDefault()
+			this.$v.form.$touch()
+			if(this.$v.form.$anyError) {
+				return
+			} else {
+				this.update()
+			}
+		},
 
         update: function() {
             const provincesAPI = `${this.host}/province/${this.edit_id}`;
             const data = {
-                name: this.edit_name
-            };
-            axios
-                .put(provincesAPI, data)
-                .then(response => {
-                    if (response.data.status == 201) {
-                        this.provinces[this.edit_index].name = this.edit_name;
+                name: this.form.name
+			};
+			
+			axios
+			.put(provincesAPI, data)
+			.then(response => {
+				if (response.data.status == 201) {
+					this.provinces[this.edit_index].name = this.form.name;
+					this.$bvModal.hide('edit-modal')
+					this.$v.$reset()
 
-                        swal.fire({
-                            icon: "success",
-                            title: "Updated",
-                            text: "Province information successfully updated",
-                            timer: 3000
-                        });
-                    } else {
-                        swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "Failed to update province information",
-                            timer: 3000
-                        });
-                    }
-                })
-                .catch(err =>
-                    swal.fire({
-                        icon: "error",
-                        title: err.response.data.message,
-                        text: err.response.data.errors.name[0],
-                        timer: 3000
-                    })
-                );
+					swal.fire({
+						icon: "success",
+						title: "Updated",
+						text: "Province information successfully updated",
+						timer: 3000
+					});
+				} else {
+					swal.fire({
+						icon: "error",
+						title: "Error",
+						text: "Failed to update province information",
+						timer: 3000
+					});
+				}
+			})
+			.catch(err =>
+				swal.fire({
+					icon: "error",
+					title: err.response.data.message,
+					text: err.response.data.errors.name[0],
+					timer: 3000
+				})
+			);
         },
 
         remove: function(index) {
@@ -395,7 +463,7 @@ export default {
 					timer: 3000
 				})
 			);
-        }
+		}
     }
 };
 </script>
