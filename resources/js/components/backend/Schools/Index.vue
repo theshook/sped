@@ -247,7 +247,7 @@ export default {
                     sortable: true
                 },
                 {
-                    key: "province_id",
+                    key: "province.name",
                     label: "Province",
                     sortable: true
                 },
@@ -313,7 +313,7 @@ export default {
                 .get(schoolsAPI)
                 .then(response => {
                     this.schools = response.data.data;
-                    this.response = response.data;
+					this.response = response.data;
                 })
                 .catch(err => console.log(err));
         },
@@ -463,10 +463,11 @@ export default {
                 .put(schoolsAPI, data)
                 .then(response => {
                     if (response.data.status == 201) {
-                        this.schools[this.edit_index].name = this.form.name;
-                        this.schools[this.edit_index].province_id = this.form.province_id;
-                        this.form.name = null;
-                        this.form.province_id = null;
+                        // this.schools[this.edit_index].name = this.form.name;
+                        // this.schools[this.edit_index].province_id = this.form.province_id;
+                        // this.form.name = null;
+						// this.form.province_id = null;
+						this.getSchools()
 						this.$bvModal.hide('edit-modal')
 						this.$v.$reset()
 

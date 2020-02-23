@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class School extends Model
 {
 	use SoftDeletes;
-    protected $fillable = ['province_id', 'name'];
+	protected $fillable = ['province_id', 'name'];
+	
+	public function province() {
+		return $this->belongsTo(Province::class);
+	}
 }
