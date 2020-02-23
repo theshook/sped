@@ -197,7 +197,6 @@ export default {
 			// ADD
 			province: null,
 			province_id: null,
-			province_not_found: false,
 			name: null,
 
 			// EDIT
@@ -404,7 +403,7 @@ export default {
 				}
 			})
 			.catch(err =>
-				console.log(err.response)
+				console.log(err.response.data)
 			);
 		}
 	},
