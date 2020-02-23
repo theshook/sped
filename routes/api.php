@@ -51,3 +51,7 @@ Route::post('/checklists', 'API\Backend\ChecklistsController@store');
 Route::get('/checklist/{id}', 'API\Backend\ChecklistsController@show');
 Route::put('/checklist/{id}', 'API\Backend\ChecklistsController@update');
 Route::delete('/checklist/{id}', 'API\Backend\ChecklistsController@destroy');
+
+/* ========================================================================================================== */
+//BACKEND (REPORTS)
+Route::get('/reports', 'API\Backend\ChecklistsController@index');
