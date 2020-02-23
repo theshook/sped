@@ -21,6 +21,7 @@ class CreatePupilsTable extends Migration
 			$table->string('last_name');
 			$table->string('middle_name');
 			$table->date('birth_date');
+			$table->softDeletes();
 			$table->timestamps();
 			
 			$table->foreign('school_id')->references('id')->on('schools');
