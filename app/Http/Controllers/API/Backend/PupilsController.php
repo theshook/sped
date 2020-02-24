@@ -32,14 +32,16 @@ class PupilsController extends Controller
     public function store(PupilsStoreRequest $request)
     {
 		$pupil = new Pupil;
-		$pupil->school_id = $request->input('school_id');
-		$pupil->first_name = $request->input('first_name');
-		$pupil->last_name = $request->input('last_name');
-		$pupil->middle_name = $request->input('middle_name');
-		$pupil->birth_date = $request->input('birth_date');
-		$pupil->prof_pic = $request->input('prof_pic');
+		$pupil->school_id = $request->school_id;
+		$pupil->first_name = $request->first_name;
+		$pupil->last_name = $request->last_name;
+		$pupil->middle_name = $request->middle_name;
+		$pupil->birth_date = $request->birth_date;
+		$imageName = $request->first_name.'-'.$request->last_name.'.'.$request->prof_pic->getClientOriginalExtension();
+		$pupil->prof_pic = $imageName;
+		$request->prof_pic->move(public_path('images/pupils'), $imageName);
 
-		if($pupil->delete()) {
+		if($pupil->save()) {
 			$response = array(
 				'status' => 201,
 				'message' => 'Successfully added pupil'
@@ -88,12 +90,12 @@ class PupilsController extends Controller
     {
         $pupil = Pupil::find($id);
 		if(!empty($pupil)) {
-			$pupil->school_id = $request->input('school_id');
-			$pupil->first_name = $request->input('first_name');
-			$pupil->last_name = $request->input('last_name');
-			$pupil->middle_name = $request->input('middle_name');
-			$pupil->birth_date = $request->input('birth_date');
-			$pupil->prof_pic = $request->input('prof_pic');
+			$pupil->school_id = $request->school_id;
+			$pupil->first_name = $request->first_name;
+			$pupil->last_name = $request->last_name;
+			$pupil->middle_name = $request->middle_name;
+			$pupil->birth_date = $request->birth_date;
+			//$pupil->prof_pic = $request->input('prof_pic');
 
 			if($pupil->delete()) {
 				$response = array(

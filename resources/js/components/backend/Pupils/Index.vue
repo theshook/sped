@@ -132,7 +132,21 @@
             button-size="sm"
         >
             <b-form>
-				<label>
+				<b-form-group>
+					<b-form-file
+					v-model="$v.form.prof_pic.$model"
+					:state="validateState('prof_pic')"
+					aria-describedby="input-image-feedback"
+					@change="handleImage">
+					</b-form-file>
+
+					<b-form-invalid-feedback
+					id="input-image-feedback">
+						This field is required and must be an image.
+					</b-form-invalid-feedback>
+				</b-form-group>
+
+				<label class="text-sm">
 					Full name
 				</label>
 				<b-form-row>
@@ -189,7 +203,6 @@
 				</b-form-row>
 
 				<b-form-group>
-					{{form.school_id}}
 					<b-form-group
 					label="School"
 					label-class="text-sm">
@@ -287,12 +300,12 @@
 
 				// ADD
 				form: {
+					prof_pic: null,
+					school_id: null,
 					first_name: null,
 					last_name: null,
 					middle_name: null,
-					birth_date: null,
-					prof_pic: null,
-					school_id: null
+					birth_date: null
 				},
 
 				 // EDIT
@@ -367,6 +380,10 @@
 					.catch(err => console.log(err));
 			},
 
+			handleImage: function(event) {
+				this.form.prof_pic = event.target.files[0]
+			},
+
 			submitAdd: function(event) {
 				event.preventDefault()
 				this.$v.form.$touch()
@@ -378,7 +395,28 @@
 			},
 
 			add: function() {
+				let pupilsAPI = `${this.host}/pupils`
 
+				let data = new FormData();
+				data.append('school_id', this.form.school_id)
+				data.append('prof_pic', this.form.prof_pic)
+				data.append('first_name', this.form.first_name)
+				data.append('last_name', this.form.last_name)
+				data.append('middle_name', this.form.middle_name)
+				data.append('birth_date', '1998-01-18')
+				//data.append('birth_date', this.form.birth_date)
+
+				const config = {
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				}
+
+				axios.post(pupilsAPI, data, config)
+				.then(response => {
+					console.log(response.data)
+				})
+				.catch(err => console.log(err.response))
 			},
 
 			edit: function(index) {
@@ -388,6 +426,16 @@
 				this.edit_lname = this.pupils[index].last_name
 				this.edit_mname = this.pupils[index].middle_name
 				this.edit_bday = this.pupils[index].birth_date
+			},
+
+			submitUpdate: function() {
+				event.preventDefault()
+				this.$v.form.$touch()
+				if(this.$v.form.$anyError) {
+					return
+				} else {
+					this.add()
+				}
 			},
 
 			update: function() {
