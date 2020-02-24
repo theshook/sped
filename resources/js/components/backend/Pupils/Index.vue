@@ -128,14 +128,88 @@
             ok-title="Submit"
             ok-variant="success"
             ok-only
-            @ok="add"
+            @ok="submitAdd"
             button-size="sm"
         >
             <b-form>
-                <b-row>
-					<b-col lg="6"></b-col>
-					<b-col lg="6"></b-col>
-				</b-row>
+				<label>
+					Full name
+				</label>
+				<b-form-row>
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.first_name.$model"
+							:state="validateState('first_name')"
+							aria-describedby="input-fname-feedback"
+							placeholder="First name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.last_name.$model"
+							:state="validateState('last_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Middle name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.middle_name.$model"
+							:state="validateState('middle_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Last name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+				</b-form-row>
+
+				<b-form-group>
+					{{form.school_id}}
+					<b-form-group
+					label="School"
+					label-class="text-sm">
+							<b-form-select
+							v-model="$v.form.school_id.$model"
+							:state="validateState('school_id')"
+							aria-describedby="input-school-feedback">
+								<b-form-select-option
+								v-for="school in schools" :key="school.id"
+								:value="school.id">
+									{{school.name}}
+								</b-form-select-option>
+							</b-form-select>
+
+							<b-form-invalid-feedback
+							id="input-school-feedback">
+								This field is required.
+							</b-form-invalid-feedback>
+						</b-form-group>
+				</b-form-group>
             </b-form>
         </b-modal>
 
@@ -176,6 +250,7 @@
 	</div>
 </template>
 <script>
+	import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 	export default {
 		name: 'PupilsIndex',
 		props: ['host'],
@@ -205,14 +280,20 @@
 						label: 'Action'
 					},
 				],
+				schools: null,
+				schools_list: [],
 				current_page: 1,
 				response: {},
 
 				// ADD
-				first_name: null,
-				last_name: null,
-				middle_name: null,
-				birth_date: null,
+				form: {
+					first_name: null,
+					last_name: null,
+					middle_name: null,
+					birth_date: null,
+					prof_pic: null,
+					school_id: null
+				},
 
 				 // EDIT
 				edit_id: null,
@@ -226,10 +307,42 @@
 				delete_id: null
 			}
 		}, 
+		validations: {
+			form: {
+				school_id: {
+					required
+				},
+				first_name: {
+					required,
+					minLength: minLength(3),
+					maxLength: maxLength(40)
+				},
+				last_name: {
+					required,
+					minLength: minLength(3),
+					maxLength: maxLength(40)
+				},
+				middle_name: {
+					required,
+					minLength: minLength(3),
+					maxLength: maxLength(40)
+				},
+				prof_pic: {
+					required
+				}
+			}
+		},
+		computed: {},
 		mounted() {
 			this.getPupils()
+			this.getSchools()
 		},
 		methods: {
+			validateState: function(name) {
+				const { $dirty, $error } = this.$v.form[name]
+				return $dirty ? !$error : null
+			},
+
 			getPupils: function(page) {
 				let pupilsAPI = `${this.host}/pupils?search=${this.search}&limit=${this.limit}&page=${page}`
 				axios.get(pupilsAPI)
@@ -238,6 +351,30 @@
 					this.response = response.data
 				})
 				.catch(err => console.log(err))
+			},
+
+			getSchools: function(page) {
+				const schoolsAPI = `${this.host}/schools/raw`;
+				axios
+					.get(schoolsAPI)
+					.then(response => {
+						this.schools = response.data;
+
+						for(let i = 0; i < this.schools.length; i++) {
+							this.schools_list.push(this.schools[i].name)
+						}
+					})
+					.catch(err => console.log(err));
+			},
+
+			submitAdd: function(event) {
+				event.preventDefault()
+				this.$v.form.$touch()
+				if(this.$v.form.$anyError) {
+					return
+				} else {
+					this.add()
+				}
 			},
 
 			add: function() {
