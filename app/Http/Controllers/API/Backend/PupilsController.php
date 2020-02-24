@@ -95,7 +95,9 @@ class PupilsController extends Controller
 			$pupil->last_name = $request->last_name;
 			$pupil->middle_name = $request->middle_name;
 			$pupil->birth_date = $request->birth_date;
-			//$pupil->prof_pic = $request->input('prof_pic');
+			$imageName = $request->first_name.'-'.$request->last_name.'.'.$request->prof_pic->getClientOriginalExtension();
+			$pupil->prof_pic = $imageName;
+			$request->prof_pic->move(public_path('images/pupils'), $imageName);
 
 			if($pupil->delete()) {
 				$response = array(
