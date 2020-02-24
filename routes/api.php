@@ -29,6 +29,7 @@ Route::delete('/province/{id}', 'API\Backend\ProvincesController@destroy');
 
 //BACKEND (SCHOOLS)
 Route::get('/schools', 'API\Backend\SchoolsController@index');
+Route::get('/schools/raw', 'API\Backend\SchoolsController@index_raw');
 Route::post('/schools', 'API\Backend\SchoolsController@store');
 Route::get('/school/{id}', 'API\Backend\SchoolsController@show');
 Route::put('/school/{id}', 'API\Backend\SchoolsController@update');
