@@ -16,4 +16,8 @@ class Pupil extends Model
 		'birth_date',
 		'prof_pic'
 	];
+
+	public function school() {
+		return $this->belongsTo(School::class);
+	}
 }

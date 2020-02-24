@@ -13,4 +13,8 @@ class School extends Model
 	public function province() {
 		return $this->belongsTo(Province::class);
 	}
+
+	public function pupils() {
+		return $this->hasMany(Pupil::class);
+	}
 }

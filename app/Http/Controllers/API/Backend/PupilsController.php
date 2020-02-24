@@ -20,7 +20,7 @@ class PupilsController extends Controller
 		$search = $request->search;
 		$limit = $request->limit;
 
-		return ($search) ? Pupil::where('first_name', 'like', "$search%")->orWhere('last_name', 'like', "$search%")->paginate($limit) : Pupil::paginate($limit);
+		return ($search) ? Pupil::with('school')::where('first_name', 'like', "$search%")->orWhere('last_name', 'like', "$search%")->paginate($limit) : Pupil::with('school')->paginate($limit);
     }
 
     /**

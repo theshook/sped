@@ -20,8 +20,12 @@ class SchoolsController extends Controller
 		$search = $request->search;
 		$limit = $request->limit;
 		
-		return ($search) ? School::with('province')::where('name', 'like', "$search%")->paginate($limit) : School::with('province')->paginate($limit);
-    }
+		return ($search) ? School::with('province', 'pupils')::where('name', 'like', "$search%")->paginate($limit) : School::with('province', 'pupils')->paginate($limit);
+	}
+	
+	public function index_raw() {
+		return School::with('province')->get();
+	}
 
     /**
      * Store a newly created resource in storage.

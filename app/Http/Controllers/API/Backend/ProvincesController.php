@@ -20,7 +20,7 @@ class ProvincesController extends Controller
 		$search = $request->search;
 		$limit = $request->limit;
 
-		return ($search) ? Province::where('name', 'like', "$search%")->paginate($limit) : Province::paginate($limit);
+		return ($search) ? Province::where('name', 'like', "$search%")->paginate($limit) : Province::with('schools')->paginate($limit);
 	}
 
 	public function index_raw()
