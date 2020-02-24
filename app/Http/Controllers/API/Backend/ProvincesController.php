@@ -86,7 +86,7 @@ class ProvincesController extends Controller
 		//return $id;
 		$province = Province::find($id);
 		if (!empty($province)) {
-			$province->name = $request->input('name');
+			$province->name = $request->name;
 			if ($province->save()) {
 				$response = array(
 					'status' => 201,

@@ -36,8 +36,8 @@ class SchoolsController extends Controller
     public function store(SchoolsStoreRequest $request)
     {
 		$school = new School;
-		$school->province_id = $request->input('province_id');
-		$school->name = $request->input('name');
+		$school->province_id = $request->province_id;
+		$school->name = $request->name;
 
 		if($school->save()) {
 			$response = array(
@@ -88,8 +88,8 @@ class SchoolsController extends Controller
     {
 		$school = School::find($id);
 		if(!empty($school)) {
-			$school->province_id = $request->input('province_id');
-			$school->name = $request->input('name');
+			$school->province_id = $request->province_id;
+			$school->name = $request->name;
 
 			if($school->save()) {
 				$response = array(
