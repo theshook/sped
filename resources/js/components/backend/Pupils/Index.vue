@@ -132,6 +132,11 @@
             button-size="sm"
         >
             <b-form>
+				<b-img 
+				v-if="image_url"
+				:src="image_url"
+				fluid></b-img>
+				
 				<b-form-group>
 					<b-form-file
 					v-model="$v.form.prof_pic.$model"
@@ -297,6 +302,7 @@
 				schools_list: [],
 				current_page: 1,
 				response: {},
+				image_url: null,
 
 				// ADD
 				form: {
@@ -382,6 +388,7 @@
 
 			handleImage: function(event) {
 				this.form.prof_pic = event.target.files[0]
+				this.image_url = URL.createObjectURL(this.form.prof_pic)
 			},
 
 			submitAdd: function(event) {
