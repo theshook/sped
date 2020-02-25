@@ -123,25 +123,20 @@
         <!-- ADD -->
         <b-modal
             id="add-modal"
-			size="lg"
             title="Add Pupil"
-            ok-title="Submit"
-            ok-variant="success"
-            ok-only
-            @ok="submitAdd"
+			hide-footer
             button-size="sm"
         >
             <b-form>
-				<b-img 
-				v-if="image_url"
-				:src="image_url"
-				fluid></b-img>
-				
-				<b-form-group>
+				<b-form-group
+				label="Profile picture"
+				label-class="text-sm"
+				v-if="!image_url">
 					<b-form-file
 					v-model="$v.form.prof_pic.$model"
 					:state="validateState('prof_pic')"
 					aria-describedby="input-image-feedback"
+					accept="image/*"
 					@change="handleImage">
 					</b-form-file>
 
@@ -151,6 +146,44 @@
 					</b-form-invalid-feedback>
 				</b-form-group>
 
+				<b-container 
+				class="text-center"
+				v-if="image_url"
+				fluid >
+					<b-img 
+					class="prof-pic-preview"
+					:src="image_url"
+					fluid></b-img>
+
+					<br>
+
+					<b-button
+					variant="light"
+					@click="clearImage">
+						Remove
+					</b-button>
+				</b-container>
+
+				<b-button
+				v-b-modal.add-two
+				class="float-right mt-4"
+				v-if="image_url"
+				variant="success">
+					Next
+				</b-button>
+            </b-form>
+        </b-modal>
+
+		<!-- ADD (SECOND STEP) -->
+		<b-modal
+		size="lg"
+		id="add-two"
+		title="Add Pupil"
+		ok-title="Submit"
+		ok-variant="success"
+		ok-only
+		@ok="submitAdd">
+			<b-form>
 				<label class="text-sm">
 					Full name
 				</label>
@@ -228,8 +261,29 @@
 							</b-form-invalid-feedback>
 						</b-form-group>
 				</b-form-group>
-            </b-form>
-        </b-modal>
+
+				<b-form-group>
+					<b-form-input
+					type="date"
+					v-model="$v.form.birth_date.$model"
+					:state="validateState('birth_date')"
+					aria-describedby="input-bday-feedback">
+					</b-form-input>
+
+					<b-form-invalid-feedback
+					id="input-bday-feedback">
+						This field is required.
+					</b-form-invalid-feedback>
+				</b-form-group>
+			</b-form>
+
+			<b-button
+			size="sm"
+			variant="link"
+			@click="addModalOpen">
+				Go back
+			</b-button>
+		</b-modal>
 
 		<!-- EDIT -->
         <b-modal
@@ -348,6 +402,9 @@
 				},
 				prof_pic: {
 					required
+				},
+				birth_date: {
+					required
 				}
 			}
 		},
@@ -391,6 +448,11 @@
 				this.image_url = URL.createObjectURL(this.form.prof_pic)
 			},
 
+			clearImage: function() {
+				this.form.prof_pic = null
+				this.image_url = null
+			},
+
 			submitAdd: function(event) {
 				event.preventDefault()
 				this.$v.form.$touch()
@@ -410,8 +472,7 @@
 				data.append('first_name', this.form.first_name)
 				data.append('last_name', this.form.last_name)
 				data.append('middle_name', this.form.middle_name)
-				data.append('birth_date', '1998-01-18')
-				//data.append('birth_date', this.form.birth_date)
+				data.append('birth_date', this.form.birth_date)
 
 				const config = {
 					headers: {
@@ -479,6 +540,11 @@
 				.catch(err =>
 					console.log(err.response)
 				);
+			},
+
+			addModalOpen: function() {
+				this.$bvModal.show('add-modal')
+				this.$bvModal.hide('add-two')
 			}
 		}
 	}
