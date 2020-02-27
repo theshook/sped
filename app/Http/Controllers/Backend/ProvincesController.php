@@ -11,13 +11,13 @@ class ProvincesController extends Controller
 	protected $province;
 
 	public function __construct(Province $province)
-    {
-        $this->middleware('auth');
-        $this->province = $province;
+	{
+		$this->province = $province;
 	}
-	
+
 	//Return admin provinces index
-	public function index() {
+	public function index()
+	{
 		return view('pages.backend.province.index');
 	}
 }

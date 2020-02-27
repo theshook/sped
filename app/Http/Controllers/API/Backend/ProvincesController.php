@@ -10,6 +10,7 @@ use App\Http\Resources\Backend\ProvincesResource;
 
 class ProvincesController extends Controller
 {
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -17,6 +18,8 @@ class ProvincesController extends Controller
 	 */
 	public function index(Request $request)
 	{
+		$user = auth()->user()->name;
+		dd($user);
 		$search = $request->search;
 		$limit = $request->limit;
 
