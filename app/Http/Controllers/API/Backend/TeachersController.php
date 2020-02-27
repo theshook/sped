@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\SchoolsStoreRequest;
 use Illuminate\Http\Request;
-use App\Models\School;
-use App\Http\Resources\Backend\SchoolsResource;
+use App\Models\Teacher;
+use App\Http\Requests\API\TeachersStoreRequest;
 
-class SchoolsController extends Controller
+class TeachersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,15 +16,15 @@ class SchoolsController extends Controller
      */
     public function index(Request $request)
     {
-		$search = $request->search;
+        $search = $request->search;
 		$limit = $request->limit;
 		
-		return ($search) ? School::with('province', 'pupils')::where('name', 'like', "$search%")->paginate($limit) : School::with('province', 'pupils')->paginate($limit);
-	}
-	
-	public function index_raw() {
-		return School::with('province')->get();
-	}
+		return ($search) ? Teacher::with('school')::where('first_name', 'like', "$search%")
+									->orWhere('last_name', 'like', "$search%")
+									->orWhere('middle_name', 'like', "$search%")
+									->paginate($limit) 
+						 : Teacher::with('school')->paginate($limit);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -33,23 +32,25 @@ class SchoolsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SchoolsStoreRequest $request)
+    public function store(TeachersStoreRequest $request)
     {
-		$school = new School;
-		$school->province_id = $request->province_id;
-		$school->name = $request->name;
+		$teacher = new Teacher;
+		$teacher->school_id = $request->school_id;
+		$teacher->first_name = $request->first_name;
+		$teacher->last_name = $request->last_name;
+		$teacher->middle_name = $request->middle_name;
 
-		if($school->save()) {
+		if($teacher->save()) {
 			$response = array(
 				'status' => 201,
-				'message' => 'Successfully added school'
+				'message' => 'Successfully added teacher'
 			);
 
 			return response()->json($response, 201);
 		} else {
 			$response = array(
 				'status' => 500,
-				'message' => 'Failed to add school'
+				'message' => 'Failed to add teacher'
 			);
 
 			return response()->json($response, 500);
@@ -64,17 +65,8 @@ class SchoolsController extends Controller
      */
     public function show($id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			return $school;
-		} else {
-			$response = array(
-				'status' => 404,
-				'message' => 'School do not exist'
-			);
-
-			return response()->json($response, 404);
-		}
+		$teacher = Teacher::find($id);
+		return $teacher;
     }
 
     /**
@@ -84,24 +76,26 @@ class SchoolsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(SchoolsStoreRequest $request, $id)
+    public function update(Request $request, $id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			$school->province_id = $request->province_id;
-			$school->name = $request->name;
+        $teacher = Teacher::find($id);
+		if(!empty($teacher)) {
+			$teacher->school_id = $request->school_id;
+			$teacher->first_name = $request->first_name;
+			$teacher->last_name = $request->last_name;
+			$teacher->middle_name = $request->middle_name;
 
-			if($school->save()) {
+			if($teacher->save()) {
 				$response = array(
 					'status' => 201,
-					'message' => 'Successfully updated school'
+					'message' => 'Successfully updated teacher'
 				);
 
 				return response()->json($response, 201);
 			} else {
 				$response = array(
 					'status' => 500,
-					'message' => 'Failed to updated school'
+					'message' => 'Failed to update teacher'
 				);
 
 				return response()->json($response, 500);
@@ -109,7 +103,7 @@ class SchoolsController extends Controller
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Teacher do not exist'
 			);
 
 			return response()->json($response, 404);
@@ -124,19 +118,19 @@ class SchoolsController extends Controller
      */
     public function destroy($id)
     {
-		$school = School::find($id);
-		if(!empty($school)) {
-			if($school->delete()) {
+        $teacher = Teacher::find($id);
+		if(!empty($teacher)) {
+			if($teacher->delete()) {
 				$response = array(
 					'status' => 201,
-					'message' => 'Successfully deleted school'
+					'message' => 'Successfully deleted teacher'
 				);
 	
 				return response()->json($response, 201);
 			} else {
 				$response = array(
 					'status' => 500,
-					'message' => 'Failed to delete school'
+					'message' => 'Failed to delete teacher'
 				);
 	
 				return response()->json($response, 500);
@@ -144,11 +138,10 @@ class SchoolsController extends Controller
 		} else {
 			$response = array(
 				'status' => 404,
-				'message' => 'School do not exist'
+				'message' => 'Teacher do not exist'
 			);
 
 			return response()->json($response, 404);
 		}
-
     }
 }

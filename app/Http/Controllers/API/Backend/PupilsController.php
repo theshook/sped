@@ -20,7 +20,7 @@ class PupilsController extends Controller
 		$search = $request->search;
 		$limit = $request->limit;
 
-		return ($search) ? Pupil::where('first_name', 'like', "$search%")->orWhere('last_name', 'like', "$search%")->paginate($limit) : Pupil::paginate($limit);
+		return ($search) ? Pupil::with('school')::where('first_name', 'like', "$search%")->orWhere('last_name', 'like', "$search%")->paginate($limit) : Pupil::with('school')->paginate($limit);
     }
 
     /**
@@ -32,14 +32,16 @@ class PupilsController extends Controller
     public function store(PupilsStoreRequest $request)
     {
 		$pupil = new Pupil;
-		$pupil->school_id = $request->input('school_id');
-		$pupil->first_name = $request->input('first_name');
-		$pupil->last_name = $request->input('last_name');
-		$pupil->middle_name = $request->input('middle_name');
-		$pupil->birth_date = $request->input('birth_date');
-		$pupil->prof_pic = $request->input('prof_pic');
+		$pupil->school_id = $request->school_id;
+		$pupil->first_name = $request->first_name;
+		$pupil->last_name = $request->last_name;
+		$pupil->middle_name = $request->middle_name;
+		$pupil->birth_date = $request->birth_date;
+		$imageName = $request->first_name.'-'.$request->last_name.'.'.$request->prof_pic->getClientOriginalExtension();
+		$pupil->prof_pic = $imageName;
+		$request->prof_pic->move(public_path('images/pupils'), $imageName);
 
-		if($pupil->delete()) {
+		if($pupil->save()) {
 			$response = array(
 				'status' => 201,
 				'message' => 'Successfully added pupil'
@@ -86,26 +88,28 @@ class PupilsController extends Controller
      */
     public function update(PupilsStoreRequest $request, $id)
     {
-        $pupil = Pupil::find($id);
+		$pupil = Pupil::find($id);
 		if(!empty($pupil)) {
-			$pupil->school_id = $request->input('school_id');
-			$pupil->first_name = $request->input('first_name');
-			$pupil->last_name = $request->input('last_name');
-			$pupil->middle_name = $request->input('middle_name');
-			$pupil->birth_date = $request->input('birth_date');
-			$pupil->prof_pic = $request->input('prof_pic');
+			$pupil->school_id = $request->school_id;
+			$pupil->first_name = $request->first_name;
+			$pupil->last_name = $request->last_name;
+			$pupil->middle_name = $request->middle_name;
+			$pupil->birth_date = $request->birth_date;
+			$imageName = $request->first_name.'-'.$request->last_name.'.jpg';
+			// $pupil->prof_pic = $imageName;
+			// $request->prof_pic->move(public_path('images/pupils'), $imageName);
 
-			if($pupil->delete()) {
+			if($pupil->update()) {
 				$response = array(
 					'status' => 201,
-					'message' => 'Successfully added pupil'
+					'message' => 'Successfully updated pupil'
 				);
 
 				return response()->json($response, 201);
 			} else {
 				$response = array(
 					'status' => 500,
-					'message' => 'Failed to add pupil'
+					'message' => 'Failed to update pupil'
 				);
 
 				return response()->json($response, 500);

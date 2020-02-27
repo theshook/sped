@@ -8,7 +8,7 @@
 							<h2
 								class="text-primary font-weight-bold"
 							>
-								Provinces
+								Questions
 							</h2>
 						</b-col>
 
@@ -21,7 +21,7 @@
 								>
 									<b-icon icon="pencil"></b-icon>
 									<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-									Add Province
+									Add Question
 								</b-button>
 							</div>
 						</b-col>
@@ -47,7 +47,7 @@
 								<select
 									class="form-control form-control-sm text-sm col-sm-2 mx-1"
 									id="row-limit"
-									@change="getProvinces"
+									@change="getQuestions"
 									v-model="limit"
 								>
 									<option value="10">10</option>
@@ -66,7 +66,7 @@
 								<b-form-input
 								size="sm"
 								v-model="search"
-								@input="getProvinces"
+								@input="getQuestions"
 								placeholder="Search"></b-form-input>
 							</b-form>
 						</b-col>
@@ -76,9 +76,9 @@
                         borderless
 						striped
                         hover
-                        id="province-table"
-                        :items="provinces"
-                        :fields="provinces_fields"
+                        id="question-table"
+                        :items="questions"
+                        :fields="questions_fields"
                         responsive="md"
                     >
                         <template v-slot:cell(name)="data">
@@ -116,8 +116,8 @@
                             v-model="current_page"
                             :per-page="Number(response.per_page)"
                             :total-rows="Number(response.total)"
-                            @change="getProvinces"
-                            aria-controls="province-table"
+                            @change="getQuestions"
+                            aria-controls="question-table"
                         ></b-pagination>
                     </b-container>
                 </b-card-body>
@@ -128,17 +128,16 @@
         <!-- ADD -->
         <b-modal
             id="add-modal"
-            title="Add Province"
+            title="Add Question"
             ok-title="Submit"
             ok-variant="success"
             ok-only
             @ok="submitAdd"
-			@hidden="resetForm"
             button-size="sm"
 
         >
             <b-form>
-                <b-form-group label="Name" label-class="text-sm">
+                <!-- <b-form-group label="Name" label-class="text-sm">
                     <b-form-input
 					v-model="$v.form.name.$model"
 					:state="validateState('name')"
@@ -148,25 +147,23 @@
 					id="invalid-input-name">
 						This field is required and must be atleast 3 characters.
 					</b-form-invalid-feedback>
-                </b-form-group>
+                </b-form-group> -->
             </b-form>
         </b-modal>
 
-        <!-- EDIT/UPDATE -->
+		<!-- EDIT -->
         <b-modal
             id="edit-modal"
-            title="Update Province Information"
-            ok-title="Save Changes"
+            title="Update Question"
+            ok-title="Submit"
             ok-variant="success"
             ok-only
             @ok="submitUpdate"
-			@hidden="resetForm"
             button-size="sm"
+
         >
-            <b-form
-			ref="form">
-                <input type="hidden" v-model="edit_id" />
-                <b-form-group label="Name" label-class="text-sm">
+            <b-form>
+                <!-- <b-form-group label="Name" label-class="text-sm">
                     <b-form-input
 					v-model="$v.form.name.$model"
 					:state="validateState('name')"
@@ -176,7 +173,7 @@
 					id="invalid-input-name">
 						This field is required and must be atleast 3 characters.
 					</b-form-invalid-feedback>
-                </b-form-group>
+                </b-form-group> -->
             </b-form>
         </b-modal>
 
@@ -200,18 +197,18 @@
 <script>
 import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 export default {
-    name: "ProvincesIndex",
-    props: ["host"],
+    name: "TeacherQuestionsIndex",
+    props: ["host", 'userid'],
     data() {
         return {
             search: "",
 			limit: 10,
             current_page: 1,
-            provinces: null,
-            provinces_fields: [
+            questions: null,
+            questions_fields: [
                 {
-                    key: "name",
-                    label: "Name",
+                    key: "question",
+                    label: "Question",
                     sortable: true
                 },
                 {
@@ -219,18 +216,16 @@ export default {
                     label: "Action"
                 }
             ],
-            province_list: [],
 			response: {},
 
             // ADD
             form: {
-				name: ''
+				
 			},
 
             // EDIT
             edit_id: null,
             edit_index: null,
-            edit_name: null,
 
             // DELETE
             delete_id: null
@@ -238,16 +233,12 @@ export default {
 	},
 	validations: {
 		form: {
-			name: {
-				required, 
-				minLength: minLength(3),
-				maxLength: maxLength(60)
-			}
+			
 		}
 	},
     computed: {},
     mounted() {
-        this.getProvinces();
+        this.getQuestions();
     },
     methods: {
 		validateState: function(name) {
@@ -255,67 +246,18 @@ export default {
 			return $dirty ? !$error : null
 		},
 
-        getProvinces: function(page) {
-            const provincesAPI = `${this.host}/provinces?search=${this.search}&limit=${this.limit}&page=${page}`;
+        getQuestions: function(page) {
+            const questionsAPI = `${this.host}/teacher/${this.userid}/questions?search=${this.search}&limit=${this.limit}&page=${page}`;
             axios
-                .get(provincesAPI)
+                .get(questionsAPI)
                 .then(response => {
-                    this.provinces = response.data.data;
+                    this.questions = response.data;
 					this.response = response.data;
+
+					console.log(this.questions)
                 })
                 .catch(err => console.log(err));
         },
-
-        formatDate: function(index) {
-            const provinces = this.provinces;
-            //return provinces[index].created_at.split('-')
-            const month = provinces[index].created_at.split("-")[1];
-            const dateDay = provinces[index].created_at
-                .split("-")[2]
-                .split(" ")[0];
-            const dateYear = provinces[index].created_at.split("-")[0];
-            let dateMonth = null;
-            switch (month) {
-                case "01":
-                    dateMonth = "January";
-                    break;
-                case "02":
-                    dateMonth = "February";
-                    break;
-                case "03":
-                    dateMonth = "March";
-                    break;
-                case "04":
-                    dateMonth = "April";
-                    break;
-                case "05":
-                    dateMonth = "May";
-                    break;
-                case "06":
-                    dateMonth = "June";
-                    break;
-                case "07":
-                    dateMonth = "July";
-                    break;
-                case "08":
-                    dateMonth = "August";
-                    break;
-                case "09":
-                    dateMonth = "September";
-                    break;
-                case "10":
-                    dateMonth = "October";
-                    break;
-                case "11":
-                    dateMonth = "November";
-                    break;
-                case "12":
-                    dateMonth = "December";
-                    break;
-            }
-
-            return `${dateMonth} ${dateDay}, ${dateYear}`;
-		},
 		
 		submitAdd: function(event) {
 			event.preventDefault()
@@ -328,13 +270,13 @@ export default {
 		},
 
         add: function() {
-            const provincesAPI = `${this.host}/provinces`;
+            const questionsAPI = `${this.host}/questions`;
             const data = {
                 name: this.form.name
 			};
 			
 			axios
-			.post(provincesAPI, data)
+			.post(questionsAPI, data)
 			.then(response => {
 				if (response.data.status == 201) {
 					this.getProvinces();
@@ -345,14 +287,14 @@ export default {
 					swal.fire({
 						icon: "success",
 						title: "Added",
-						text: "Province information successfully added",
+						text: "Assessment question successfully added",
 						timer: 3000
 					});
 				} else {
 					swal.fire({
 						icon: "error",
 						title: "Error",
-						text: "Failed to add province information",
+						text: "Failed to add assessment question",
 						timer: 3000
 					});
 				}
@@ -368,9 +310,8 @@ export default {
         },
 
         edit: function(index) {
-            this.edit_id = this.provinces[index].id;
+            this.edit_id = this.question[index].id;
             this.edit_index = index;
-			this.form.name = this.provinces[index].name;
 		},
 		
 		submitUpdate: function(event) {
@@ -384,30 +325,30 @@ export default {
 		},
 
         update: function() {
-            const provincesAPI = `${this.host}/province/${this.edit_id}`;
+            const questionsAPI = `${this.host}/question/${this.edit_id}`;
             const data = {
                 name: this.form.name
 			};
 			
 			axios
-			.put(provincesAPI, data)
+			.put(questionsAPI, data)
 			.then(response => {
 				if (response.data.status == 201) {
-					this.provinces[this.edit_index].name = this.form.name;
+					this.question[this.edit_index].name = this.form.name;
 					this.$bvModal.hide('edit-modal')
 					this.$v.$reset()
 
 					swal.fire({
 						icon: "success",
 						title: "Updated",
-						text: "Province information successfully updated",
+						text: "Assessment question information successfully updated",
 						timer: 3000
 					});
 				} else {
 					swal.fire({
 						icon: "error",
 						title: "Error",
-						text: "Failed to update province information",
+						text: "Failed to update assessment question",
 						timer: 3000
 					});
 				}
@@ -423,28 +364,28 @@ export default {
         },
 
         remove: function(index) {
-            this.delete_id = this.provinces[index].id;
+            this.delete_id = this.questions[index].id;
         },
 
         destroy: function(index) {
-            const provincesAPI = `${this.host}/province/${this.delete_id}`;
+            const questionsAPI = `${this.host}/questions/${this.delete_id}`;
             axios
-			.delete(provincesAPI)
+			.delete(questionsAPI)
 			.then(response => {
 				if (response.data.status == 201) {
-					this.provinces.splice(index, 1);
+					this.questions.splice(index, 1);
 
 					swal.fire({
 						icon: "success",
 						title: "Deleted",
-						text: "Province information successfully deleted",
+						text: "Assessment question successfully deleted",
 						timer: 3000
 					});
 				} else {
 					swal.fire({
 						icon: "error",
 						title: "Error",
-						text: "Failed to delete province information",
+						text: "Failed to delete assessment question",
 						timer: 3000
 					});
 				}
@@ -457,11 +398,6 @@ export default {
 					timer: 3000
 				})
 			);
-		},
-
-		resetForm: function() {
-			this.$v.$reset()
-			this.form.name = null
 		}
     }
 };

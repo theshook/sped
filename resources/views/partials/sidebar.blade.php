@@ -38,11 +38,14 @@
 					<h6 class="collapse-header">Assessment Centers</h6>
 					<a class="collapse-item" href="{{ route('admin.provinces') }}">Provinces</a>
 					<a class="collapse-item" href="{{ route('admin.schools') }}">Schools</a>
-					{{-- <a class="collapse-item" href="{{ route('admin.teachers') }}">Teachers</a> --}}
+					<a class="collapse-item" href="{{ route('admin.teachers') }}">Teachers</a>
 					<div class="collapse-divider"></div>
 					<h6 class="collapse-header">Students</h6>
 					<a class="collapse-item" href="{{ route('admin.pupils') }}">Pupils</a>
 					<div class="collapse-divider"></div>
+					<h6 class="collapse-header">Assessment</h6>
+					<a class="collapse-item" href="#">Tests</a>
+					<a class="collapse-item" href="{{ route('admin.questions') }}">Questions</a>
 					<h6 class="collapse-header">Checklists</h6>
 					<a class="collapse-item" href="{{ route('admin.categories') }}">Categories</a>
 					<a class="collapse-item" href="{{ route('admin.checklists') }}">Checklists</a>

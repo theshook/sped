@@ -9,4 +9,8 @@ class Province extends Model
 {
     use SoftDeletes;
 	protected $fillable = ['name'];
+
+	public function schools() {
+		return $this->hasMany(School::class);
+	}
 }

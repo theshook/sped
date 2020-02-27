@@ -16,7 +16,8 @@ class CreateChecklistsTable extends Migration
         Schema::create('checklists', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('content');
-            $table->unsignedBigInteger('checklist_categories_id');
+			$table->unsignedBigInteger('checklist_categories_id');
+			$table->softDeletes();
             $table->timestamps();
 
             $table->foreign('checklist_categories_id')->references('id')->on('checklist_categories');

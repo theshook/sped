@@ -40,17 +40,27 @@ window.swal = Swal;
 //BACKEND (Provinces)
 Vue.component(
     "provinces-index",
-    require("./components/backend/province/Index.vue").default
+    require("./components/backend/Province/Index.vue").default
 );
 //BACKEND (Schools)
 Vue.component(
     "schools-index",
-    require("./components/backend/schools/Index.vue").default
+    require("./components/backend/Schools/Index.vue").default
 );
 //BACKEND (Pupils)
 Vue.component(
     "pupils-index",
-    require("./components/backend/pupils/Index.vue").default
+    require("./components/backend/Pupils/Index.vue").default
+);
+//BACKEND (Teachers)
+Vue.component(
+    "teachers-index",
+    require("./components/backend/Teachers/Index.vue").default
+);
+//BACKEND (Teacher-Questions)
+Vue.component(
+    "teacher-questions-index",
+    require("./components/backend/AssessmentQuestions/Index.vue").default
 );
 
 /** ChecklistCategories & Checklists */

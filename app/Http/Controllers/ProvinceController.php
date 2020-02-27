@@ -9,7 +9,7 @@ class ProvinceController extends Controller
 {
     protected $province;
 
-    public function __construct(Province $province)--
+    //public function __construct(Province $province)--
     public function update(Request $request, Province $province)
     {
         $province->update(['name' => $request->name]);

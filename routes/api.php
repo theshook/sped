@@ -29,6 +29,7 @@ Route::delete('/province/{id}', 'API\Backend\ProvincesController@destroy');
 
 //BACKEND (SCHOOLS)
 Route::get('/schools', 'API\Backend\SchoolsController@index');
+Route::get('/schools/raw', 'API\Backend\SchoolsController@index_raw');
 Route::post('/schools', 'API\Backend\SchoolsController@store');
 Route::get('/school/{id}', 'API\Backend\SchoolsController@show');
 Route::put('/school/{id}', 'API\Backend\SchoolsController@update');
@@ -42,6 +43,29 @@ Route::post('/pupils', 'API\Backend\PupilsController@store');
 Route::get('/pupil/{id}', 'API\Backend\PupilsController@show');
 Route::put('/pupil/{id}', 'API\Backend\PupilsController@update');
 Route::delete('/pupil/{id}', 'API\Backend\PupilsController@destroy');
+
+/* ========================================================================================================== */
+
+//BACKEND (TEACHERS)
+Route::get('/teachers', 'API\Backend\TeachersController@index');
+Route::post('/teachers', 'API\Backend\TeachersController@store');
+Route::get('/teacher/{id}', 'API\Backend\TeachersController@show');
+Route::put('/teacher/{id}', 'API\Backend\TeachersController@update');
+Route::delete('/teacher/{id}', 'API\Backend\TeachersController@destroy');
+
+/* ========================================================================================================== */
+
+//BACKEND (ASSESSMENT QUESTIONS) --TEACHER OWNED
+Route::get('/teacher/{id}/questions', 'API\Backend\TeacherQuestionsController@index');
+
+/* ========================================================================================================== */
+
+//BACKEND (ASSESSMENT QUESTIONS) --GENERAL
+Route::get('/questions', 'API\Backend\QuestionsController@index');
+Route::post('/questions', 'API\Backend\QuestionsController@store');
+Route::get('/question/{id}', 'API\Backend\QuestionsController@show');
+Route::put('/question/{id}', 'API\Backend\QuestionsController@update');
+Route::delete('/question/{id}', 'API\Backend\QuestionsController@destroy');
 
 /* ========================================================================================================== */
 
@@ -61,5 +85,8 @@ Route::post('/checklists/categories', 'API\Backend\ChecklistCategoriesController
 Route::get('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@show');
 Route::put('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@update');
 Route::delete('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@destroy');
+
+/* ========================================================================================================== */
+
 //BACKEND (REPORTS)
 Route::get('/reports', 'API\Backend\ChecklistsController@index');

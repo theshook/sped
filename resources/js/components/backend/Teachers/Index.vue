@@ -8,7 +8,7 @@
 							<h2
 								class="text-primary font-weight-bold"
 							>
-								Provinces
+								Teachers
 							</h2>
 						</b-col>
 
@@ -21,7 +21,7 @@
 								>
 									<b-icon icon="pencil"></b-icon>
 									<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-									Add Province
+									Add Teacher
 								</b-button>
 							</div>
 						</b-col>
@@ -32,7 +32,7 @@
 					class="mb-2">
 						<b-col lg="6">
 							<!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
-							@change="getProvinces"
+							@change="getTeachers"
 							v-model="limit">
 								<b-form-select-option value="10" selected>10</b-form-select-option>
 								<b-form-select-option value="25">25</b-form-select-option>
@@ -47,7 +47,7 @@
 								<select
 									class="form-control form-control-sm text-sm col-sm-2 mx-1"
 									id="row-limit"
-									@change="getProvinces"
+									@change="getTeachers"
 									v-model="limit"
 								>
 									<option value="10">10</option>
@@ -66,7 +66,7 @@
 								<b-form-input
 								size="sm"
 								v-model="search"
-								@input="getProvinces"
+								@input="getTeachers"
 								placeholder="Search"></b-form-input>
 							</b-form>
 						</b-col>
@@ -76,9 +76,9 @@
                         borderless
 						striped
                         hover
-                        id="province-table"
-                        :items="provinces"
-                        :fields="provinces_fields"
+                        id="teacher-table"
+                        :items="teachers"
+                        :fields="teachers_fields"
                         responsive="md"
                     >
                         <template v-slot:cell(name)="data">
@@ -116,8 +116,8 @@
                             v-model="current_page"
                             :per-page="Number(response.per_page)"
                             :total-rows="Number(response.total)"
-                            @change="getProvinces"
-                            aria-controls="province-table"
+                            @change="getTeachers"
+                            aria-controls="teacher-table"
                         ></b-pagination>
                     </b-container>
                 </b-card-body>
@@ -127,8 +127,9 @@
         <!-- MODALS -->
         <!-- ADD -->
         <b-modal
+			size="lg"
             id="add-modal"
-            title="Add Province"
+            title="Add Teacher"
             ok-title="Submit"
             ok-variant="success"
             ok-only
@@ -138,45 +139,173 @@
 
         >
             <b-form>
-                <b-form-group label="Name" label-class="text-sm">
-                    <b-form-input
-					v-model="$v.form.name.$model"
-					:state="validateState('name')"
-					aria-describedby="invalid-input-name"></b-form-input>
+				<b-form-group
+				label="School"
+				label-class="text-sm">
+					<b-form-select
+					v-model="$v.form.school_id.$model"
+					:state="validateState('school_id')"
+					aria-describedby="input-school-feedback">
+						<b-form-select-option
+						v-for="school in schools" :key="school.id"
+						:value="school.id">
+							{{school.name}}
+						</b-form-select-option>
+					</b-form-select>
 
 					<b-form-invalid-feedback
-					id="invalid-input-name">
-						This field is required and must be atleast 3 characters.
+					id="input-school-feedback">
+						This field is required.
 					</b-form-invalid-feedback>
-                </b-form-group>
+				</b-form-group>
+
+                <label class="text-sm">
+					Full name
+				</label>
+				<b-form-row>
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.first_name.$model"
+							:state="validateState('first_name')"
+							aria-describedby="input-fname-feedback"
+							placeholder="First name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.last_name.$model"
+							:state="validateState('last_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Middle name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.middle_name.$model"
+							:state="validateState('middle_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Last name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+				</b-form-row>
             </b-form>
         </b-modal>
 
-        <!-- EDIT/UPDATE -->
+        <!-- ADD -->
         <b-modal
+			size="lg"
             id="edit-modal"
-            title="Update Province Information"
-            ok-title="Save Changes"
+            title="Update Teacher Information"
+            ok-title="Submit"
             ok-variant="success"
             ok-only
             @ok="submitUpdate"
 			@hidden="resetForm"
             button-size="sm"
+
         >
-            <b-form
-			ref="form">
-                <input type="hidden" v-model="edit_id" />
-                <b-form-group label="Name" label-class="text-sm">
-                    <b-form-input
-					v-model="$v.form.name.$model"
-					:state="validateState('name')"
-					aria-describedby="invalid-input-name"></b-form-input>
+            <b-form>
+				<b-form-group
+				label="School"
+				label-class="text-sm">
+					<b-form-select
+					v-model="$v.form.school_id.$model"
+					:state="validateState('school_id')"
+					aria-describedby="input-school-feedback">
+						<b-form-select-option
+						v-for="school in schools" :key="school.id"
+						:value="school.id">
+							{{school.name}}
+						</b-form-select-option>
+					</b-form-select>
 
 					<b-form-invalid-feedback
-					id="invalid-input-name">
-						This field is required and must be atleast 3 characters.
+					id="input-school-feedback">
+						This field is required.
 					</b-form-invalid-feedback>
-                </b-form-group>
+				</b-form-group>
+
+                <label class="text-sm">
+					Full name
+				</label>
+				<b-form-row>
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.first_name.$model"
+							:state="validateState('first_name')"
+							aria-describedby="input-fname-feedback"
+							placeholder="First name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.last_name.$model"
+							:state="validateState('last_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Middle name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.middle_name.$model"
+							:state="validateState('middle_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Last name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+				</b-form-row>
             </b-form>
         </b-modal>
 
@@ -200,37 +329,50 @@
 <script>
 import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 export default {
-    name: "ProvincesIndex",
+    name: "TeachersIndex",
     props: ["host"],
     data() {
         return {
             search: "",
 			limit: 10,
             current_page: 1,
-            provinces: null,
-            provinces_fields: [
+            teachers: null,
+            teachers_fields: [
                 {
-                    key: "name",
-                    label: "Name",
+                    key: "first_name",
+                    label: "First name",
+                    sortable: true
+				},
+				{
+                    key: "last_name",
+                    label: "Last name",
+                    sortable: true
+				},
+				{
+                    key: "school.name",
+                    label: "School",
                     sortable: true
                 },
                 {
                     key: "index",
                     label: "Action"
                 }
-            ],
-            province_list: [],
+			],
+			schools: null,
+            schools_list: [],
 			response: {},
 
             // ADD
             form: {
-				name: ''
+				school_id: null,
+				first_name: null,
+				last_name: null,
+				middle_name: null
 			},
 
             // EDIT
             edit_id: null,
             edit_index: null,
-            edit_name: null,
 
             // DELETE
             delete_id: null
@@ -238,7 +380,20 @@ export default {
 	},
 	validations: {
 		form: {
-			name: {
+			school_id: {
+				required
+			},
+			first_name: {
+				required, 
+				minLength: minLength(3),
+				maxLength: maxLength(60)
+			},
+			last_name: {
+				required, 
+				minLength: minLength(3),
+				maxLength: maxLength(60)
+			},
+			middle_name: {
 				required, 
 				minLength: minLength(3),
 				maxLength: maxLength(60)
@@ -247,7 +402,8 @@ export default {
 	},
     computed: {},
     mounted() {
-        this.getProvinces();
+		this.getTeachers();
+		this.getSchools();
     },
     methods: {
 		validateState: function(name) {
@@ -255,25 +411,39 @@ export default {
 			return $dirty ? !$error : null
 		},
 
-        getProvinces: function(page) {
-            const provincesAPI = `${this.host}/provinces?search=${this.search}&limit=${this.limit}&page=${page}`;
+        getTeachers: function(page) {
+            const teachersAPI = `${this.host}/teachers?search=${this.search}&limit=${this.limit}&page=${page}`;
             axios
-                .get(provincesAPI)
+                .get(teachersAPI)
                 .then(response => {
-                    this.provinces = response.data.data;
+                    this.teachers = response.data.data;
 					this.response = response.data;
                 })
                 .catch(err => console.log(err));
-        },
+		},
+		
+		getSchools: function() {
+			const schoolsAPI = `${this.host}/schools/raw`;
+			axios
+				.get(schoolsAPI)
+				.then(response => {
+					this.schools = response.data;
+
+					for(let i = 0; i < this.schools.length; i++) {
+						this.schools_list.push(this.schools[i].name)
+					}
+				})
+				.catch(err => console.log(err));
+		},
 
         formatDate: function(index) {
-            const provinces = this.provinces;
-            //return provinces[index].created_at.split('-')
-            const month = provinces[index].created_at.split("-")[1];
-            const dateDay = provinces[index].created_at
+            const teachers = this.teachers;
+            //return teachers[index].created_at.split('-')
+            const month = teachers[index].created_at.split("-")[1];
+            const dateDay = teachers[index].created_at
                 .split("-")[2]
                 .split(" ")[0];
-            const dateYear = provinces[index].created_at.split("-")[0];
+            const dateYear = teachers[index].created_at.split("-")[0];
             let dateMonth = null;
             switch (month) {
                 case "01":
@@ -328,49 +498,49 @@ export default {
 		},
 
         add: function() {
-            const provincesAPI = `${this.host}/provinces`;
+            const teachersAPI = `${this.host}/teachers`;
             const data = {
-                name: this.form.name
+				school_id: this.form.school_id,
+                first_name: this.form.first_name,
+                last_name: this.form.last_name,
+                middle_name: this.form.middle_name
 			};
 			
 			axios
-			.post(provincesAPI, data)
+			.post(teachersAPI, data)
 			.then(response => {
+				console.log(response.data)
 				if (response.data.status == 201) {
-					this.getProvinces();
-					this.form.name = null
+					this.getTeachers();
+					this.resetForm()
 					this.$bvModal.hide('add-modal')
-					this.$v.$reset()
 
 					swal.fire({
 						icon: "success",
 						title: "Added",
-						text: "Province information successfully added",
+						text: "Teacher successfully added",
 						timer: 3000
 					});
 				} else {
 					swal.fire({
 						icon: "error",
 						title: "Error",
-						text: "Failed to add province information",
+						text: "Failed to add teacher",
 						timer: 3000
 					});
 				}
 			})
-			.catch(err =>
-				swal.fire({
-					icon: "error",
-					title: err.response.data.message,
-					text: err.response.data.errors.name[0],
-					timer: 3000
-				})
-			);
+			.catch(err => console.log(err))
         },
 
         edit: function(index) {
-            this.edit_id = this.provinces[index].id;
+			this.$v.$reset()
+            this.edit_id = this.teachers[index].id;
             this.edit_index = index;
-			this.form.name = this.provinces[index].name;
+			this.form.school_id = this.teachers[index].school_id;
+			this.form.first_name = this.teachers[index].first_name;
+			this.form.last_name = this.teachers[index].last_name;
+			this.form.middle_name = this.teachers[index].middle_name;
 		},
 		
 		submitUpdate: function(event) {
@@ -384,67 +554,74 @@ export default {
 		},
 
         update: function() {
-            const provincesAPI = `${this.host}/province/${this.edit_id}`;
+            const teachersAPI = `${this.host}/teacher/${this.edit_id}`;
             const data = {
-                name: this.form.name
+				school_id: this.form.school_id,
+                first_name: this.form.first_name,
+                last_name: this.form.last_name,
+                middle_name: this.form.middle_name
 			};
 			
 			axios
-			.put(provincesAPI, data)
+			.put(teachersAPI, data)
 			.then(response => {
 				if (response.data.status == 201) {
-					this.provinces[this.edit_index].name = this.form.name;
+					this.teachers[this.edit_index].school_id = this.form.school_id;
+					this.teachers[this.edit_index].first_name = this.form.first_name;
+					this.teachers[this.edit_index].middle_name = this.form.middle_name;
+					this.teachers[this.edit_index].last_name = this.form.last_name;
 					this.$bvModal.hide('edit-modal')
 					this.$v.$reset()
 
 					swal.fire({
 						icon: "success",
 						title: "Updated",
-						text: "Province information successfully updated",
+						text: "Teacher information successfully updated",
 						timer: 3000
 					});
 				} else {
 					swal.fire({
 						icon: "error",
 						title: "Error",
-						text: "Failed to update province information",
+						text: "Failed to update teacher information",
 						timer: 3000
 					});
 				}
 			})
 			.catch(err =>
-				swal.fire({
-					icon: "error",
-					title: err.response.data.message,
-					text: err.response.data.errors.name[0],
-					timer: 3000
-				})
+				console.log(err)
+				// swal.fire({
+				// 	icon: "error",
+				// 	title: err.response.data.message,
+				// 	text: err.response.data.errors.name[0],
+				// 	timer: 3000
+				// })
 			);
         },
 
         remove: function(index) {
-            this.delete_id = this.provinces[index].id;
+            this.delete_id = this.teachers[index].id;
         },
 
         destroy: function(index) {
-            const provincesAPI = `${this.host}/province/${this.delete_id}`;
+            const teachersAPI = `${this.host}/teacher/${this.delete_id}`;
             axios
-			.delete(provincesAPI)
+			.delete(teachersAPI)
 			.then(response => {
 				if (response.data.status == 201) {
-					this.provinces.splice(index, 1);
+					this.teachers.splice(index, 1);
 
 					swal.fire({
 						icon: "success",
 						title: "Deleted",
-						text: "Province information successfully deleted",
+						text: "Teacher successfully deleted",
 						timer: 3000
 					});
 				} else {
 					swal.fire({
 						icon: "error",
 						title: "Error",
-						text: "Failed to delete province information",
+						text: "Failed to delete teacher",
 						timer: 3000
 					});
 				}
@@ -461,7 +638,10 @@ export default {
 
 		resetForm: function() {
 			this.$v.$reset()
-			this.form.name = null
+			this.form.school_id = null
+			this.form.first_name = null
+			this.form.last_name = null
+			this.form.middle_name = null
 		}
     }
 };
