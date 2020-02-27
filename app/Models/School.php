@@ -17,4 +17,8 @@ class School extends Model
 	public function pupils() {
 		return $this->hasMany(Pupil::class);
 	}
+
+	public function teachers() {
+		return $this->hasMany(Teacher::class);
+	}
 }
