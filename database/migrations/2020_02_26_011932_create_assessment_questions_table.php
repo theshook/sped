@@ -15,13 +15,17 @@ class CreateAssessmentQuestionsTable extends Migration
     {
         Schema::create('assessment_questions', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->unsignedBigInteger('test_id');
-			$table->unsignedBigInteger('assessment_id');
+			$table->unsignedBigInteger('teacher_id');
+			$table->string('question');
+			$table->string('choice1');
+			$table->string('choice2');
+			$table->string('choice3');
+			$table->string('choice4');
+			$table->string('answer');
+			$table->softDeletes();
 			$table->timestamps();
 			
-			
-			$table->foreign('test_id')->references('id')->on('tests');
-			$table->foreign('assessment_id')->references('id')->on('assessments');
+			$table->foreign('teacher_id')->references('id')->on('teachers');
         });
     }
 
