@@ -25,7 +25,6 @@
 }
 
 /* TABLE */
-
 table > thead {
 	background: #fff !important;
 }
@@ -40,6 +39,26 @@ table > tbody tr > td {
 	color: #888 !important;
 	padding: .7rem !important;
 	font-size: .8rem !important;
+}
+
+/* PROFILE PICTURE PREVIEW */
+.prof-pic-preview {
+	height: 150px !important;
+	width: 160px !important;
+	border: solid 1px #eee;
+	border-radius: 50% !important;
+	margin: .7rem auto !important
+}
+
+/* AVATAR */
+.avatar {
+	background: #f0f0f0;
+	color: #777 !important;
+	padding: 4rem 4.5rem !important;
+	border: solid 1px #f1f1f1;
+	border-radius: 50%;
+	text-align: center;
+	font-size: 2rem !important;
 }
 
 
