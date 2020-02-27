@@ -15,9 +15,10 @@
 						<b-col lg="6">
 							<div class="d-flex justify-content-end align-baseline">
 								<b-button
-									variant="primary"
-									size="sm"
-									v-b-modal.add-modal
+								variant="primary"
+								size="sm"
+								v-b-modal.add-modal
+								@click="clearPupilData"
 								>
 									<b-icon icon="pencil"></b-icon>
 									<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
@@ -120,19 +121,24 @@
 		</b-container>
 
 		<!-- MODALS -->
-        <!-- ADD -->
-        <b-modal
-            id="add-modal"
-            title="Add Pupil"
-			hide-footer
-            button-size="sm"
-        >
-            <b-form>
+		<!-- ADD -->
+		<b-modal
+		size="lg"
+		id="add-modal"
+		title="Add Pupil"
+		ok-title="Submit"
+		ok-variant="success"
+		ok-only
+		@ok="submitAdd"
+		@hidden="resetForm"
+		scrollable>
+			<b-form>
 				<b-form-group
 				label="Profile picture"
 				label-class="text-sm"
 				v-if="!image_url">
 					<b-form-file
+					ref="image_input"
 					v-model="$v.form.prof_pic.$model"
 					:state="validateState('prof_pic')"
 					aria-describedby="input-image-feedback"
@@ -147,7 +153,7 @@
 				</b-form-group>
 
 				<b-container 
-				class="text-center"
+				class="text-center py-0 my-0"
 				v-if="image_url"
 				fluid >
 					<b-img 
@@ -157,33 +163,25 @@
 
 					<br>
 
-					<b-button
-					variant="light"
-					@click="clearImage">
-						Remove
-					</b-button>
+					<b-container 
+					class="text-center mb-2"
+					fluid>
+						<b-button
+						class="text-sm p-2 mx-2"
+						variant="light"
+						@click="changeImage">
+							Change
+						</b-button>
+
+						<b-button
+						class="text-sm p-2 mx-2"
+						variant="light"
+						@click="clearImage">
+							Remove
+						</b-button>
+					</b-container>
 				</b-container>
 
-				<b-button
-				v-b-modal.add-two
-				class="float-right mt-4"
-				v-if="image_url"
-				variant="success">
-					Next
-				</b-button>
-            </b-form>
-        </b-modal>
-
-		<!-- ADD (SECOND STEP) -->
-		<b-modal
-		size="lg"
-		id="add-two"
-		title="Add Pupil"
-		ok-title="Submit"
-		ok-variant="success"
-		ok-only
-		@ok="submitAdd">
-			<b-form>
 				<label class="text-sm">
 					Full name
 				</label>
@@ -240,29 +238,29 @@
 					</b-col>
 				</b-form-row>
 
-				<b-form-group>
-					<b-form-group
-					label="School"
-					label-class="text-sm">
-							<b-form-select
-							v-model="$v.form.school_id.$model"
-							:state="validateState('school_id')"
-							aria-describedby="input-school-feedback">
-								<b-form-select-option
-								v-for="school in schools" :key="school.id"
-								:value="school.id">
-									{{school.name}}
-								</b-form-select-option>
-							</b-form-select>
+				<b-form-group
+				label="School"
+				label-class="text-sm">
+					<b-form-select
+					v-model="$v.form.school_id.$model"
+					:state="validateState('school_id')"
+					aria-describedby="input-school-feedback">
+						<b-form-select-option
+						v-for="school in schools" :key="school.id"
+						:value="school.id">
+							{{school.name}}
+						</b-form-select-option>
+					</b-form-select>
 
-							<b-form-invalid-feedback
-							id="input-school-feedback">
-								This field is required.
-							</b-form-invalid-feedback>
-						</b-form-group>
+					<b-form-invalid-feedback
+					id="input-school-feedback">
+						This field is required.
+					</b-form-invalid-feedback>
 				</b-form-group>
 
-				<b-form-group>
+				<b-form-group
+				label="Birth date"
+				label-class="text-sm">
 					<b-form-input
 					type="date"
 					v-model="$v.form.birth_date.$model"
@@ -293,15 +291,131 @@
             ok-title="Submit"
             ok-variant="success"
             ok-only
-            @ok="update"
+            @ok="submitUpdate"
+			@hidden="resetForm"
             button-size="sm"
         >
             <b-form>
-                <b-row>
-					<b-col lg="6"></b-col>
-					<b-col lg="6"></b-col>
-				</b-row>
-            </b-form>
+				<!-- <b-container 
+				class="text-center"
+				v-if="form.prof_pic"
+				fluid >
+					<b-img 
+					class="prof-pic-preview"
+					:src="this.assetURL + '/' + form.prof_pic"
+					fluid></b-img>
+				</b-container>
+
+
+				<b-form-group
+				label="Profile picture"
+				label-class="text-sm">
+					<b-form-file
+					v-model="$v.form.prof_pic.$model"
+					:state="validateState('prof_pic')"
+					aria-describedby="input-image-feedback"
+					accept="image/*"
+					@change="handleImage">
+					</b-form-file>
+
+					<b-form-invalid-feedback
+					id="input-image-feedback">
+						This field is required and must be an image.
+					</b-form-invalid-feedback>
+				</b-form-group> -->
+
+				<label class="text-sm">
+					Full name
+				</label>
+				<b-form-row>
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.first_name.$model"
+							:state="validateState('first_name')"
+							aria-describedby="input-fname-feedback"
+							placeholder="First name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.middle_name.$model"
+							:state="validateState('last_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Middle name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+
+					<b-col 
+					lg="4"
+					no-gutters>
+						<b-form-group>
+							<b-form-input
+							v-model="$v.form.last_name.$model"
+							:state="validateState('middle_name')"
+							aria-describedby="input-lname-feedback"
+							placeholder="Last name"></b-form-input>
+
+							<b-form-invalid-feedback
+							id="input-fname-feedback">
+								This field is required and must be atleast 3 characters.
+							</b-form-invalid-feedback>
+						</b-form-group>
+					</b-col>
+				</b-form-row>
+
+				<b-form-group
+				label="School"
+				label-class="text-sm">
+					<b-form-select
+					v-model="$v.form.school_id.$model"
+					:state="validateState('school_id')"
+					aria-describedby="input-school-feedback">
+						<b-form-select-option
+						v-for="school in schools" :key="school.id"
+						:value="school.id">
+							{{school.name}}
+						</b-form-select-option>
+					</b-form-select>
+
+					<b-form-invalid-feedback
+					id="input-school-feedback">
+						This field is required.
+					</b-form-invalid-feedback>
+				</b-form-group>
+
+				<b-form-group
+				label="Birth date"
+				label-class="text-sm">
+					<b-form-input
+					type="date"
+					v-model="$v.form.birth_date.$model"
+					:state="validateState('birth_date')"
+					aria-describedby="input-bday-feedback">
+					</b-form-input>
+
+					<b-form-invalid-feedback
+					id="input-bday-feedback">
+						This field is required.
+					</b-form-invalid-feedback>
+				</b-form-group>
+			</b-form>
         </b-modal>
 
 		<!-- DELETE CONFIRM -->
@@ -371,10 +485,6 @@
 				 // EDIT
 				edit_id: null,
 				edit_index: null,
-				edit_fname: null,
-				edit_lname: null,
-				edit_mname: null,
-				edit_bday: null,
 
 				// DELETE
 				delete_id: null
@@ -453,6 +563,12 @@
 				this.image_url = null
 			},
 
+			changeImage: function() {
+				this.clearImage()
+				// TODO - click input file to show choose image dialog
+				// this.$refs.image_input.click()
+			},
+
 			submitAdd: function(event) {
 				event.preventDefault()
 				this.$v.form.$touch()
@@ -482,18 +598,50 @@
 
 				axios.post(pupilsAPI, data, config)
 				.then(response => {
+					if (response.data.status == 201) {
+						this.getPupils()
+						this.clearPupilData()
+						this.$bvModal.hide('add-two')
+						this.$v.$reset()
+
+						swal.fire({
+							icon: "success",
+							title: "Added",
+							text: "Pupil successfully added",
+							timer: 3000
+						});
+					} else {
+						swal.fire({
+							icon: "error",
+							title: "Error",
+							text: "Failed to add pupil",
+							timer: 3000
+						});
+					}
+
 					console.log(response.data)
 				})
-				.catch(err => console.log(err.response))
+				.catch(err => {
+					swal.fire({
+						icon: "error",
+						title: err.response.data.message,
+						text: err.response.data.errors.name[0],
+						timer: 3000
+					})
+				})
 			},
 
 			edit: function(index) {
+				this.$v.$reset()
+
 				this.edit_id = this.pupils[index].id
 				this.edit_index = index
-				this.edit_fname = this.pupils[index].first_name
-				this.edit_lname = this.pupils[index].last_name
-				this.edit_mname = this.pupils[index].middle_name
-				this.edit_bday = this.pupils[index].birth_date
+				this.form.school_id = this.pupils[index].school_id
+				this.form.prof_pic = this.pupils[index].prof_pic
+				this.form.first_name = this.pupils[index].first_name
+				this.form.last_name = this.pupils[index].last_name
+				this.form.middle_name = this.pupils[index].middle_name
+				this.form.birth_date = this.pupils[index].birth_date
 			},
 
 			submitUpdate: function() {
@@ -502,12 +650,70 @@
 				if(this.$v.form.$anyError) {
 					return
 				} else {
-					this.add()
+					this.update()
 				}
 			},
 
 			update: function() {
+				let pupilsAPI = `${this.host}/pupil/${this.edit_id}`
 
+				//TODO - #QA - Update data empty in controller
+
+				// let data = new FormData();
+				// data.append('school_id', this.form.school_id)
+				// data.append('prof_pic', this.form.prof_pic)
+				// data.append('first_name', this.form.first_name)
+				// data.append('last_name', this.form.last_name)
+				// data.append('middle_name', this.form.middle_name)
+				// data.append('birth_date', this.form.birth_date)
+
+				let data = {
+					school_id: this.form.school_id,
+					first_name: this.form.first_name,
+					last_name: this.form.last_name,
+					middle_name: this.form.middle_name,
+					birth_date: this.form.birth_date,
+					prof_pic: this.form.prof_pic
+				}
+
+				// const config = {
+				// 	headers: {
+				// 		'Content-Type': 'multipart/form-data'
+				// 	}
+				// }
+
+				axios.put(pupilsAPI, data)
+				.then(response => { 
+					if (response.data.status == 201) {
+						this.getPupils()
+						this.clearPupilData()
+						this.$bvModal.hide('add-two')
+						this.$v.$reset()
+
+						swal.fire({
+							icon: "success",
+							title: "Updated",
+							text: "Pupil information successfully added",
+							timer: 3000
+						});
+					} else {
+						swal.fire({
+							icon: "error",
+							title: "Error",
+							text: "Failed to update pupil information",
+							timer: 3000
+						});
+					}
+				})
+				.catch(err => {
+					// swal.fire({
+					// 	icon: "error",
+					// 	title: err.response.data.message,
+					// 	text: err.response.data.errors.name[0],
+					// 	timer: 3000
+					// })
+					console.log(err)
+				})
 			},
 
 			remove: function(index) {
@@ -545,6 +751,19 @@
 			addModalOpen: function() {
 				this.$bvModal.show('add-modal')
 				this.$bvModal.hide('add-two')
+			},
+
+			clearPupilData: function() {
+				this.form.first_name = null
+				this.form.last_name = null
+				this.form.middle_name = null
+				this.form.birth_date = null
+				this.form.prof_pic = null
+				this.form.school_id = null
+			},
+
+			resetForm: function() {
+				this.$v.$reset()
 			}
 		}
 	}
