@@ -46,6 +46,29 @@ Route::delete('/pupil/{id}', 'API\Backend\PupilsController@destroy');
 
 /* ========================================================================================================== */
 
+//BACKEND (TEACHERS)
+Route::get('/teachers', 'API\Backend\TeachersController@index');
+Route::post('/teachers', 'API\Backend\TeachersController@store');
+Route::get('/teacher/{id}', 'API\Backend\TeachersController@show');
+Route::put('/teacher/{id}', 'API\Backend\TeachersController@update');
+Route::delete('/teacher/{id}', 'API\Backend\TeachersController@destroy');
+
+/* ========================================================================================================== */
+
+//BACKEND (ASSESSMENT QUESTIONS) --TEACHER OWNED
+Route::get('/teacher/{id}/questions', 'API\Backend\TeacherQuestionsController@index');
+
+/* ========================================================================================================== */
+
+//BACKEND (ASSESSMENT QUESTIONS) --GENERAL
+Route::get('/questions', 'API\Backend\QuestionsController@index');
+Route::post('/questions', 'API\Backend\QuestionsController@store');
+Route::get('/question/{id}', 'API\Backend\QuestionsController@show');
+Route::put('/question/{id}', 'API\Backend\QuestionsController@update');
+Route::delete('/question/{id}', 'API\Backend\QuestionsController@destroy');
+
+/* ========================================================================================================== */
+
 //BACKEND (CHECKLIST)
 Route::get('/checklists', 'API\Backend\ChecklistsController@index');
 Route::post('/checklists', 'API\Backend\ChecklistsController@store');
@@ -62,5 +85,8 @@ Route::post('/checklists/categories', 'API\Backend\ChecklistCategoriesController
 Route::get('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@show');
 Route::put('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@update');
 Route::delete('/checklist/categories/{id}', 'API\Backend\ChecklistCategoriesController@destroy');
+
+/* ========================================================================================================== */
+
 //BACKEND (REPORTS)
 Route::get('/reports', 'API\Backend\ChecklistsController@index');
