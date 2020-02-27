@@ -8,12 +8,13 @@ use App\Models\Question;
 
 class QuestionsController extends Controller
 {
-    public function __construct(Question $question) {
-		$this->middleware('auth');
+	public function __construct(Question $question)
+	{
 		$this->question = $question;
 	}
 
-	public function index() {
+	public function index()
+	{
 		return view('pages.backend.assessment_questions.index');
 	}
 }

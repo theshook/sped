@@ -8,15 +8,15 @@ use App\Models\School;
 
 class SchoolsController extends Controller
 {
-	protected $school;
+    protected $school;
 
     public function __construct(School $school)
     {
-        $this->middleware('auth');
         $this->school = $school;
     }
 
-    public function index() {
-		return view('pages.backend.schools.index');
-	}
+    public function index()
+    {
+        return view('pages.backend.schools.index');
+    }
 }
