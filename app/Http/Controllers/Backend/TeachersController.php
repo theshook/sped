@@ -8,12 +8,13 @@ use App\Models\Teacher;
 
 class TeachersController extends Controller
 {
-    public function __construct(Teacher $teacher) {
-		$this->middleware('auth');
+	public function __construct(Teacher $teacher)
+	{
 		$this->teacher = $teacher;
 	}
 
-	public function index() {
+	public function index()
+	{
 		return view('pages.backend.teachers.index');
 	}
 }
