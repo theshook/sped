@@ -135,6 +135,7 @@
             ok-variant="success"
             ok-only
             @ok="submitAdd"
+			@hidden="resetForm"
             button-size="sm"
         >
             <b-form>
@@ -179,6 +180,7 @@
             ok-variant="success"
             ok-only
             @ok="submitUpdate"
+			@hidden="resetForm"
             button-size="sm"
         >
             <b-form>
@@ -504,28 +506,34 @@ export default {
         destroy: function() {
             const schoolsAPI = `${this.host}/school/${this.delete_id}`;
             axios
-                .delete(schoolsAPI)
-                .then(response => {
-                    if (response.data.status == 201) {
-                        this.schools.splice(this.delete_index, 1);
+			.delete(schoolsAPI)
+			.then(response => {
+				if (response.data.status == 201) {
+					this.schools.splice(this.delete_index, 1);
 
-                        swal.fire({
-                            icon: "success",
-                            title: "Deleted",
-                            text: "School information successfully deleted",
-                            timer: 3000
-                        });
-                    } else {
-                        swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "Failed to delete school information",
-                            timer: 3000
-                        });
-                    }
-                })
-                .catch(err => console.log(err.response.data));
-        }
+					swal.fire({
+						icon: "success",
+						title: "Deleted",
+						text: "School information successfully deleted",
+						timer: 3000
+					});
+				} else {
+					swal.fire({
+						icon: "error",
+						title: "Error",
+						text: "Failed to delete school information",
+						timer: 3000
+					});
+				}
+			})
+			.catch(err => console.log(err.response.data));
+		},
+		
+		resetForm: function() {
+			this.$v.$reset()
+			this.form.province_id = null
+			this.form.name = null
+		}
     }
 };
 </script>

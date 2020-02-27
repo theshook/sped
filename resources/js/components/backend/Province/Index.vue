@@ -133,17 +133,10 @@
             ok-variant="success"
             ok-only
             @ok="submitAdd"
+			@hidden="resetForm"
             button-size="sm"
 
         >
-			<b-alert
-			variant="error"
-			v-if="$v.form.$error">
-				<p>
-					<strong><b-icon name="alert-triangle"></b-icon></strong>
-					The form is invalid, please try again.
-				</p>
-			</b-alert>
             <b-form>
                 <b-form-group label="Name" label-class="text-sm">
                     <b-form-input
@@ -167,6 +160,7 @@
             ok-variant="success"
             ok-only
             @ok="submitUpdate"
+			@hidden="resetForm"
             button-size="sm"
         >
             <b-form
@@ -463,6 +457,11 @@ export default {
 					timer: 3000
 				})
 			);
+		},
+
+		resetForm: function() {
+			this.$v.$reset()
+			this.form.name = null
 		}
     }
 };
