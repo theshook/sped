@@ -18,7 +18,7 @@
 								variant="primary"
 								size="sm"
 								v-b-modal.add-modal
-								@click="clearPupilData"
+								@click="resetForm"
 								>
 									<b-icon icon="pencil"></b-icon>
 									<!-- <span class="fa fa-fw fa-plus-circle"></span> -->
@@ -600,9 +600,8 @@
 				.then(response => {
 					if (response.data.status == 201) {
 						this.getPupils()
-						this.clearPupilData()
 						this.$bvModal.hide('add-two')
-						this.$v.$reset()
+						this.resetForm()
 
 						swal.fire({
 							icon: "success",
@@ -686,9 +685,8 @@
 				.then(response => { 
 					if (response.data.status == 201) {
 						this.getPupils()
-						this.clearPupilData()
 						this.$bvModal.hide('add-two')
-						this.$v.$reset()
+						this.resetForm()
 
 						swal.fire({
 							icon: "success",
@@ -753,17 +751,14 @@
 				this.$bvModal.hide('add-two')
 			},
 
-			clearPupilData: function() {
+			resetForm: function() {
+				this.$v.$reset()
 				this.form.first_name = null
 				this.form.last_name = null
 				this.form.middle_name = null
 				this.form.birth_date = null
 				this.form.prof_pic = null
 				this.form.school_id = null
-			},
-
-			resetForm: function() {
-				this.$v.$reset()
 			}
 		}
 	}

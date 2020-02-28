@@ -403,14 +403,9 @@ export default {
                 .post(schoolsAPI, data)
                 .then(response => {
                     if (response.status == 201) {
-                        this.schools.push({
-                            name: this.form.name,
-                            province_id: this.form.province_id
-                        });
-                        this.name = null;
-                        this.province_id = null;
+						this.getSchools;
 						this.$bvModal.hide('add-modal')
-						this.$v.$reset()
+						this.resetForm()
 
                         swal.fire({
                             icon: "success",
@@ -465,13 +460,9 @@ export default {
                 .put(schoolsAPI, data)
                 .then(response => {
                     if (response.data.status == 201) {
-                        // this.schools[this.edit_index].name = this.form.name;
-                        // this.schools[this.edit_index].province_id = this.form.province_id;
-                        // this.form.name = null;
-						// this.form.province_id = null;
 						this.getSchools()
 						this.$bvModal.hide('edit-modal')
-						this.$v.$reset()
+						this.resetForm()
 
                         swal.fire({
                             icon: "success",

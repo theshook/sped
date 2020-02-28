@@ -395,7 +395,7 @@ export default {
 				if (response.data.status == 201) {
 					this.provinces[this.edit_index].name = this.form.name;
 					this.$bvModal.hide('edit-modal')
-					this.$v.$reset()
+					this.resetForm()
 
 					swal.fire({
 						icon: "success",
