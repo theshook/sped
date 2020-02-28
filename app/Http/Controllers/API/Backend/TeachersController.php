@@ -65,7 +65,17 @@ class TeachersController extends Controller
      */
     public function show($id)
     {
-		$teacher = Teacher::find($id);
+		$teacher = Teacher::with('school')->find($id);
+		if(!empty($teacher)) {
+			return $teacher;
+		} else {
+			$response = array(
+				'status' => 404,
+				'message' => 'Teacher do not exist'
+			);
+
+			return response()->json($response, 404);
+		}
 		return $teacher;
     }
 

@@ -18,8 +18,8 @@ class ProvincesController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		$user = auth()->user()->name;
-		dd($user);
+		$user = auth()->user()->id;
+		//dd($user);
 		$search = $request->search;
 		$limit = $request->limit;
 
@@ -65,7 +65,7 @@ class ProvincesController extends Controller
 	 */
 	public function show($id)
 	{
-		$province = Province::find($id);
+		$province = Province::with('schools')->find($id);
 		if (!empty($province)) {
 			return $province;
 		} else {

@@ -20,7 +20,7 @@ class SchoolsController extends Controller
 		$search = $request->search;
 		$limit = $request->limit;
 		
-		return ($search) ? School::with('province', 'pupils')::where('name', 'like', "$search%")->paginate($limit) : School::with('province', 'pupils')->paginate($limit);
+		return ($search) ? School::with('province', 'teachers', 'pupils')::where('name', 'like', "$search%")->paginate($limit) : School::with('province', 'teachers', 'pupils')->paginate($limit);
 	}
 	
 	public function index_raw() {
@@ -64,7 +64,7 @@ class SchoolsController extends Controller
      */
     public function show($id)
     {
-		$school = School::find($id);
+		$school = School::with('province', 'teachers', 'pupils')->find($id);
 		if(!empty($school)) {
 			return $school;
 		} else {

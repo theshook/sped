@@ -64,8 +64,17 @@ class QuestionsController extends Controller
      */
     public function show($id)
     {
-		$question = Question::find($id);
-		return $question;
+		$question = Question::with('teacher')->find($id);
+		if(!empty($question)) {
+			return $question;
+		} else {
+			$response = array(
+				'status' => 404,
+				'message' => 'Question do not exist'
+			);
+
+			return response()->json($response, 404);
+		}
     }
 
     /**

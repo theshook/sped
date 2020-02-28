@@ -132,7 +132,7 @@ class PupilsController extends Controller
      */
     public function destroy($id)
     {
-        $pupil = Pupil::find($id);
+        $pupil = Pupil::with('school')->find($id);
 		if(!empty($pupil)) {
 			if($pupil->delete()) {
 				$response = array(
