@@ -14,15 +14,15 @@ class CreateTestsTable extends Migration
     public function up()
     {
         Schema::create('tests', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->unsignedBigInteger('teacher_id');
-			$table->string('title');
-			$table->string('description');
-			$table->string('test_questions');
-			$table->softDeletes();
-			$table->timestamps();
-			
-			$table->foreign('teacher_id')->references('id')->on('teachers');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('teacher_id');
+            $table->string('title');
+            $table->string('description');
+            $table->string('test_questions');
+            $table->softDeletes();
+            $table->timestamps();
+
+            $table->foreign('teacher_id')->references('id')->on('teachers');
         });
     }
 
