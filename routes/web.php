@@ -24,27 +24,29 @@ Route::get('/register', function () {
 //AUTH ROUTES
 Auth::routes();
 
-Route::group(['middleware' => ['auth']], function () {
-    //ADMIN DASHBOARD
-    Route::get('/home', 'HomeController@index')->name('home');
+//ADMIN DASHBOARD
+Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 
+Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
     //BACKEND (Provinces)
-    Route::get('/configure/provinces', 'Backend\ProvincesController@index')->name('admin.provinces');
+    Route::get('/provinces', 'Backend\ProvincesController@index')->name('admin.provinces');
 
     //BACKEND (Schools)
-    Route::get('configure/schools', 'Backend\SchoolsController@index')->name('admin.schools');
+    Route::get('/schools', 'Backend\SchoolsController@index')->name('admin.schools');
 
     //BACKEND (Pupils)
-    Route::get('configure/pupils', 'Backend\PupilsController@index')->name('admin.pupils');
+    Route::get('/pupils', 'Backend\PupilsController@index')->name('admin.pupils');
 
     //BACKEND (Teachers)
-    Route::get('configure/teachers', 'Backend\TeachersController@index')->name('admin.teachers');
+    Route::get('/teachers', 'Backend\TeachersController@index')->name('admin.teachers');
+    //BACKEND (Tests)
+    Route::get('/tests', 'Backend\TestsController@index')->name('admin.tests');
     //BACKEND (Teachers/Questions)
-    Route::get('configure/questions', 'Backend\QuestionsController@index')->name('admin.questions');
+    Route::get('/questions', 'Backend\QuestionsController@index')->name('admin.questions');
 
     //BACKEND (Checklists & Categories)
-    Route::get('configure/categories', 'Backend\PagesController@checklistCategoriesIndex')->name('admin.categories');
-    Route::get('configure/checklists', 'Backend\PagesController@checklistsIndex')->name('admin.checklists');
+    Route::get('/categories', 'Backend\PagesController@checklistCategoriesIndex')->name('admin.categories');
+    Route::get('/checklists', 'Backend\PagesController@checklistsIndex')->name('admin.checklists');
 
     //BACKEND (Reports)
     Route::get('/configure/reports', 'Backend\ReportsController@index')->name('admin.reports');
