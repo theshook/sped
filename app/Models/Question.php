@@ -10,12 +10,14 @@ class Question extends Model
 	use SoftDeletes;
 	protected $table = 'assessment_questions';
 	protected $fillable = ['teacher_id', 'question', 'choice1', 'choice2', 'choice3', 'choice4', 'answer'];
-	
-	public function teacher() {
+
+	public function teacher()
+	{
 		return $this->belongsTo(Teacher::class);
 	}
 
-	public function test() {
+	public function test()
+	{
 		return $this->belongsTo(Test::class);
 	}
 }
