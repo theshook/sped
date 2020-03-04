@@ -12,7 +12,10 @@ import Vue from "vue";
 import Swal from "sweetalert2";
 
 //Bootstrap-vue
-import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
+import {
+    BootstrapVue,
+    BootstrapVueIcons
+} from "bootstrap-vue";
 //Bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -56,6 +59,11 @@ Vue.component(
 Vue.component(
     "teachers-index",
     require("./components/backend/Teachers/Index.vue").default
+);
+//BACKEND (Tests)
+Vue.component(
+    "tests-index",
+    require("./components/backend/Tests/Index.vue").default
 );
 //BACKEND (Teacher-Questions)
 Vue.component(
