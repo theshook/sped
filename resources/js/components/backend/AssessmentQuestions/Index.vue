@@ -21,15 +21,6 @@
 
           <b-row class="mb-2">
             <b-col lg="6">
-              <!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
-							@change="getProvinces"
-							v-model="limit">
-								<b-form-select-option value="10" selected>10</b-form-select-option>
-								<b-form-select-option value="25">25</b-form-select-option>
-								<b-form-select-option value="50">50</b-form-select-option>
-								<b-form-select-option value="100">100</b-form-select-option>
-              </b-form-select>-->
-
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
                 <select
@@ -107,6 +98,7 @@
     <!-- MODALS -->
     <!-- ADD -->
     <b-modal
+      scrollable
       id="add-modal"
       title="Add Question"
       ok-title="Submit"
@@ -116,22 +108,103 @@
       button-size="sm"
     >
       <b-form>
-        <!-- <b-form-group label="Name" label-class="text-sm">
-                    <b-form-input
-					v-model="$v.form.name.$model"
-					:state="validateState('name')"
-					aria-describedby="invalid-input-name"></b-form-input>
+        <b-form-group label="Teacher" label-class="text-sm">
+          <b-form-select
+            v-model="$v.form.teacher_id.$model"
+            :state="validateState('teacher_id')"
+            aria-describedby="input-teacher-feedback"
+          >
+            <b-form-select-option
+              v-for="teacher in teachers"
+              :key="teacher.id"
+              :value="teacher.id"
+            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
+          </b-form-select>
+          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+        </b-form-group>
 
-					<b-form-invalid-feedback
-					id="invalid-input-name">
-						This field is required and must be atleast 3 characters.
-					</b-form-invalid-feedback>
-        </b-form-group>-->
+        <b-form-group label="Question" label-class="text-sm">
+          <b-form-input
+            v-model="$v.form.question.$model"
+            :state="validateState('question')"
+            aria-describedby="invalid-input-question"
+          ></b-form-input>
+
+          <b-form-invalid-feedback
+            id="invalid-input-question"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #1" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice1.$model"
+            :state="validateState('choice1')"
+            aria-describedby="invalid-input-choice1"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice1"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #2" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice2.$model"
+            :state="validateState('choice2')"
+            aria-describedby="invalid-input-choice2"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice2"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #3" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice3.$model"
+            :state="validateState('choice3')"
+            aria-describedby="invalid-input-choice3"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice3"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #4" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice4.$model"
+            :state="validateState('choice4')"
+            aria-describedby="invalid-input-choice4"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice4"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Answer" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.answer.$model"
+            :state="validateState('answer')"
+            aria-describedby="invalid-input-choice1"
+            rows="2"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-answer"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
       </b-form>
     </b-modal>
 
     <!-- EDIT -->
     <b-modal
+      scrollable
       id="edit-modal"
       title="Update Question"
       ok-title="Submit"
@@ -141,17 +214,97 @@
       button-size="sm"
     >
       <b-form>
-        <!-- <b-form-group label="Name" label-class="text-sm">
-                    <b-form-input
-					v-model="$v.form.name.$model"
-					:state="validateState('name')"
-					aria-describedby="invalid-input-name"></b-form-input>
+        <b-form-group label="Teacher" label-class="text-sm">
+          <b-form-select
+            v-model="$v.form.teacher_id.$model"
+            :state="validateState('teacher_id')"
+            aria-describedby="input-teacher-feedback"
+          >
+            <b-form-select-option
+              v-for="teacher in teachers"
+              :key="teacher.id"
+              :value="teacher.id"
+            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
+          </b-form-select>
+          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+        </b-form-group>
 
-					<b-form-invalid-feedback
-					id="invalid-input-name">
-						This field is required and must be atleast 3 characters.
-					</b-form-invalid-feedback>
-        </b-form-group>-->
+        <b-form-group label="Question" label-class="text-sm">
+          <b-form-input
+            v-model="$v.form.question.$model"
+            :state="validateState('question')"
+            aria-describedby="invalid-input-question"
+          ></b-form-input>
+
+          <b-form-invalid-feedback
+            id="invalid-input-question"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #1" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice1.$model"
+            :state="validateState('choice1')"
+            aria-describedby="invalid-input-choice1"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice1"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #2" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice2.$model"
+            :state="validateState('choice2')"
+            aria-describedby="invalid-input-choice2"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice2"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #3" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice3.$model"
+            :state="validateState('choice3')"
+            aria-describedby="invalid-input-choice3"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice3"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Choice #4" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.choice4.$model"
+            :state="validateState('choice4')"
+            aria-describedby="invalid-input-choice4"
+            rows="4"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-choice4"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Answer" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.answer.$model"
+            :state="validateState('answer')"
+            aria-describedby="invalid-input-choice1"
+            rows="2"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-answer"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
       </b-form>
     </b-modal>
 
@@ -174,12 +327,13 @@
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   name: "TeacherQuestionsIndex",
-  props: ["host", "userid"],
+  props: ["host"],
   data() {
     return {
       search: "",
       limit: 10,
       current_page: 1,
+      teachers: [],
       questions: null,
       questions_fields: [
         {
@@ -195,7 +349,15 @@ export default {
       response: {},
 
       // ADD
-      form: {},
+      form: {
+        teacher_id: null,
+        question: null,
+        choice1: null,
+        choice2: null,
+        choice3: null,
+        choice4: null,
+        answer: null
+      },
 
       // EDIT
       edit_id: null,
@@ -207,11 +369,46 @@ export default {
     };
   },
   validations: {
-    form: {}
+    form: {
+      teacher_id: {
+        required
+      },
+      question: {
+        required,
+        minLength: minLength(10),
+        maxLength: maxLength(100)
+      },
+      choice1: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(200)
+      },
+      choice2: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(200)
+      },
+      choice3: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(200)
+      },
+      choice4: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(200)
+      },
+      answer: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(200)
+      }
+    }
   },
   computed: {},
   mounted() {
     this.getQuestions();
+    this.getTeachers();
   },
   methods: {
     validateState: function(name) {
@@ -220,16 +417,32 @@ export default {
     },
 
     getQuestions: function(page) {
-      const questionsAPI = `${this.host}/teacher/${this.userid}/questions?search=${this.search}&limit=${this.limit}&page=${page}`;
+      const questionsAPI = `${this.host}/questions?search=${this.search}&limit=${this.limit}&page=${page}`;
       axios
         .get(questionsAPI)
         .then(response => {
-          this.questions = response.data;
+          this.questions = response.data.data;
           this.response = response.data;
-
-          console.log(this.questions);
         })
         .catch(err => console.log(err));
+    },
+
+    getTeachers: function() {
+      let teachersAPI = `${this.host}/teachers/raw`;
+      axios
+        .get(teachersAPI)
+        .then(response => {
+          let teacherArr = response.data;
+          for (let i = 0; i < teacherArr.length; i++) {
+            let teacher = `${teacherArr[i].first_name} ${teacherArr[i].last_name}`;
+            this.teachers.push({
+              id: teacherArr[i].id,
+              name: teacher,
+              school: teacherArr[i].school.name
+            });
+          }
+        })
+        .catch(err => console.log(err.response));
     },
 
     submitAdd: function(event) {
@@ -245,17 +458,22 @@ export default {
     add: function() {
       const questionsAPI = `${this.host}/questions`;
       const data = {
-        name: this.form.name
+        teacher_id: this.form.teacher_id,
+        question: this.form.question,
+        choice1: this.form.choice1,
+        choice2: this.form.choice2,
+        choice3: this.form.choice3,
+        choice4: this.form.choice4,
+        answer: this.form.answer
       };
 
       axios
         .post(questionsAPI, data)
         .then(response => {
           if (response.data.status == 201) {
-            this.getProvinces();
-            this.form.name = null;
+            this.questions.push({ data });
             this.$bvModal.hide("add-modal");
-            this.$v.$reset();
+            this.resetForm();
 
             swal.fire({
               icon: "success",
@@ -276,15 +494,22 @@ export default {
           swal.fire({
             icon: "error",
             title: err.response.data.message,
-            text: err.response.data.errors.name[0],
+            text: err.response.data.errors,
             timer: 3000
           })
         );
     },
 
     edit: function(index) {
-      this.edit_id = this.question[index].id;
+      this.edit_id = this.questions[index].id;
       this.edit_index = index;
+      this.form.teacher_id = this.questions[index].teacher_id;
+      this.form.question = this.questions[index].question;
+      this.form.choice1 = this.questions[index].choice1;
+      this.form.choice2 = this.questions[index].choice2;
+      this.form.choice3 = this.questions[index].choice3;
+      this.form.choice4 = this.questions[index].choice4;
+      this.form.answer = this.questions[index].answer;
     },
 
     submitUpdate: function(event) {
@@ -300,8 +525,22 @@ export default {
     update: function() {
       const questionsAPI = `${this.host}/question/${this.edit_id}`;
       const data = {
-        name: this.form.name
+        teacher_id: this.form.teacher_id,
+        question: this.form.question,
+        choice1: this.form.choice1,
+        choice2: this.form.choice2,
+        choice3: this.form.choice3,
+        choice4: this.form.choice4,
+        answer: this.form.answer
       };
+
+      this.questions[this.edit_index].teacher_id = this.form.teacher_id;
+      this.questions[this.edit_index].question = this.form.question;
+      this.questions[this.edit_index].choice1 = this.form.choice1;
+      this.questions[this.edit_index].choice2 = this.form.choice2;
+      this.questions[this.edit_index].choice3 = this.form.choice3;
+      this.questions[this.edit_index].choice4 = this.form.choice4;
+      this.questions[this.edit_index].answer = this.form.answer;
 
       axios
         .put(questionsAPI, data)
@@ -309,7 +548,7 @@ export default {
           if (response.data.status == 201) {
             this.question[this.edit_index].name = this.form.name;
             this.$bvModal.hide("edit-modal");
-            this.$v.$reset();
+            this.resetForm();
 
             swal.fire({
               icon: "success",
@@ -330,7 +569,7 @@ export default {
           swal.fire({
             icon: "error",
             title: err.response.data.message,
-            text: err.response.data.errors.name[0],
+            text: err.response.data.errors,
             timer: 3000
           })
         );
@@ -342,7 +581,7 @@ export default {
     },
 
     destroy: function(index) {
-      const questionsAPI = `${this.host}/questions/${this.delete_id}`;
+      const questionsAPI = `${this.host}/question/${this.delete_id}`;
       axios
         .delete(questionsAPI)
         .then(response => {
@@ -368,10 +607,21 @@ export default {
           swal.fire({
             icon: "error",
             title: err.response.data.message,
-            text: err.response.data.errors.name[0],
+            text: err.response.data,
             timer: 3000
           })
         );
+    },
+
+    resetForm: function() {
+      this.$v.$reset();
+      this.form.teacher_id = null;
+      this.form.question = null;
+      this.form.choice1 = null;
+      this.form.choice2 = null;
+      this.form.choice3 = null;
+      this.form.choice4 = null;
+      this.form.answer = null;
     }
   }
 };
