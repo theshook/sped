@@ -122,7 +122,7 @@
               v-for="teacher in teachers"
               :key="teacher.id"
               :value="teacher.id"
-            >{{ teacher.name }}</b-form-select-option>
+            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
           </b-form-select>
           <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
@@ -272,7 +272,8 @@ export default {
             let teacher = `${teacherArr[i].first_name} ${teacherArr[i].last_name}`;
             this.teachers.push({
               id: teacherArr[i].id,
-              name: teacher
+              name: teacher,
+              school: teacherArr[i].school.name
             });
           }
         })
