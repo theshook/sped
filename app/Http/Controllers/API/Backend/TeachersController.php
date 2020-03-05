@@ -28,7 +28,7 @@ class TeachersController extends Controller
 
 	public function raw()
 	{
-		return Teacher::all();
+		return Teacher::with('school')->get();
 	}
 
 	/**
