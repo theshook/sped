@@ -55,3 +55,8 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
     Route::get('/report/printPDF', 'Backend\ReportsController@printPDF')->name('report.printpdf');
     Route::get('/report/viewPDF', 'Backend\ReportsController@viewPDF')->name('report.viewpdf');
 });
+
+Route::group(['prefix' => 'client'], function () {
+    //Browse assessment test
+    Route::get('test/browse', 'Frontend\TestsController@index')->name('tests.index');
+});

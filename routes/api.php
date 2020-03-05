@@ -60,10 +60,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     /* ========================================================================================================== */
 
-    //BACKEND (ASSESSMENT QUESTIONS) --TEACHER OWNED
-    Route::get('/teacher/{id}/questions', 'API\Backend\TeacherQuestionsController@index');
-
-    /* ========================================================================================================== */
 
     //BACKEND (TESTS) --GENERAL
     Route::get('/tests', 'API\Backend\TestsController@index');
@@ -79,6 +75,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/question/{id}', 'API\Backend\QuestionsController@show');
     Route::put('/question/{id}', 'API\Backend\QuestionsController@update');
     Route::delete('/question/{id}', 'API\Backend\QuestionsController@destroy');
+
+    /* ========================================================================================================== */
+
+     //BACKEND (ASSESSMENT QUESTIONS) --TEACHER OWNED
+    Route::get('/teacher/{id}/questions', 'API\Backend\TeacherQuestionsController@index');
 
     /* ========================================================================================================== */
 
