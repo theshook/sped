@@ -78,7 +78,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     /* ========================================================================================================== */
 
-     //BACKEND (ASSESSMENT QUESTIONS) --TEACHER OWNED
+    //BACKEND (ASSESSMENT QUESTIONS) --TEACHER OWNED
     Route::get('/teacher/{id}/questions', 'API\Backend\TeacherQuestionsController@index');
 
     /* ========================================================================================================== */
