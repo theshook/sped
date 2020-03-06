@@ -54,11 +54,11 @@
             :fields="tests_fields"
             responsive="md"
           >
-            <template v-slot:cell(name)="data">
-              {{
-              data.item.name
-              }}
-            </template>
+            <template v-slot:cell(name)="data">{{ data.item.name }}</template>
+
+            <template
+              v-slot:cell(teacher)="data"
+            >{{ data.item.teacher.first_name + ' ' + data.item.teacher.last_name }}</template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
@@ -118,11 +118,10 @@
             :state="validateState('teacher_id')"
             aria-describedby="input-teacher-feedback"
           >
-            <b-form-select-option
-              v-for="teacher in teachers"
-              :key="teacher.id"
-              :value="teacher.id"
-            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
+            <b-form-select-option v-for="teacher in teachers" :key="teacher.id" :value="teacher.id">
+              {{ teacher.name }} -
+              {{ teacher.school }}
+            </b-form-select-option>
           </b-form-select>
           <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
@@ -133,9 +132,10 @@
             :state="validateState('title')"
             aria-describedby="input-title-feedback"
           ></b-form-input>
-          <b-form-invalid-feedback
-            id="input-title-feedback"
-          >This field is required and must be atleast 3 characters</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-title-feedback">
+            This field is required and must be atleast 3
+            characters
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Description" label-class="text-sm">
@@ -146,7 +146,10 @@
             aria-describedby="input-description-feedback"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback>This field is required and must be atleast 10 characters</b-form-invalid-feedback>
+          <b-form-invalid-feedback>
+            This field is required and must be atleast 10
+            characters
+          </b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -162,7 +165,47 @@
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form></b-form>
+      <b-form>
+        <b-form-group label="Teacher" label-class="text-sm">
+          <b-form-select
+            v-model="$v.form.teacher_id.$model"
+            :state="validateState('teacher_id')"
+            aria-describedby="input-teacher-feedback"
+          >
+            <b-form-select-option v-for="teacher in teachers" :key="teacher.id" :value="teacher.id">
+              {{ teacher.name }} -
+              {{ teacher.school }}
+            </b-form-select-option>
+          </b-form-select>
+          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Title" label-class="text-sm">
+          <b-form-input
+            v-model="$v.form.title.$model"
+            :state="validateState('title')"
+            aria-describedby="input-title-feedback"
+          ></b-form-input>
+          <b-form-invalid-feedback id="input-title-feedback">
+            This field is required and must be atleast 3
+            characters
+          </b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Description" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.description.$model"
+            :state="validateState('description')"
+            rows="4"
+            aria-describedby="input-description-feedback"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback>
+            This field is required and must be atleast 10
+            characters
+          </b-form-invalid-feedback>
+        </b-form-group>
+      </b-form>
     </b-modal>
 
     <!-- DELETE CONFIRM -->
@@ -196,6 +239,11 @@ export default {
         {
           key: "title",
           label: "Title",
+          sortable: true
+        },
+        {
+          key: "teacher",
+          label: "Teacher",
           sortable: true
         },
         {
@@ -252,7 +300,7 @@ export default {
     },
 
     getTests: function(page) {
-      const testsAPI = `${this.host}/tests?search=${this.search}&limit=${this.limit}&page=${page}`;
+      const testsAPI = `${this.host}/tests?search=${this.search}&limit=${this.limit}`;
       axios
         .get(testsAPI)
         .then(response => {
@@ -335,7 +383,9 @@ export default {
     edit: function(index) {
       this.edit_id = this.tests[index].id;
       this.edit_index = index;
-      this.form.name = this.tests[index].name;
+      this.form.teacher_id = this.tests[index].teacher_id;
+      this.form.title = this.tests[index].title;
+      this.form.description = this.tests[index].description;
     },
 
     submitUpdate: function(event) {
@@ -351,14 +401,31 @@ export default {
     update: function() {
       const testsAPI = `${this.host}/test/${this.edit_id}`;
       const data = {
-        name: this.form.name
+        teacher_id: this.form.teacher_id,
+        title: this.form.title,
+        description: this.form.description
       };
 
       axios
         .put(testsAPI, data)
         .then(response => {
           if (response.data.status == 201) {
-            this.tests[this.edit_index].name = this.form.name;
+            for (let t = 0; t < this.teachers.length; t++) {
+              if (this.form.teacher_id === this.teachers[t].id) {
+                this.tests[this.edit_index].teacher.first_name = this.teachers[
+                  t
+                ].name.split(" ")[0];
+                this.tests[this.edit_index].teacher.last_name = this.teachers[
+                  t
+                ].name.split(" ")[1];
+                break;
+              }
+            }
+
+            this.tests[this.edit_index].teacher_id = this.form.teacher_id;
+            this.tests[this.edit_index].title = this.form.title;
+            this.tests[this.edit_index].description = this.form.description;
+
             this.$bvModal.hide("edit-modal");
             this.resetForm();
 
@@ -381,7 +448,7 @@ export default {
           swal.fire({
             icon: "error",
             title: err.response.data.message,
-            text: err.response.data.errors.name[0],
+            text: err.response.data.errors,
             timer: 3000
           })
         );
