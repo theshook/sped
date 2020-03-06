@@ -19,7 +19,7 @@ class TestsController extends Controller
         $search = $request->search;
         $limit = $request->limit;
 
-        return ($search) ? Test::with('teacher', 'questions')->where('title', 'like', "%$search%")->paginate($limit) : Test::with('teacher', 'questions')->paginate($limit);
+        return ($search) ? Test::with('teacher')->where('title', 'like', "%$search%")->paginate($limit) : Test::with('teacher')->paginate($limit);
     }
 
     /**
@@ -32,27 +32,25 @@ class TestsController extends Controller
     {
         $test = new Test;
         // $test->teacher_id = auth()->user()->id;
-        $test->teacher_id = $request->teacher_id;
+        $test->teacher_id = 1;
         $test->title = $request->title;
         $test->description = $request->description;
-        $test->save();
-        return $request->all();
 
-        // if ($test->save()) {
-        //     $response = array(
-        //         'status' => 201,
-        //         'message' => 'Successfully added test'
-        //     );
+        if ($test->save()) {
+            $response = array(
+                'status' => 201,
+                'message' => 'Successfully added test'
+            );
 
-        //     return response()->json($response, 201);
-        // } else {
-        //     $response = array(
-        //         'status' => 500,
-        //         'message' => 'Failed to add test'
-        //     );
+            return response()->json($response, 201);
+        } else {
+            $response = array(
+                'status' => 500,
+                'message' => 'Failed to add test'
+            );
 
-        //     return response()->json($response, 500);
-        // }
+            return response()->json($response, 500);
+        }
     }
 
     /**
@@ -75,7 +73,35 @@ class TestsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $test = Test::find($id);
+        if (!empty($test)) {
+            $test->teacher_id = $request->teacher_id;
+            $test->title = $request->title;
+            $test->description = $request->description;
+
+            if ($test->save()) {
+                $response = array(
+                    'status' => 201,
+                    'message' => 'Successfully added test'
+                );
+
+                return response()->json($response, 201);
+            } else {
+                $response = array(
+                    'status' => 500,
+                    'message' => 'Failed to add test'
+                );
+
+                return response()->json($response, 500);
+            }
+        } else {
+            $response = array(
+                'status' => 404,
+                'message' => 'Teacher do not exist'
+            );
+
+            return response()->json($response, 404);
+        }
     }
 
     /**
@@ -86,6 +112,30 @@ class TestsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $test = Test::find($id);
+        if (!empty($test)) {
+            if ($test->delete()) {
+                $response = array(
+                    'status' => 201,
+                    'message' => 'Successfully deleted test'
+                );
+
+                return response()->json($response, 201);
+            } else {
+                $response = array(
+                    'status' => 500,
+                    'message' => 'Failed to delete test'
+                );
+
+                return response()->json($response, 500);
+            }
+        } else {
+            $response = array(
+                'status' => 404,
+                'message' => 'Test do not exist'
+            );
+
+            return response()->json($response, 404);
+        }
     }
 }
