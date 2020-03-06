@@ -16,10 +16,10 @@ class TeacherQuestionsController extends Controller
      */
     public function index(Request $request, $id)
     {
-		$search = $request->search;
-		$limit = $request->limit;
+        $search = $request->search;
+        $limit = $request->limit;
 
-		return collect(Question::with('teacher', 'test')->get())->where('teacher_id', $id);
+        return collect(Question::with('teacher')->get())->where('teacher_id', $id);
     }
 
     /**
