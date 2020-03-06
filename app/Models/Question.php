@@ -15,9 +15,4 @@ class Question extends Model
 	{
 		return $this->belongsTo(Teacher::class);
 	}
-
-	public function test()
-	{
-		return $this->belongsTo(Test::class);
-	}
 }
