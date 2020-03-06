@@ -9,16 +9,19 @@ class Teacher extends Model
 {
 	use SoftDeletes;
 	protected $fillable = ['school_id', 'first_name', 'last_name', 'middle_name'];
-	
-	public function school() {
+
+	public function school()
+	{
 		return $this->belongsTo(School::class);
 	}
 
-	public function tests() {
+	public function tests()
+	{
 		return $this->hasMany(Test::class);
 	}
 
-	public function questions() {
+	public function questions()
+	{
 		return $this->hasMany(Question::class);
 	}
 }
