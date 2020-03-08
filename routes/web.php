@@ -49,7 +49,7 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
     Route::get('/checklists', 'Backend\PagesController@checklistsIndex')->name('admin.checklists');
 
     //BACKEND (Reports)
-    Route::get('/configure/reports', 'Backend\ReportsController@index')->name('admin.reports');
+    Route::get('/reports', 'Backend\ReportsController@index')->name('admin.reports');
 
     //Progress Reports
     Route::get('/report/printPDF', 'Backend\ReportsController@printPDF')->name('report.printpdf');

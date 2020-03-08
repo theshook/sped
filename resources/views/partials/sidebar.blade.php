@@ -72,6 +72,8 @@
 				<div class="bg-white py-2 collapse-inner rounded">
 					<h6 class="collapse-header">Pupils</h6>
 					<a class="collapse-item" href="#">View</a>
+					<h6 class="collapse-header">Forms</h6>
+					<a class="collapse-item" href="{{ route('admin.reports') }}">Intake Form</a>
 				</div>
 			</div>
 		</li>

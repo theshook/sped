@@ -89,7 +89,7 @@ Vue.component(
 //BACKEND (Reports)
 Vue.component(
     "reports-index",
-    require("./components/backend/reports/Index.vue").default
+    require("./components/backend/Reports/Index.vue").default
 );
 
 /**
