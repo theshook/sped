@@ -413,7 +413,6 @@ export default {
       axios
         .delete(provincesAPI)
         .then(response => {
-          console.log(response.data.status);
           if (response.data.status == 201) {
             this.provinces.splice(this.delete_index, 1);
             this.delete_index = null;
@@ -429,7 +428,7 @@ export default {
               icon: "error",
               title: "Failed",
               text:
-                "Province cannot be deleted, it contains one or more schools",
+                "Cannot be deleted, one or more schools are assigned to this province",
               timer: 3000
             });
           } else {
