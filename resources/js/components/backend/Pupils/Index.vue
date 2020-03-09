@@ -422,6 +422,9 @@ export default {
       delete_id: null,
       delete_index: null,
 
+      //FORM BUTTON LOADING
+      submitLoading: false,
+
       // ERROR
       bdayErr: false
     };
@@ -471,7 +474,7 @@ export default {
       if (bday === currentDate || bday > currentDate) {
         this.bdayErr = true;
       } else {
-        this.bdayErr = true;
+        this.bdayErr = false;
       }
     },
 
@@ -525,6 +528,7 @@ export default {
         console.log(this.bdayErr);
       } else {
         this.add();
+        this.$bvModal.hide("add-modal");
       }
     },
 
@@ -601,6 +605,7 @@ export default {
         return;
       } else {
         this.update();
+        this.$bvModal.hide("edit-modal");
       }
     },
 
@@ -637,7 +642,7 @@ export default {
         .then(response => {
           if (response.data.status == 201) {
             this.getPupils();
-            this.$bvModal.hide("add-two");
+            this.$bvModal.hide("edit-two");
             this.resetForm();
 
             swal.fire({
