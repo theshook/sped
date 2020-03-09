@@ -222,6 +222,10 @@
           ></b-form-input>
 
           <b-form-invalid-feedback id="input-bday-feedback">This field is required.</b-form-invalid-feedback>
+          <span
+            class="text-danger text-small"
+            v-if="bdayErr"
+          >Date must not be beyond the current date.</span>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -337,9 +341,14 @@
             v-model="$v.form.birth_date.$model"
             :state="validateState('birth_date')"
             aria-describedby="input-bday-feedback"
+            @change="validateBirthDate"
           ></b-form-input>
 
           <b-form-invalid-feedback id="input-bday-feedback">This field is required.</b-form-invalid-feedback>
+          <span
+            class="text-danger text-small"
+            v-if="bdayErr"
+          >Date must not be beyond the current date.</span>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -411,7 +420,10 @@ export default {
 
       // DELETE
       delete_id: null,
-      delete_index: null
+      delete_index: null,
+
+      // ERROR
+      bdayErr: false
     };
   },
   validations: {
@@ -451,6 +463,16 @@ export default {
     validateState: function(name) {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
+    },
+
+    validateBirthDate: function() {
+      let bday = this.form.birth_date;
+      let currentDate = new Date().toJSON().slice(0, 10);
+      if (bday === currentDate || bday > currentDate) {
+        this.bdayErr = true;
+      } else {
+        this.bdayErr = true;
+      }
     },
 
     getPupils: function(page) {
@@ -497,8 +519,10 @@ export default {
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
-      if (this.$v.form.$anyError) {
+      this.validateBirthDate();
+      if (this.$v.form.$anyError || this.bdayErr) {
         return;
+        console.log(this.bdayErr);
       } else {
         this.add();
       }
@@ -550,7 +574,7 @@ export default {
           swal.fire({
             icon: "error",
             title: err.response.data.message,
-            text: err.response.data.errors.name[0],
+            text: err.response.data.errors,
             timer: 3000
           });
         });
@@ -572,7 +596,8 @@ export default {
     submitUpdate: function() {
       event.preventDefault();
       this.$v.form.$touch();
-      if (this.$v.form.$anyError) {
+      this.validateBirthDate();
+      if (this.$v.form.$anyError || this.bdayErr) {
         return;
       } else {
         this.update();
