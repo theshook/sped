@@ -672,10 +672,11 @@ export default {
 
     remove: function(index) {
       this.delete_id = this.pupils[index].id;
-      this.delete_index = null;
+      this.delete_index = index;
     },
 
     destroy: function(index) {
+      console.log(this.delete_index);
       const pupilsAPI = `${this.host}/pupil/${this.delete_id}`;
       axios
         .delete(pupilsAPI)
