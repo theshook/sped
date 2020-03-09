@@ -63,7 +63,11 @@
             :fields="provinces_fields"
             responsive="md"
           >
-            <template v-slot:cell(name)="data">{{ data.item.name }}</template>
+            <template v-slot:cell(name)="data">
+              {{
+              data.item.name
+              }}
+            </template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
@@ -124,9 +128,10 @@
             aria-describedby="invalid-input-name"
           ></b-form-input>
 
-          <b-form-invalid-feedback
-            id="invalid-input-name"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-name">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -151,9 +156,10 @@
             aria-describedby="invalid-input-name"
           ></b-form-input>
 
-          <b-form-invalid-feedback
-            id="invalid-input-name"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-name">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -407,6 +413,7 @@ export default {
       axios
         .delete(provincesAPI)
         .then(response => {
+          console.log(response.data.status);
           if (response.data.status == 201) {
             this.provinces.splice(this.delete_index, 1);
             this.delete_index = null;
@@ -415,6 +422,14 @@ export default {
               icon: "success",
               title: "Deleted",
               text: "Province information successfully deleted",
+              timer: 3000
+            });
+          } else if (response.data.status == 400) {
+            swal.fire({
+              icon: "error",
+              title: "Failed",
+              text:
+                "Province cannot be deleted, it contains one or more schools",
               timer: 3000
             });
           } else {

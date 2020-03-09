@@ -121,26 +121,34 @@ class ProvincesController extends Controller
 	public function destroy($id)
 	{
 		$province = Province::find($id);
-		if (!empty($province)) {
-			if ($province->delete()) {
-				$response = array(
-					'status' => 201,
-					'message' => 'Province successfully deleted'
-				);
-				return response()->json($response, 201);
+		if (!empty($province->schools)) {
+			$response = array(
+				'status' => 400,
+				'message' => 'Province cannot be deleted, contains one or more schools'
+			);
+			return response()->json($response);
+		} else {
+			if (!empty($province)) {
+				if ($province->delete()) {
+					$response = array(
+						'status' => 201,
+						'message' => 'Province successfully deleted'
+					);
+					return response()->json($response, 201);
+				} else {
+					$response = array(
+						'status' => 500,
+						'message' => 'Failed to delete province'
+					);
+					return response()->json($response, 500);
+				}
 			} else {
 				$response = array(
-					'status' => 500,
-					'message' => 'Failed to delete province'
+					'status' => 404,
+					'message' => 'Province do not exist'
 				);
-				return response()->json($response, 500);
+				return response()->json($response, 404);
 			}
-		} else {
-			$response = array(
-				'status' => 404,
-				'message' => 'Province do not exist'
-			);
-			return response()->json($response, 404);
 		}
 	}
 }
