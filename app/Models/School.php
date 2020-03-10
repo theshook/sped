@@ -9,16 +9,19 @@ class School extends Model
 {
 	use SoftDeletes;
 	protected $fillable = ['province_id', 'name'];
-	
-	public function province() {
+
+	public function province()
+	{
 		return $this->belongsTo(Province::class);
 	}
 
-	public function pupils() {
+	public function pupils()
+	{
 		return $this->hasMany(Pupil::class);
 	}
 
-	public function teachers() {
+	public function teachers()
+	{
 		return $this->hasMany(Teacher::class);
 	}
 }
