@@ -5,5 +5,5 @@
 @endsection
 
 @section('content')
-	<test-manage-questions host="{{ env('API_HOST') }}" />
+	<test-manage-questions host="{{ env('API_HOST') }}" test_id="{{$test_id}}" />
 @endsection

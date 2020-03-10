@@ -41,6 +41,7 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
     Route::get('/teachers', 'Backend\TeachersController@index')->name('admin.teachers');
     //BACKEND (Tests)
     Route::get('/tests', 'Backend\TestsController@index')->name('admin.tests');
+    Route::get('/test{id}/manage', 'Backend\TestsController@test_manage_questions')->name('admin.test.manage');
     //BACKEND (Teachers/Questions)
     Route::get('/questions', 'Backend\QuestionsController@index')->name('admin.questions');
 

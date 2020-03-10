@@ -12,8 +12,8 @@ class TestsController extends Controller
         return view('pages.backend.tests.index');
     }
 
-    public function test_manage_questions()
+    public function test_manage_questions($id)
     {
-        return view('pages.backend.tests.test-manage-questions');
+        return view('pages.backend.tests.test-manage-questions')->with('test_id', $id);
     }
 }
