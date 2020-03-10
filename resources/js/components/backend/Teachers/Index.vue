@@ -460,7 +460,6 @@ export default {
       axios
         .post(teachersAPI, data)
         .then(response => {
-          console.log(response.data);
           if (response.data.status == 201) {
             this.getTeachers();
             this.resetForm();

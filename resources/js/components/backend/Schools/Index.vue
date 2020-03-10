@@ -373,7 +373,7 @@ export default {
         .post(schoolsAPI, data)
         .then(response => {
           if (response.status == 201) {
-            this.getSchools;
+            this.getSchools();
             this.$bvModal.hide("add-modal");
             this.resetForm();
 

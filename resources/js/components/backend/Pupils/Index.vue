@@ -571,8 +571,6 @@ export default {
               timer: 3000
             });
           }
-
-          console.log(response.data);
         })
         .catch(err => {
           swal.fire({
