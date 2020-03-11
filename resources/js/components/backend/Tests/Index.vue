@@ -335,6 +335,7 @@ export default {
         return;
       } else {
         this.add();
+        this.$bvModal.hide("add-modal");
       }
     },
 
@@ -352,7 +353,6 @@ export default {
           console.log(response.data);
           if (response.data.status == 201) {
             this.getTests();
-            this.$bvModal.hide("add-modal");
             this.resetForm();
 
             swal.fire({
@@ -395,6 +395,7 @@ export default {
         return;
       } else {
         this.update();
+        this.$bvModal.hide("edit-modal");
       }
     },
 
@@ -426,7 +427,6 @@ export default {
             this.tests[this.edit_index].title = this.form.title;
             this.tests[this.edit_index].description = this.form.description;
 
-            this.$bvModal.hide("edit-modal");
             this.resetForm();
 
             swal.fire({

@@ -554,7 +554,7 @@ export default {
         .then(response => {
           if (response.data.status == 201) {
             this.getPupils();
-            this.$bvModal.hide("add-modal");
+            this.image_url = "";
             this.resetForm();
 
             swal.fire({
@@ -640,7 +640,7 @@ export default {
         .then(response => {
           if (response.data.status == 201) {
             this.getPupils();
-            this.$bvModal.hide("edit-two");
+            this.image_url = "";
             this.resetForm();
 
             swal.fire({
