@@ -528,7 +528,6 @@ export default {
         console.log(this.bdayErr);
       } else {
         this.add();
-        this.$bvModal.hide("add-modal");
       }
     },
 
@@ -556,6 +555,7 @@ export default {
             this.getPupils();
             this.image_url = "";
             this.resetForm();
+            this.$bvModal.hide("add-modal");
 
             swal.fire({
               icon: "success",
@@ -603,7 +603,6 @@ export default {
         return;
       } else {
         this.update();
-        this.$bvModal.hide("edit-modal");
       }
     },
 
@@ -642,6 +641,7 @@ export default {
             this.getPupils();
             this.image_url = "";
             this.resetForm();
+            this.$bvModal.hide("edit-modal");
 
             swal.fire({
               icon: "success",

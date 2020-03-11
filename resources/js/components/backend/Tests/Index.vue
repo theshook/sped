@@ -80,6 +80,10 @@
                 >
                   <b-icon icon="trash"></b-icon>
                 </b-button>
+
+                <b-button size="sm" variant="info" @click="manage(data.index)">
+                  <b-icon icon="eye"></b-icon>
+                </b-button>
               </b-btn-group>
             </template>
           </b-table>
@@ -328,6 +332,11 @@ export default {
         .catch(err => console.log(err.response));
     },
 
+    manage: function(index) {
+      let id = this.tests[index].id;
+      console.log(id);
+    },
+
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
@@ -335,7 +344,6 @@ export default {
         return;
       } else {
         this.add();
-        this.$bvModal.hide("add-modal");
       }
     },
 
@@ -350,10 +358,10 @@ export default {
       axios
         .post(testsAPI, data)
         .then(response => {
-          console.log(response.data);
           if (response.data.status == 201) {
             this.getTests();
             this.resetForm();
+            this.$bvModal.hide("add-modal");
 
             swal.fire({
               icon: "success",
@@ -495,7 +503,9 @@ export default {
 
     resetForm: function() {
       this.$v.$reset();
+      this.form.teacher_id = null;
       this.form.title = null;
+      this.form.description = null;
     }
   }
 };

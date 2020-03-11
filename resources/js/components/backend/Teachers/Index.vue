@@ -445,7 +445,6 @@ export default {
         return;
       } else {
         this.add();
-        this.$bvModal.hide("add-modal");
       }
     },
 
@@ -464,6 +463,7 @@ export default {
           if (response.data.status == 201) {
             this.getTeachers();
             this.resetForm();
+            this.$bvModal.hide("add-modal");
 
             swal.fire({
               icon: "success",
@@ -500,7 +500,6 @@ export default {
         return;
       } else {
         this.update();
-        this.$bvModal.hide("edit-modal");
       }
     },
 
@@ -522,6 +521,7 @@ export default {
             this.teachers[this.edit_index].middle_name = this.form.middle_name;
             this.teachers[this.edit_index].last_name = this.form.last_name;
             this.$v.$reset();
+            this.$bvModal.hide("edit-modal");
 
             swal.fire({
               icon: "success",

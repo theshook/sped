@@ -358,7 +358,6 @@ export default {
         return;
       } else {
         this.add();
-        this.$bvModal.hide("add-modal");
       }
     },
 
@@ -376,6 +375,7 @@ export default {
           if (response.status == 201) {
             this.getSchools();
             this.resetForm();
+            this.$bvModal.hide("add-modal");
 
             swal.fire({
               icon: "success",
@@ -416,7 +416,6 @@ export default {
         return;
       } else {
         this.update();
-        this.$bvModal.hide("edit-modal");
       }
     },
 
@@ -433,6 +432,7 @@ export default {
           if (response.data.status == 201) {
             this.getSchools();
             this.resetForm();
+            this.$bvModal.hide("edit-modal");
 
             swal.fire({
               icon: "success",
