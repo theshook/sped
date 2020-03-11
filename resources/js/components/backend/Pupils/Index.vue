@@ -169,9 +169,9 @@
           <b-col lg="4" no-gutters>
             <b-form-group>
               <b-form-input
-                v-model="$v.form.last_name.$model"
-                :state="validateState('last_name')"
-                aria-describedby="input-lname-feedback"
+                v-model="$v.form.middle_name.$model"
+                :state="validateState('middle_name')"
+                aria-describedby="input-mname-feedback"
                 placeholder="Middle name"
               ></b-form-input>
 
@@ -184,8 +184,8 @@
           <b-col lg="4" no-gutters>
             <b-form-group>
               <b-form-input
-                v-model="$v.form.middle_name.$model"
-                :state="validateState('middle_name')"
+                v-model="$v.form.last_name.$model"
+                :state="validateState('last_name')"
                 aria-describedby="input-lname-feedback"
                 placeholder="Last name"
               ></b-form-input>
@@ -292,8 +292,8 @@
             <b-form-group>
               <b-form-input
                 v-model="$v.form.middle_name.$model"
-                :state="validateState('last_name')"
-                aria-describedby="input-lname-feedback"
+                :state="validateState('middle_name')"
+                aria-describedby="input-mname-feedback"
                 placeholder="Middle name"
               ></b-form-input>
 
@@ -307,7 +307,7 @@
             <b-form-group>
               <b-form-input
                 v-model="$v.form.last_name.$model"
-                :state="validateState('middle_name')"
+                :state="validateState('last_name')"
                 aria-describedby="input-lname-feedback"
                 placeholder="Last name"
               ></b-form-input>
