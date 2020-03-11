@@ -12,10 +12,7 @@ import Vue from "vue";
 import Swal from "sweetalert2";
 
 //Bootstrap-vue
-import {
-    BootstrapVue,
-    BootstrapVueIcons
-} from "bootstrap-vue";
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 //Bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -97,6 +94,9 @@ Vue.component(
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+Vue.prototype.$user = document
+    .querySelector("meta[name='user']")
+    .getAttribute("content");
 
 const app = new Vue({
     el: "#app"

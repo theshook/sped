@@ -2106,15 +2106,145 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TeacherQuestionsIndex",
-  props: ["host", 'userid'],
+  props: ["host"],
   data: function data() {
     return {
       search: "",
       limit: 10,
       current_page: 1,
+      teachers: [],
       questions: null,
       questions_fields: [{
         key: "question",
@@ -2126,20 +2256,64 @@ __webpack_require__.r(__webpack_exports__);
       }],
       response: {},
       // ADD
-      form: {},
+      form: {
+        teacher_id: null,
+        question: null,
+        choice1: null,
+        choice2: null,
+        choice3: null,
+        choice4: null,
+        answer: null
+      },
       // EDIT
       edit_id: null,
       edit_index: null,
       // DELETE
-      delete_id: null
+      delete_id: null,
+      delete_index: null
     };
   },
   validations: {
-    form: {}
+    form: {
+      teacher_id: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+      },
+      question: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(10),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(100)
+      },
+      choice1: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(3),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(200)
+      },
+      choice2: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(3),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(200)
+      },
+      choice3: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(3),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(200)
+      },
+      choice4: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(3),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(200)
+      },
+      answer: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(3),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(200)
+      }
+    }
   },
   computed: {},
   mounted: function mounted() {
     this.getQuestions();
+    this.getTeachers();
   },
   methods: {
     validateState: function validateState(name) {
@@ -2151,13 +2325,32 @@ __webpack_require__.r(__webpack_exports__);
     getQuestions: function getQuestions(page) {
       var _this = this;
 
-      var questionsAPI = "".concat(this.host, "/teacher/").concat(this.userid, "/questions?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
+      var questionsAPI = "".concat(this.host, "/questions?search=").concat(this.search, "&limit=").concat(this.limit, "&page=").concat(page);
       axios.get(questionsAPI).then(function (response) {
-        _this.questions = response.data;
+        _this.questions = response.data.data;
         _this.response = response.data;
-        console.log(_this.questions);
       })["catch"](function (err) {
         return console.log(err);
+      });
+    },
+    getTeachers: function getTeachers() {
+      var _this2 = this;
+
+      var teachersAPI = "".concat(this.host, "/teachers/raw");
+      axios.get(teachersAPI).then(function (response) {
+        var teacherArr = response.data;
+
+        for (var i = 0; i < teacherArr.length; i++) {
+          var teacher = "".concat(teacherArr[i].first_name, " ").concat(teacherArr[i].last_name);
+
+          _this2.teachers.push({
+            id: teacherArr[i].id,
+            name: teacher,
+            school: teacherArr[i].school.name
+          });
+        }
+      })["catch"](function (err) {
+        return console.log(err.response);
       });
     },
     submitAdd: function submitAdd(event) {
@@ -2171,21 +2364,27 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     add: function add() {
-      var _this2 = this;
+      var _this3 = this;
 
       var questionsAPI = "".concat(this.host, "/questions");
       var data = {
-        name: this.form.name
+        teacher_id: this.form.teacher_id,
+        question: this.form.question,
+        choice1: this.form.choice1,
+        choice2: this.form.choice2,
+        choice3: this.form.choice3,
+        choice4: this.form.choice4,
+        answer: this.form.answer
       };
       axios.post(questionsAPI, data).then(function (response) {
         if (response.data.status == 201) {
-          _this2.getProvinces();
+          _this3.questions.push({
+            data: data
+          });
 
-          _this2.form.name = null;
+          _this3.$bvModal.hide("add-modal");
 
-          _this2.$bvModal.hide('add-modal');
-
-          _this2.$v.$reset();
+          _this3.resetForm();
 
           swal.fire({
             icon: "success",
@@ -2205,14 +2404,21 @@ __webpack_require__.r(__webpack_exports__);
         return swal.fire({
           icon: "error",
           title: err.response.data.message,
-          text: err.response.data.errors.name[0],
+          text: err.response.data.errors,
           timer: 3000
         });
       });
     },
     edit: function edit(index) {
-      this.edit_id = this.question[index].id;
+      this.edit_id = this.questions[index].id;
       this.edit_index = index;
+      this.form.teacher_id = this.questions[index].teacher_id;
+      this.form.question = this.questions[index].question;
+      this.form.choice1 = this.questions[index].choice1;
+      this.form.choice2 = this.questions[index].choice2;
+      this.form.choice3 = this.questions[index].choice3;
+      this.form.choice4 = this.questions[index].choice4;
+      this.form.answer = this.questions[index].answer;
     },
     submitUpdate: function submitUpdate(event) {
       event.preventDefault();
@@ -2225,19 +2431,32 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     update: function update() {
-      var _this3 = this;
+      var _this4 = this;
 
       var questionsAPI = "".concat(this.host, "/question/").concat(this.edit_id);
       var data = {
-        name: this.form.name
+        teacher_id: this.form.teacher_id,
+        question: this.form.question,
+        choice1: this.form.choice1,
+        choice2: this.form.choice2,
+        choice3: this.form.choice3,
+        choice4: this.form.choice4,
+        answer: this.form.answer
       };
+      this.questions[this.edit_index].teacher_id = this.form.teacher_id;
+      this.questions[this.edit_index].question = this.form.question;
+      this.questions[this.edit_index].choice1 = this.form.choice1;
+      this.questions[this.edit_index].choice2 = this.form.choice2;
+      this.questions[this.edit_index].choice3 = this.form.choice3;
+      this.questions[this.edit_index].choice4 = this.form.choice4;
+      this.questions[this.edit_index].answer = this.form.answer;
       axios.put(questionsAPI, data).then(function (response) {
         if (response.data.status == 201) {
-          _this3.question[_this3.edit_index].name = _this3.form.name;
+          _this4.question[_this4.edit_index].name = _this4.form.name;
 
-          _this3.$bvModal.hide('edit-modal');
+          _this4.$bvModal.hide("edit-modal");
 
-          _this3.$v.$reset();
+          _this4.resetForm();
 
           swal.fire({
             icon: "success",
@@ -2257,22 +2476,24 @@ __webpack_require__.r(__webpack_exports__);
         return swal.fire({
           icon: "error",
           title: err.response.data.message,
-          text: err.response.data.errors.name[0],
+          text: err.response.data.errors,
           timer: 3000
         });
       });
     },
     remove: function remove(index) {
       this.delete_id = this.questions[index].id;
+      this.delete_index = index;
     },
     destroy: function destroy(index) {
-      var _this4 = this;
+      var _this5 = this;
 
-      var questionsAPI = "".concat(this.host, "/questions/").concat(this.delete_id);
+      var questionsAPI = "".concat(this.host, "/question/").concat(this.delete_id);
       axios["delete"](questionsAPI).then(function (response) {
         if (response.data.status == 201) {
-          _this4.questions.splice(index, 1);
+          _this5.questions.splice(_this5.delete_index, 1);
 
+          _this5.delete_index = null;
           swal.fire({
             icon: "success",
             title: "Deleted",
@@ -2291,10 +2512,20 @@ __webpack_require__.r(__webpack_exports__);
         return swal.fire({
           icon: "error",
           title: err.response.data.message,
-          text: err.response.data.errors.name[0],
+          text: err.response.data,
           timer: 3000
         });
       });
+    },
+    resetForm: function resetForm() {
+      this.$v.$reset();
+      this.form.teacher_id = null;
+      this.form.question = null;
+      this.form.choice1 = null;
+      this.form.choice2 = null;
+      this.form.choice3 = null;
+      this.form.choice4 = null;
+      this.form.answer = null;
     }
   }
 });
@@ -3347,10 +3578,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ProvincesIndex",
@@ -3373,14 +3600,15 @@ __webpack_require__.r(__webpack_exports__);
       response: {},
       // ADD
       form: {
-        name: ''
+        name: ""
       },
       // EDIT
       edit_id: null,
       edit_index: null,
       edit_name: null,
       // DELETE
-      delete_id: null
+      delete_id: null,
+      delete_index: null
     };
   },
   validations: {
@@ -3495,11 +3723,9 @@ __webpack_require__.r(__webpack_exports__);
         if (response.data.status == 201) {
           _this2.getProvinces();
 
-          _this2.form.name = null;
+          _this2.resetForm();
 
-          _this2.$bvModal.hide('add-modal');
-
-          _this2.$v.$reset();
+          _this2.$bvModal.hide("add-modal");
 
           swal.fire({
             icon: "success",
@@ -3550,9 +3776,9 @@ __webpack_require__.r(__webpack_exports__);
         if (response.data.status == 201) {
           _this3.provinces[_this3.edit_index].name = _this3.form.name;
 
-          _this3.$bvModal.hide('edit-modal');
+          _this3.resetForm();
 
-          _this3.$v.$reset();
+          _this3.$bvModal.hide("edit-modal");
 
           swal.fire({
             icon: "success",
@@ -3579,6 +3805,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     remove: function remove(index) {
       this.delete_id = this.provinces[index].id;
+      this.delete_index = index;
     },
     destroy: function destroy(index) {
       var _this4 = this;
@@ -3586,12 +3813,20 @@ __webpack_require__.r(__webpack_exports__);
       var provincesAPI = "".concat(this.host, "/province/").concat(this.delete_id);
       axios["delete"](provincesAPI).then(function (response) {
         if (response.data.status == 201) {
-          _this4.provinces.splice(index, 1);
+          _this4.provinces.splice(_this4.delete_index, 1);
 
+          _this4.delete_index = null;
           swal.fire({
             icon: "success",
             title: "Deleted",
             text: "Province information successfully deleted",
+            timer: 3000
+          });
+        } else if (response.data.status == 400) {
+          swal.fire({
+            icon: "error",
+            title: "Failed",
+            text: "Cannot be deleted, one or more schools are assigned to this province",
             timer: 3000
           });
         } else {
@@ -4063,35 +4298,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'PupilsIndex',
-  props: ['host'],
+  name: "PupilsIndex",
+  props: ["host"],
   data: function data() {
     return {
       search: "",
       limit: 10,
       pupils: null,
       pupil_fields: [{
-        key: 'id',
-        label: 'ID',
+        key: "id",
+        label: "ID",
         sortable: true
       }, {
-        key: 'first_name',
-        label: 'First name',
+        key: "first_name",
+        label: "First name",
         sortable: true
       }, {
-        key: 'last_name',
-        label: 'Last name',
+        key: "last_name",
+        label: "Last name",
         sortable: true
       }, {
-        key: 'index',
-        label: 'Action'
+        key: "index",
+        label: "Action"
       }],
       schools: null,
       schools_list: [],
@@ -4111,7 +4341,13 @@ __webpack_require__.r(__webpack_exports__);
       edit_id: null,
       edit_index: null,
       // DELETE
-      delete_id: null
+      delete_id: null,
+      delete_index: null,
+      //FORM BUTTON LOADING
+      submitLoading: false,
+      // ERROR
+      bdayErr: false,
+      userInfo: ""
     };
   },
   validations: {
@@ -4146,6 +4382,8 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.getPupils();
     this.getSchools();
+    var user = JSON.parse(this.$user);
+    this.userInfo = user.roles[0].name;
   },
   methods: {
     validateState: function validateState(name) {
@@ -4153,6 +4391,16 @@ __webpack_require__.r(__webpack_exports__);
           $dirty = _this$$v$form$name.$dirty,
           $error = _this$$v$form$name.$error;
       return $dirty ? !$error : null;
+    },
+    validateBirthDate: function validateBirthDate() {
+      var bday = this.form.birth_date;
+      var currentDate = new Date().toJSON().slice(0, 10);
+
+      if (bday === currentDate || bday > currentDate) {
+        this.bdayErr = true;
+      } else {
+        this.bdayErr = false;
+      }
     },
     getPupils: function getPupils(page) {
       var _this = this;
@@ -4194,9 +4442,11 @@ __webpack_require__.r(__webpack_exports__);
     submitAdd: function submitAdd(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.validateBirthDate();
 
-      if (this.$v.form.$anyError) {
+      if (this.$v.form.$anyError || this.bdayErr) {
         return;
+        console.log(this.bdayErr);
       } else {
         this.add();
       }
@@ -4206,26 +4456,26 @@ __webpack_require__.r(__webpack_exports__);
 
       var pupilsAPI = "".concat(this.host, "/pupils");
       var data = new FormData();
-      data.append('school_id', this.form.school_id);
-      data.append('prof_pic', this.form.prof_pic);
-      data.append('first_name', this.form.first_name);
-      data.append('last_name', this.form.last_name);
-      data.append('middle_name', this.form.middle_name);
-      data.append('birth_date', this.form.birth_date);
+      data.append("school_id", this.form.school_id);
+      data.append("prof_pic", this.form.prof_pic);
+      data.append("first_name", this.form.first_name);
+      data.append("last_name", this.form.last_name);
+      data.append("middle_name", this.form.middle_name);
+      data.append("birth_date", this.form.birth_date);
       var config = {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          "Content-Type": "multipart/form-data"
         }
       };
       axios.post(pupilsAPI, data, config).then(function (response) {
         if (response.data.status == 201) {
           _this3.getPupils();
 
-          _this3.clearPupilData();
+          _this3.image_url = "";
 
-          _this3.$bvModal.hide('add-two');
+          _this3.resetForm();
 
-          _this3.$v.$reset();
+          _this3.$bvModal.hide("add-modal");
 
           swal.fire({
             icon: "success",
@@ -4241,13 +4491,11 @@ __webpack_require__.r(__webpack_exports__);
             timer: 3000
           });
         }
-
-        console.log(response.data);
       })["catch"](function (err) {
         swal.fire({
           icon: "error",
           title: err.response.data.message,
-          text: err.response.data.errors.name[0],
+          text: err.response.data.errors,
           timer: 3000
         });
       });
@@ -4266,8 +4514,9 @@ __webpack_require__.r(__webpack_exports__);
     submitUpdate: function submitUpdate() {
       event.preventDefault();
       this.$v.form.$touch();
+      this.validateBirthDate();
 
-      if (this.$v.form.$anyError) {
+      if (this.$v.form.$anyError || this.bdayErr) {
         return;
       } else {
         this.update();
@@ -4302,11 +4551,11 @@ __webpack_require__.r(__webpack_exports__);
         if (response.data.status == 201) {
           _this4.getPupils();
 
-          _this4.clearPupilData();
+          _this4.image_url = "";
 
-          _this4.$bvModal.hide('add-two');
+          _this4.resetForm();
 
-          _this4.$v.$reset();
+          _this4.$bvModal.hide("edit-modal");
 
           swal.fire({
             icon: "success",
@@ -4323,25 +4572,26 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (err) {
-        // swal.fire({
-        // 	icon: "error",
-        // 	title: err.response.data.message,
-        // 	text: err.response.data.errors.name[0],
-        // 	timer: 3000
-        // })
-        console.log(err);
+        swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors,
+          timer: 3000
+        });
       });
     },
     remove: function remove(index) {
       this.delete_id = this.pupils[index].id;
+      this.delete_index = index;
     },
     destroy: function destroy(index) {
       var _this5 = this;
 
+      console.log(this.delete_index);
       var pupilsAPI = "".concat(this.host, "/pupil/").concat(this.delete_id);
       axios["delete"](pupilsAPI).then(function (response) {
         if (response.data.status == 201) {
-          _this5.pupils.splice(index, 1);
+          _this5.pupils.splice(_this5.delete_index, 1);
 
           swal.fire({
             icon: "success",
@@ -4358,25 +4608,50 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (err) {
-        return console.log(err.response);
+        swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors,
+          timer: 3000
+        });
       });
     },
-    addModalOpen: function addModalOpen() {
-      this.$bvModal.show('add-modal');
-      this.$bvModal.hide('add-two');
-    },
-    clearPupilData: function clearPupilData() {
+    resetForm: function resetForm() {
+      this.$v.$reset();
       this.form.first_name = null;
       this.form.last_name = null;
       this.form.middle_name = null;
       this.form.birth_date = null;
       this.form.prof_pic = null;
       this.form.school_id = null;
-    },
-    resetForm: function resetForm() {
-      this.$v.$reset();
+      this.image_url = null;
     }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Reports/Index.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Reports/Index.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "ReportsIndex",
+  props: ["host"]
 });
 
 /***/ }),
@@ -4392,34 +4667,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -4795,17 +5042,11 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.post(schoolsAPI, data).then(function (response) {
         if (response.status == 201) {
-          _this3.schools.push({
-            name: _this3.form.name,
-            province_id: _this3.form.province_id
-          });
+          _this3.getSchools();
 
-          _this3.name = null;
-          _this3.province_id = null;
+          _this3.resetForm();
 
-          _this3.$bvModal.hide('add-modal');
-
-          _this3.$v.$reset();
+          _this3.$bvModal.hide("add-modal");
 
           swal.fire({
             icon: "success",
@@ -4856,15 +5097,11 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.put(schoolsAPI, data).then(function (response) {
         if (response.data.status == 201) {
-          // this.schools[this.edit_index].name = this.form.name;
-          // this.schools[this.edit_index].province_id = this.form.province_id;
-          // this.form.name = null;
-          // this.form.province_id = null;
           _this4.getSchools();
 
-          _this4.$bvModal.hide('edit-modal');
+          _this4.resetForm();
 
-          _this4.$v.$reset();
+          _this4.$bvModal.hide("edit-modal");
 
           swal.fire({
             icon: "success",
@@ -4901,6 +5138,7 @@ __webpack_require__.r(__webpack_exports__);
         if (response.data.status == 201) {
           _this5.schools.splice(_this5.delete_index, 1);
 
+          _this5.delete_index = null;
           swal.fire({
             icon: "success",
             title: "Deleted",
@@ -4940,54 +5178,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -5308,7 +5498,8 @@ __webpack_require__.r(__webpack_exports__);
       edit_id: null,
       edit_index: null,
       // DELETE
-      delete_id: null
+      delete_id: null,
+      delete_index: null
     };
   },
   validations: {
@@ -5451,14 +5642,12 @@ __webpack_require__.r(__webpack_exports__);
         middle_name: this.form.middle_name
       };
       axios.post(teachersAPI, data).then(function (response) {
-        console.log(response.data);
-
         if (response.data.status == 201) {
           _this3.getTeachers();
 
           _this3.resetForm();
 
-          _this3.$bvModal.hide('add-modal');
+          _this3.$bvModal.hide("add-modal");
 
           swal.fire({
             icon: "success",
@@ -5514,9 +5703,9 @@ __webpack_require__.r(__webpack_exports__);
           _this4.teachers[_this4.edit_index].middle_name = _this4.form.middle_name;
           _this4.teachers[_this4.edit_index].last_name = _this4.form.last_name;
 
-          _this4.$bvModal.hide('edit-modal');
-
           _this4.$v.$reset();
+
+          _this4.$bvModal.hide("edit-modal");
 
           swal.fire({
             icon: "success",
@@ -5533,17 +5722,17 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (err) {
-        return console.log(err);
-      } // swal.fire({
-      // 	icon: "error",
-      // 	title: err.response.data.message,
-      // 	text: err.response.data.errors.name[0],
-      // 	timer: 3000
-      // })
-      );
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors,
+          timer: 3000
+        });
+      });
     },
     remove: function remove(index) {
       this.delete_id = this.teachers[index].id;
+      this.delete_index = index;
     },
     destroy: function destroy(index) {
       var _this5 = this;
@@ -5551,8 +5740,9 @@ __webpack_require__.r(__webpack_exports__);
       var teachersAPI = "".concat(this.host, "/teacher/").concat(this.delete_id);
       axios["delete"](teachersAPI).then(function (response) {
         if (response.data.status == 201) {
-          _this5.teachers.splice(index, 1);
+          _this5.teachers.splice(_this5.delete_index, 1);
 
+          _this5.delete_index = null;
           swal.fire({
             icon: "success",
             title: "Deleted",
@@ -5571,7 +5761,7 @@ __webpack_require__.r(__webpack_exports__);
         return swal.fire({
           icon: "error",
           title: err.response.data.message,
-          text: err.response.data.errors.name[0],
+          text: err.response.data.errors,
           timer: 3000
         });
       });
@@ -5588,10 +5778,517 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/reports/Index.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/reports/Index.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/Index.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Tests/Index.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "TestsIndex",
+  props: ["host"],
+  data: function data() {
+    return {
+      search: "",
+      limit: 10,
+      current_page: 1,
+      teachers: [],
+      tests: null,
+      tests_fields: [{
+        key: "title",
+        label: "Title",
+        sortable: true
+      }, {
+        key: "teacher",
+        label: "Teacher",
+        sortable: true
+      }, {
+        key: "index",
+        label: "Action"
+      }],
+      province_list: [],
+      response: {},
+      // ADD
+      form: {
+        title: "",
+        description: "",
+        teacher_id: ""
+      },
+      // EDIT
+      edit_id: null,
+      edit_index: null,
+      edit_name: null,
+      // DELETE
+      delete_id: null,
+      delete_index: null
+    };
+  },
+  validations: {
+    form: {
+      teacher_id: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+      },
+      title: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(3),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(60)
+      },
+      description: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"],
+        minLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["minLength"])(10),
+        maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["maxLength"])(100)
+      }
+    }
+  },
+  computed: {},
+  mounted: function mounted() {
+    this.getTests();
+    this.getTeachers();
+  },
+  methods: {
+    validateState: function validateState(name) {
+      var _this$$v$form$name = this.$v.form[name],
+          $dirty = _this$$v$form$name.$dirty,
+          $error = _this$$v$form$name.$error;
+      return $dirty ? !$error : null;
+    },
+    getTests: function getTests(page) {
+      var _this = this;
+
+      var testsAPI = "".concat(this.host, "/tests?search=").concat(this.search, "&limit=").concat(this.limit);
+      axios.get(testsAPI).then(function (response) {
+        _this.tests = response.data.data;
+        _this.response = response.data;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    getTeachers: function getTeachers() {
+      var _this2 = this;
+
+      var teachersAPI = "".concat(this.host, "/teachers/raw");
+      axios.get(teachersAPI).then(function (response) {
+        var teacherArr = response.data;
+
+        for (var i = 0; i < teacherArr.length; i++) {
+          var teacher = "".concat(teacherArr[i].first_name, " ").concat(teacherArr[i].last_name);
+
+          _this2.teachers.push({
+            id: teacherArr[i].id,
+            name: teacher,
+            school: teacherArr[i].school.name
+          });
+        }
+      })["catch"](function (err) {
+        return console.log(err.response);
+      });
+    },
+    manage: function manage(index) {
+      var id = this.tests[index].id;
+      console.log(id);
+    },
+    submitAdd: function submitAdd(event) {
+      event.preventDefault();
+      this.$v.form.$touch();
+
+      if (this.$v.form.$anyError) {
+        return;
+      } else {
+        this.add();
+      }
+    },
+    add: function add() {
+      var _this3 = this;
+
+      var testsAPI = "".concat(this.host, "/tests");
+      var data = {
+        teacher_id: this.form.teacher_id,
+        title: this.form.title,
+        description: this.form.description
+      };
+      axios.post(testsAPI, data).then(function (response) {
+        if (response.data.status == 201) {
+          _this3.getTests();
+
+          _this3.resetForm();
+
+          _this3.$bvModal.hide("add-modal");
+
+          swal.fire({
+            icon: "success",
+            title: "Added",
+            text: "Test successfully added",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to add test",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors,
+          timer: 10000
+        });
+      });
+    },
+    edit: function edit(index) {
+      this.edit_id = this.tests[index].id;
+      this.edit_index = index;
+      this.form.teacher_id = this.tests[index].teacher_id;
+      this.form.title = this.tests[index].title;
+      this.form.description = this.tests[index].description;
+    },
+    submitUpdate: function submitUpdate(event) {
+      event.preventDefault();
+      this.$v.form.$touch();
+
+      if (this.$v.form.$anyError) {
+        return;
+      } else {
+        this.update();
+        this.$bvModal.hide("edit-modal");
+      }
+    },
+    update: function update() {
+      var _this4 = this;
+
+      var testsAPI = "".concat(this.host, "/test/").concat(this.edit_id);
+      var data = {
+        teacher_id: this.form.teacher_id,
+        title: this.form.title,
+        description: this.form.description
+      };
+      axios.put(testsAPI, data).then(function (response) {
+        if (response.data.status == 201) {
+          for (var t = 0; t < _this4.teachers.length; t++) {
+            if (_this4.form.teacher_id === _this4.teachers[t].id) {
+              _this4.tests[_this4.edit_index].teacher.first_name = _this4.teachers[t].name.split(" ")[0];
+              _this4.tests[_this4.edit_index].teacher.last_name = _this4.teachers[t].name.split(" ")[1];
+              break;
+            }
+          }
+
+          _this4.tests[_this4.edit_index].teacher_id = _this4.form.teacher_id;
+          _this4.tests[_this4.edit_index].title = _this4.form.title;
+          _this4.tests[_this4.edit_index].description = _this4.form.description;
+
+          _this4.resetForm();
+
+          swal.fire({
+            icon: "success",
+            title: "Updated",
+            text: "Test successfully updated",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to update test information",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors,
+          timer: 3000
+        });
+      });
+    },
+    remove: function remove(index) {
+      this.delete_id = this.tests[index].id;
+      this.delete_index = index;
+    },
+    destroy: function destroy(index) {
+      var _this5 = this;
+
+      var testsAPI = "".concat(this.host, "/test/").concat(this.delete_id);
+      axios["delete"](testsAPI).then(function (response) {
+        if (response.data.status == 201) {
+          _this5.tests.splice(_this5.delete_index, 1);
+
+          _this5.delete_index = null;
+          swal.fire({
+            icon: "success",
+            title: "Deleted",
+            text: "Test successfully deleted",
+            timer: 3000
+          });
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete test",
+            timer: 3000
+          });
+        }
+      })["catch"](function (err) {
+        return swal.fire({
+          icon: "error",
+          title: err.response.data.message,
+          text: err.response.data.errors.name[0],
+          timer: 3000
+        });
+      });
+    },
+    resetForm: function resetForm() {
+      this.$v.$reset();
+      this.form.teacher_id = null;
+      this.form.title = null;
+      this.form.description = null;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5603,11 +6300,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "ReportsIndex",
-  props: ["host"]
+  name: "TestManageQuestions",
+  props: ["host"],
+  data: function data() {
+    return {};
+  },
+  validations: {},
+  computed: {},
+  mounted: function mounted() {},
+  methods: {}
 });
 
 /***/ }),
@@ -78635,11 +79337,7 @@ var render = function() {
                         _c(
                           "h2",
                           { staticClass: "text-primary font-weight-bold" },
-                          [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t\t\tQuestions\n\t\t\t\t\t\t\t"
-                            )
-                          ]
+                          [_vm._v("Questions")]
                         )
                       ]),
                       _vm._v(" "),
@@ -78667,7 +79365,7 @@ var render = function() {
                                 _c("b-icon", { attrs: { icon: "pencil" } }),
                                 _vm._v(" "),
                                 _vm._v(
-                                  "\n\t\t\t\t\t\t\t\t\tAdd Question\n\t\t\t\t\t\t\t\t"
+                                  "\n                Add Question\n              "
                                 )
                               ],
                               1
@@ -78806,13 +79504,7 @@ var render = function() {
                       {
                         key: "cell(name)",
                         fn: function(data) {
-                          return [
-                            _vm._v(
-                              "\n                            " +
-                                _vm._s(data.item.name) +
-                                "\n                        "
-                            )
-                          ]
+                          return [_vm._v(_vm._s(data.item.name))]
                         }
                       },
                       {
@@ -78911,6 +79603,7 @@ var render = function() {
         "b-modal",
         {
           attrs: {
+            scrollable: "",
             id: "add-modal",
             title: "Add Question",
             "ok-title": "Submit",
@@ -78920,7 +79613,248 @@ var render = function() {
           },
           on: { ok: _vm.submitAdd }
         },
-        [_c("b-form")],
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Teacher", "label-class": "text-sm" } },
+                [
+                  _c(
+                    "b-form-select",
+                    {
+                      attrs: {
+                        state: _vm.validateState("teacher_id"),
+                        "aria-describedby": "input-teacher-feedback"
+                      },
+                      model: {
+                        value: _vm.$v.form.teacher_id.$model,
+                        callback: function($$v) {
+                          _vm.$set(_vm.$v.form.teacher_id, "$model", $$v)
+                        },
+                        expression: "$v.form.teacher_id.$model"
+                      }
+                    },
+                    _vm._l(_vm.teachers, function(teacher) {
+                      return _c(
+                        "b-form-select-option",
+                        { key: teacher.id, attrs: { value: teacher.id } },
+                        [
+                          _vm._v(
+                            _vm._s(teacher.name) +
+                              " - " +
+                              _vm._s(teacher.school)
+                          )
+                        ]
+                      )
+                    }),
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "input-teacher-feedback" } },
+                    [_vm._v("This field is required")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Question", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    attrs: {
+                      state: _vm.validateState("question"),
+                      "aria-describedby": "invalid-input-question"
+                    },
+                    model: {
+                      value: _vm.$v.form.question.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.question, "$model", $$v)
+                      },
+                      expression: "$v.form.question.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-question" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #1", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice1"),
+                      "aria-describedby": "invalid-input-choice1",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice1.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice1, "$model", $$v)
+                      },
+                      expression: "$v.form.choice1.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice1" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #2", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice2"),
+                      "aria-describedby": "invalid-input-choice2",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice2.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice2, "$model", $$v)
+                      },
+                      expression: "$v.form.choice2.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice2" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #3", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice3"),
+                      "aria-describedby": "invalid-input-choice3",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice3.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice3, "$model", $$v)
+                      },
+                      expression: "$v.form.choice3.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice3" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #4", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice4"),
+                      "aria-describedby": "invalid-input-choice4",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice4.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice4, "$model", $$v)
+                      },
+                      expression: "$v.form.choice4.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice4" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Answer", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("answer"),
+                      "aria-describedby": "invalid-input-choice1",
+                      rows: "2"
+                    },
+                    model: {
+                      value: _vm.$v.form.answer.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.answer, "$model", $$v)
+                      },
+                      expression: "$v.form.answer.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-answer" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
         1
       ),
       _vm._v(" "),
@@ -78928,6 +79862,7 @@ var render = function() {
         "b-modal",
         {
           attrs: {
+            scrollable: "",
             id: "edit-modal",
             title: "Update Question",
             "ok-title": "Submit",
@@ -78937,7 +79872,248 @@ var render = function() {
           },
           on: { ok: _vm.submitUpdate }
         },
-        [_c("b-form")],
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Teacher", "label-class": "text-sm" } },
+                [
+                  _c(
+                    "b-form-select",
+                    {
+                      attrs: {
+                        state: _vm.validateState("teacher_id"),
+                        "aria-describedby": "input-teacher-feedback"
+                      },
+                      model: {
+                        value: _vm.$v.form.teacher_id.$model,
+                        callback: function($$v) {
+                          _vm.$set(_vm.$v.form.teacher_id, "$model", $$v)
+                        },
+                        expression: "$v.form.teacher_id.$model"
+                      }
+                    },
+                    _vm._l(_vm.teachers, function(teacher) {
+                      return _c(
+                        "b-form-select-option",
+                        { key: teacher.id, attrs: { value: teacher.id } },
+                        [
+                          _vm._v(
+                            _vm._s(teacher.name) +
+                              " - " +
+                              _vm._s(teacher.school)
+                          )
+                        ]
+                      )
+                    }),
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "input-teacher-feedback" } },
+                    [_vm._v("This field is required")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Question", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    attrs: {
+                      state: _vm.validateState("question"),
+                      "aria-describedby": "invalid-input-question"
+                    },
+                    model: {
+                      value: _vm.$v.form.question.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.question, "$model", $$v)
+                      },
+                      expression: "$v.form.question.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-question" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #1", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice1"),
+                      "aria-describedby": "invalid-input-choice1",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice1.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice1, "$model", $$v)
+                      },
+                      expression: "$v.form.choice1.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice1" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #2", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice2"),
+                      "aria-describedby": "invalid-input-choice2",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice2.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice2, "$model", $$v)
+                      },
+                      expression: "$v.form.choice2.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice2" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #3", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice3"),
+                      "aria-describedby": "invalid-input-choice3",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice3.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice3, "$model", $$v)
+                      },
+                      expression: "$v.form.choice3.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice3" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Choice #4", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("choice4"),
+                      "aria-describedby": "invalid-input-choice4",
+                      rows: "4"
+                    },
+                    model: {
+                      value: _vm.$v.form.choice4.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.choice4, "$model", $$v)
+                      },
+                      expression: "$v.form.choice4.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-choice4" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Answer", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("answer"),
+                      "aria-describedby": "invalid-input-choice1",
+                      rows: "2"
+                    },
+                    model: {
+                      value: _vm.$v.form.answer.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.answer, "$model", $$v)
+                      },
+                      expression: "$v.form.answer.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "invalid-input-answer" } },
+                    [
+                      _vm._v(
+                        "This field is required and must be atleast 3 characters."
+                      )
+                    ]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
         1
       ),
       _vm._v(" "),
@@ -78956,9 +80132,7 @@ var render = function() {
         },
         [
           _c("p", { staticClass: "text-center text-muted mb-1" }, [
-            _vm._v(
-              "\n                Are you sure you want to remove this province?\n            "
-            )
+            _vm._v("Are you sure you want to remove this province?")
           ])
         ]
       )
@@ -79930,7 +81104,7 @@ var render = function() {
                           { staticClass: "text-primary font-weight-bold" },
                           [
                             _vm._v(
-                              "\n\t\t\t\t\t\t\t\tProvinces\n\t\t\t\t\t\t\t"
+                              "\n                                Provinces\n                            "
                             )
                           ]
                         )
@@ -79960,7 +81134,7 @@ var render = function() {
                                 _c("b-icon", { attrs: { icon: "pencil" } }),
                                 _vm._v(" "),
                                 _vm._v(
-                                  "\n\t\t\t\t\t\t\t\t\tAdd Province\n\t\t\t\t\t\t\t\t"
+                                  "\n                                    Add Province\n                                "
                                 )
                               ],
                               1
@@ -80240,7 +81414,7 @@ var render = function() {
                     { attrs: { id: "invalid-input-name" } },
                     [
                       _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t"
+                        "\n                        This field is required and must be atleast 3 characters.\n                    "
                       )
                     ]
                   )
@@ -80316,7 +81490,7 @@ var render = function() {
                     { attrs: { id: "invalid-input-name" } },
                     [
                       _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t"
+                        "\n                        This field is required and must be atleast 3 characters.\n                    "
                       )
                     ]
                   )
@@ -80398,7 +81572,11 @@ var render = function() {
                         _c(
                           "h2",
                           { staticClass: "text-primary font-weight-bold" },
-                          [_vm._v("\n\t\t\t\t\t\t\t\tPupils\n\t\t\t\t\t\t\t")]
+                          [
+                            _vm._v(
+                              "\n                                Pupils\n                            "
+                            )
+                          ]
                         )
                       ]),
                       _vm._v(" "),
@@ -80410,28 +81588,30 @@ var render = function() {
                               "d-flex justify-content-end align-baseline"
                           },
                           [
-                            _c(
-                              "b-button",
-                              {
-                                directives: [
+                            _vm.userInfo === "admin"
+                              ? _c(
+                                  "b-button",
                                   {
-                                    name: "b-modal",
-                                    rawName: "v-b-modal.add-modal",
-                                    modifiers: { "add-modal": true }
-                                  }
-                                ],
-                                attrs: { variant: "primary", size: "sm" },
-                                on: { click: _vm.clearPupilData }
-                              },
-                              [
-                                _c("b-icon", { attrs: { icon: "pencil" } }),
-                                _vm._v(" "),
-                                _vm._v(
-                                  "\n\t\t\t\t\t\t\t\t\tAdd Pupil\n\t\t\t\t\t\t\t\t"
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.add-modal",
+                                        modifiers: { "add-modal": true }
+                                      }
+                                    ],
+                                    attrs: { variant: "primary", size: "sm" },
+                                    on: { click: _vm.resetForm }
+                                  },
+                                  [
+                                    _c("b-icon", { attrs: { icon: "pencil" } }),
+                                    _vm._v(" "),
+                                    _vm._v(
+                                      "\n                                    Add Pupil\n                                "
+                                    )
+                                  ],
+                                  1
                                 )
-                              ],
-                              1
-                            )
+                              : _vm._e()
                           ],
                           1
                         )
@@ -80566,37 +81746,19 @@ var render = function() {
                       {
                         key: "cell(id)",
                         fn: function(data) {
-                          return [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t\t" +
-                                _vm._s(data.item.id) +
-                                "\n\t\t\t\t\t\t"
-                            )
-                          ]
+                          return [_vm._v(_vm._s(data.item.id))]
                         }
                       },
                       {
                         key: "cell(first_name)",
                         fn: function(data) {
-                          return [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t\t" +
-                                _vm._s(data.item.first_name) +
-                                "\n\t\t\t\t\t\t"
-                            )
-                          ]
+                          return [_vm._v(_vm._s(data.item.first_name))]
                         }
                       },
                       {
                         key: "cell(last_name)",
                         fn: function(data) {
-                          return [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t\t" +
-                                _vm._s(data.item.last_name) +
-                                "\n\t\t\t\t\t\t"
-                            )
-                          ]
+                          return [_vm._v(_vm._s(data.item.last_name))]
                         }
                       },
                       {
@@ -80741,7 +81903,7 @@ var render = function() {
                         { attrs: { id: "input-image-feedback" } },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\tThis field is required and must be an image.\n\t\t\t\t\t"
+                            "This field is required and must be an\n                        image."
                           )
                         ]
                       )
@@ -80779,7 +81941,7 @@ var render = function() {
                               attrs: { variant: "light" },
                               on: { click: _vm.changeImage }
                             },
-                            [_vm._v("\n\t\t\t\t\t\t\tChange\n\t\t\t\t\t\t")]
+                            [_vm._v("Change")]
                           ),
                           _vm._v(" "),
                           _c(
@@ -80789,7 +81951,7 @@ var render = function() {
                               attrs: { variant: "light" },
                               on: { click: _vm.clearImage }
                             },
-                            [_vm._v("\n\t\t\t\t\t\t\tRemove\n\t\t\t\t\t\t")]
+                            [_vm._v("Remove")]
                           )
                         ],
                         1
@@ -80799,9 +81961,7 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
-              _c("label", { staticClass: "text-sm" }, [
-                _vm._v("\n\t\t\t\t\tFull name\n\t\t\t\t")
-              ]),
+              _c("label", { staticClass: "text-sm" }, [_vm._v("Full name")]),
               _vm._v(" "),
               _c(
                 "b-form-row",
@@ -80833,7 +81993,45 @@ var render = function() {
                             { attrs: { id: "input-fname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3\n                                characters."
+                              )
+                            ]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-col",
+                    { attrs: { lg: "4", "no-gutters": "" } },
+                    [
+                      _c(
+                        "b-form-group",
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              state: _vm.validateState("middle_name"),
+                              "aria-describedby": "input-mname-feedback",
+                              placeholder: "Middle name"
+                            },
+                            model: {
+                              value: _vm.$v.form.middle_name.$model,
+                              callback: function($$v) {
+                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
+                              },
+                              expression: "$v.form.middle_name.$model"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "b-form-invalid-feedback",
+                            { attrs: { id: "input-fname-feedback" } },
+                            [
+                              _vm._v(
+                                "This field is required and must be atleast 3\n                                characters."
                               )
                             ]
                           )
@@ -80855,7 +82053,7 @@ var render = function() {
                             attrs: {
                               state: _vm.validateState("last_name"),
                               "aria-describedby": "input-lname-feedback",
-                              placeholder: "Middle name"
+                              placeholder: "Last name"
                             },
                             model: {
                               value: _vm.$v.form.last_name.$model,
@@ -80871,45 +82069,7 @@ var render = function() {
                             { attrs: { id: "input-fname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
-                              )
-                            ]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-col",
-                    { attrs: { lg: "4", "no-gutters": "" } },
-                    [
-                      _c(
-                        "b-form-group",
-                        [
-                          _c("b-form-input", {
-                            attrs: {
-                              state: _vm.validateState("middle_name"),
-                              "aria-describedby": "input-lname-feedback",
-                              placeholder: "Last name"
-                            },
-                            model: {
-                              value: _vm.$v.form.middle_name.$model,
-                              callback: function($$v) {
-                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
-                              },
-                              expression: "$v.form.middle_name.$model"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "b-form-invalid-feedback",
-                            { attrs: { id: "input-fname-feedback" } },
-                            [
-                              _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3\n                                characters."
                               )
                             ]
                           )
@@ -80946,13 +82106,7 @@ var render = function() {
                       return _c(
                         "b-form-select-option",
                         { key: school.id, attrs: { value: school.id } },
-                        [
-                          _vm._v(
-                            "\n\t\t\t\t\t\t\t" +
-                              _vm._s(school.name) +
-                              "\n\t\t\t\t\t\t"
-                          )
-                        ]
+                        [_vm._v(_vm._s(school.name))]
                       )
                     }),
                     1
@@ -80961,11 +82115,7 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-school-feedback" } },
-                    [
-                      _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required.\n\t\t\t\t\t"
-                      )
-                    ]
+                    [_vm._v("This field is required.")]
                   )
                 ],
                 1
@@ -80993,26 +82143,19 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-bday-feedback" } },
-                    [
-                      _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required.\n\t\t\t\t\t"
-                      )
-                    ]
-                  )
+                    [_vm._v("This field is required.")]
+                  ),
+                  _vm._v(" "),
+                  _vm.bdayErr
+                    ? _c("span", { staticClass: "text-danger text-small" }, [
+                        _vm._v("Date must not be beyond the current date.")
+                      ])
+                    : _vm._e()
                 ],
                 1
               )
             ],
             1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-button",
-            {
-              attrs: { size: "sm", variant: "link" },
-              on: { click: _vm.addModalOpen }
-            },
-            [_vm._v("\n\t\t\t\tGo back\n\t\t\t")]
           )
         ],
         1
@@ -81036,9 +82179,7 @@ var render = function() {
           _c(
             "b-form",
             [
-              _c("label", { staticClass: "text-sm" }, [
-                _vm._v("\n\t\t\t\t\tFull name\n\t\t\t\t")
-              ]),
+              _c("label", { staticClass: "text-sm" }, [_vm._v("Full name")]),
               _vm._v(" "),
               _c(
                 "b-form-row",
@@ -81070,7 +82211,45 @@ var render = function() {
                             { attrs: { id: "input-fname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3\n                                characters."
+                              )
+                            ]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-col",
+                    { attrs: { lg: "4", "no-gutters": "" } },
+                    [
+                      _c(
+                        "b-form-group",
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              state: _vm.validateState("middle_name"),
+                              "aria-describedby": "input-mname-feedback",
+                              placeholder: "Middle name"
+                            },
+                            model: {
+                              value: _vm.$v.form.middle_name.$model,
+                              callback: function($$v) {
+                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
+                              },
+                              expression: "$v.form.middle_name.$model"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "b-form-invalid-feedback",
+                            { attrs: { id: "input-fname-feedback" } },
+                            [
+                              _vm._v(
+                                "This field is required and must be atleast 3\n                                characters."
                               )
                             ]
                           )
@@ -81092,44 +82271,6 @@ var render = function() {
                             attrs: {
                               state: _vm.validateState("last_name"),
                               "aria-describedby": "input-lname-feedback",
-                              placeholder: "Middle name"
-                            },
-                            model: {
-                              value: _vm.$v.form.middle_name.$model,
-                              callback: function($$v) {
-                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
-                              },
-                              expression: "$v.form.middle_name.$model"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "b-form-invalid-feedback",
-                            { attrs: { id: "input-fname-feedback" } },
-                            [
-                              _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
-                              )
-                            ]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-col",
-                    { attrs: { lg: "4", "no-gutters": "" } },
-                    [
-                      _c(
-                        "b-form-group",
-                        [
-                          _c("b-form-input", {
-                            attrs: {
-                              state: _vm.validateState("middle_name"),
-                              "aria-describedby": "input-lname-feedback",
                               placeholder: "Last name"
                             },
                             model: {
@@ -81146,7 +82287,7 @@ var render = function() {
                             { attrs: { id: "input-fname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3\n                                characters."
                               )
                             ]
                           )
@@ -81183,13 +82324,7 @@ var render = function() {
                       return _c(
                         "b-form-select-option",
                         { key: school.id, attrs: { value: school.id } },
-                        [
-                          _vm._v(
-                            "\n\t\t\t\t\t\t\t" +
-                              _vm._s(school.name) +
-                              "\n\t\t\t\t\t\t"
-                          )
-                        ]
+                        [_vm._v(_vm._s(school.name))]
                       )
                     }),
                     1
@@ -81198,11 +82333,7 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-school-feedback" } },
-                    [
-                      _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required.\n\t\t\t\t\t"
-                      )
-                    ]
+                    [_vm._v("This field is required.")]
                   )
                 ],
                 1
@@ -81218,6 +82349,7 @@ var render = function() {
                       state: _vm.validateState("birth_date"),
                       "aria-describedby": "input-bday-feedback"
                     },
+                    on: { change: _vm.validateBirthDate },
                     model: {
                       value: _vm.$v.form.birth_date.$model,
                       callback: function($$v) {
@@ -81230,12 +82362,14 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-bday-feedback" } },
-                    [
-                      _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required.\n\t\t\t\t\t"
-                      )
-                    ]
-                  )
+                    [_vm._v("This field is required.")]
+                  ),
+                  _vm._v(" "),
+                  _vm.bdayErr
+                    ? _c("span", { staticClass: "text-danger text-small" }, [
+                        _vm._v("Date must not be beyond the current date.")
+                      ])
+                    : _vm._e()
                 ],
                 1
               )
@@ -81266,6 +82400,49 @@ var render = function() {
             )
           ])
         ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Reports/Index.vue?vue&type=template&id=42d62168&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Reports/Index.vue?vue&type=template&id=42d62168& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "b-container",
+        { staticClass: "mt-2" },
+        [
+          _c("b-button", { attrs: { href: "/configure/report/printPDF" } }, [
+            _vm._v("Print PDF")
+          ]),
+          _vm._v(" "),
+          _c("b-button", { attrs: { href: "/configure/report/viewPDF" } }, [
+            _vm._v("View PDF")
+          ])
+        ],
+        1
       )
     ],
     1
@@ -81314,11 +82491,7 @@ var render = function() {
                         _c(
                           "h2",
                           { staticClass: "text-primary font-weight-bold" },
-                          [
-                            _vm._v(
-                              "\n                                Schools\n                            "
-                            )
-                          ]
+                          [_vm._v("Schools")]
                         )
                       ]),
                       _vm._v(" "),
@@ -81346,7 +82519,7 @@ var render = function() {
                                 _c("b-icon", { attrs: { icon: "pencil" } }),
                                 _vm._v(" "),
                                 _vm._v(
-                                  "\n                                    Add School\n                                "
+                                  "\n                  Add School\n                "
                                 )
                               ],
                               1
@@ -81485,25 +82658,13 @@ var render = function() {
                       {
                         key: "cell(name)",
                         fn: function(data) {
-                          return [
-                            _vm._v(
-                              "\n                            " +
-                                _vm._s(data.item.name) +
-                                "\n                        "
-                            )
-                          ]
+                          return [_vm._v(_vm._s(data.item.name))]
                         }
                       },
                       {
                         key: "cell(province_id)",
                         fn: function(data) {
-                          return [
-                            _vm._v(
-                              "\n                            " +
-                                _vm._s(data.item.province_id) +
-                                "\n                        "
-                            )
-                          ]
+                          return [_vm._v(_vm._s(data.item.province_id))]
                         }
                       },
                       {
@@ -81638,7 +82799,7 @@ var render = function() {
                     { attrs: { id: "invalid-name-feedback" } },
                     [
                       _vm._v(
-                        "\n\t\t\t\t\t\tThis form is required and must be atleast 3 characters.\n\t\t\t\t\t"
+                        "This form is required and must be atleast 3 characters."
                       )
                     ]
                   )
@@ -81678,7 +82839,7 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-province-feedback" } },
-                    [_vm._v("\n\t\t\t\t\t\tThis field is required\n\t\t\t\t\t")]
+                    [_vm._v("This field is required")]
                   )
                 ],
                 1
@@ -81730,7 +82891,7 @@ var render = function() {
                     { attrs: { id: "invalid-name-feedback" } },
                     [
                       _vm._v(
-                        "\n\t\t\t\t\t\tThis form is required and must be atleast 3 characters.\n\t\t\t\t\t"
+                        "This form is required and must be atleast 3 characters."
                       )
                     ]
                   )
@@ -81770,7 +82931,7 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-province-feedback" } },
-                    [_vm._v("\n\t\t\t\t\t\tThis field is required\n\t\t\t\t\t")]
+                    [_vm._v("This field is required")]
                   )
                 ],
                 1
@@ -81797,9 +82958,7 @@ var render = function() {
         },
         [
           _c("p", { staticClass: "text-center text-muted mb-1" }, [
-            _vm._v(
-              "\n                Are you sure you want to remove this school?\n            "
-            )
+            _vm._v("Are you sure you want to remove this school?")
           ])
         ]
       )
@@ -81850,7 +83009,7 @@ var render = function() {
                         _c(
                           "h2",
                           { staticClass: "text-primary font-weight-bold" },
-                          [_vm._v("\n\t\t\t\t\t\t\t\tTeachers\n\t\t\t\t\t\t\t")]
+                          [_vm._v("Teachers")]
                         )
                       ]),
                       _vm._v(" "),
@@ -81878,7 +83037,7 @@ var render = function() {
                                 _c("b-icon", { attrs: { icon: "pencil" } }),
                                 _vm._v(" "),
                                 _vm._v(
-                                  "\n\t\t\t\t\t\t\t\t\tAdd Teacher\n\t\t\t\t\t\t\t\t"
+                                  "\n                  Add Teacher\n                "
                                 )
                               ],
                               1
@@ -82017,13 +83176,7 @@ var render = function() {
                       {
                         key: "cell(name)",
                         fn: function(data) {
-                          return [
-                            _vm._v(
-                              "\n                            " +
-                                _vm._s(data.item.name) +
-                                "\n                        "
-                            )
-                          ]
+                          return [_vm._v(_vm._s(data.item.name))]
                         }
                       },
                       {
@@ -82159,13 +83312,7 @@ var render = function() {
                       return _c(
                         "b-form-select-option",
                         { key: school.id, attrs: { value: school.id } },
-                        [
-                          _vm._v(
-                            "\n\t\t\t\t\t\t\t" +
-                              _vm._s(school.name) +
-                              "\n\t\t\t\t\t\t"
-                          )
-                        ]
+                        [_vm._v(_vm._s(school.name))]
                       )
                     }),
                     1
@@ -82174,19 +83321,13 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-school-feedback" } },
-                    [
-                      _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required.\n\t\t\t\t\t"
-                      )
-                    ]
+                    [_vm._v("This field is required.")]
                   )
                 ],
                 1
               ),
               _vm._v(" "),
-              _c("label", { staticClass: "text-sm" }, [
-                _vm._v("\n\t\t\t\t\tFull name\n\t\t\t\t")
-              ]),
+              _c("label", { staticClass: "text-sm" }, [_vm._v("Full name")]),
               _vm._v(" "),
               _c(
                 "b-form-row",
@@ -82218,7 +83359,45 @@ var render = function() {
                             { attrs: { id: "input-fname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3 characters."
+                              )
+                            ]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-col",
+                    { attrs: { lg: "4", "no-gutters": "" } },
+                    [
+                      _c(
+                        "b-form-group",
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              state: _vm.validateState("middle_name"),
+                              "aria-describedby": "input-mname-feedback",
+                              placeholder: "Middle name"
+                            },
+                            model: {
+                              value: _vm.$v.form.middle_name.$model,
+                              callback: function($$v) {
+                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
+                              },
+                              expression: "$v.form.middle_name.$model"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "b-form-invalid-feedback",
+                            { attrs: { id: "input-mname-feedback" } },
+                            [
+                              _vm._v(
+                                "This field is required and must be atleast 3 characters."
                               )
                             ]
                           )
@@ -82240,7 +83419,7 @@ var render = function() {
                             attrs: {
                               state: _vm.validateState("last_name"),
                               "aria-describedby": "input-lname-feedback",
-                              placeholder: "Middle name"
+                              placeholder: "Last name"
                             },
                             model: {
                               value: _vm.$v.form.last_name.$model,
@@ -82253,48 +83432,10 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "b-form-invalid-feedback",
-                            { attrs: { id: "input-fname-feedback" } },
+                            { attrs: { id: "input-lname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
-                              )
-                            ]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-col",
-                    { attrs: { lg: "4", "no-gutters": "" } },
-                    [
-                      _c(
-                        "b-form-group",
-                        [
-                          _c("b-form-input", {
-                            attrs: {
-                              state: _vm.validateState("middle_name"),
-                              "aria-describedby": "input-lname-feedback",
-                              placeholder: "Last name"
-                            },
-                            model: {
-                              value: _vm.$v.form.middle_name.$model,
-                              callback: function($$v) {
-                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
-                              },
-                              expression: "$v.form.middle_name.$model"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "b-form-invalid-feedback",
-                            { attrs: { id: "input-fname-feedback" } },
-                            [
-                              _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3 characters."
                               )
                             ]
                           )
@@ -82355,13 +83496,7 @@ var render = function() {
                       return _c(
                         "b-form-select-option",
                         { key: school.id, attrs: { value: school.id } },
-                        [
-                          _vm._v(
-                            "\n\t\t\t\t\t\t\t" +
-                              _vm._s(school.name) +
-                              "\n\t\t\t\t\t\t"
-                          )
-                        ]
+                        [_vm._v(_vm._s(school.name))]
                       )
                     }),
                     1
@@ -82370,19 +83505,13 @@ var render = function() {
                   _c(
                     "b-form-invalid-feedback",
                     { attrs: { id: "input-school-feedback" } },
-                    [
-                      _vm._v(
-                        "\n\t\t\t\t\t\tThis field is required.\n\t\t\t\t\t"
-                      )
-                    ]
+                    [_vm._v("This field is required.")]
                   )
                 ],
                 1
               ),
               _vm._v(" "),
-              _c("label", { staticClass: "text-sm" }, [
-                _vm._v("\n\t\t\t\t\tFull name\n\t\t\t\t")
-              ]),
+              _c("label", { staticClass: "text-sm" }, [_vm._v("Full name")]),
               _vm._v(" "),
               _c(
                 "b-form-row",
@@ -82414,7 +83543,45 @@ var render = function() {
                             { attrs: { id: "input-fname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3 characters."
+                              )
+                            ]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-col",
+                    { attrs: { lg: "4", "no-gutters": "" } },
+                    [
+                      _c(
+                        "b-form-group",
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              state: _vm.validateState("middle_name"),
+                              "aria-describedby": "input-mname-feedback",
+                              placeholder: "Middle name"
+                            },
+                            model: {
+                              value: _vm.$v.form.middle_name.$model,
+                              callback: function($$v) {
+                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
+                              },
+                              expression: "$v.form.middle_name.$model"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "b-form-invalid-feedback",
+                            { attrs: { id: "input-mname-feedback" } },
+                            [
+                              _vm._v(
+                                "This field is required and must be atleast 3 characters."
                               )
                             ]
                           )
@@ -82436,7 +83603,7 @@ var render = function() {
                             attrs: {
                               state: _vm.validateState("last_name"),
                               "aria-describedby": "input-lname-feedback",
-                              placeholder: "Middle name"
+                              placeholder: "Last name"
                             },
                             model: {
                               value: _vm.$v.form.last_name.$model,
@@ -82449,48 +83616,10 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "b-form-invalid-feedback",
-                            { attrs: { id: "input-fname-feedback" } },
+                            { attrs: { id: "input-lname-feedback" } },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
-                              )
-                            ]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-col",
-                    { attrs: { lg: "4", "no-gutters": "" } },
-                    [
-                      _c(
-                        "b-form-group",
-                        [
-                          _c("b-form-input", {
-                            attrs: {
-                              state: _vm.validateState("middle_name"),
-                              "aria-describedby": "input-lname-feedback",
-                              placeholder: "Last name"
-                            },
-                            model: {
-                              value: _vm.$v.form.middle_name.$model,
-                              callback: function($$v) {
-                                _vm.$set(_vm.$v.form.middle_name, "$model", $$v)
-                              },
-                              expression: "$v.form.middle_name.$model"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "b-form-invalid-feedback",
-                            { attrs: { id: "input-fname-feedback" } },
-                            [
-                              _vm._v(
-                                "\n\t\t\t\t\t\t\t\tThis field is required and must be atleast 3 characters.\n\t\t\t\t\t\t\t"
+                                "This field is required and must be atleast 3 characters."
                               )
                             ]
                           )
@@ -82525,9 +83654,7 @@ var render = function() {
         },
         [
           _c("p", { staticClass: "text-center text-muted mb-1" }, [
-            _vm._v(
-              "\n                Are you sure you want to remove this province?\n            "
-            )
+            _vm._v("Are you sure you want to remove this province?")
           ])
         ]
       )
@@ -82542,10 +83669,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/reports/Index.vue?vue&type=template&id=185ea128&":
-/*!************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/reports/Index.vue?vue&type=template&id=185ea128& ***!
-  \************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/Index.vue?vue&type=template&id=707c85ae&":
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Tests/Index.vue?vue&type=template&id=707c85ae& ***!
+  \**********************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -82564,15 +83691,612 @@ var render = function() {
         "b-container",
         { staticClass: "mt-2" },
         [
-          _c("b-button", { attrs: { href: "/report/printPDF" } }, [
-            _vm._v("Print PDF")
-          ])
+          _c(
+            "b-card",
+            { staticClass: "shadow-sm" },
+            [
+              _c(
+                "b-card-body",
+                [
+                  _c(
+                    "b-row",
+                    [
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "h2",
+                          { staticClass: "text-primary font-weight-bold" },
+                          [_vm._v("Tests")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("b-col", { attrs: { lg: "6" } }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "d-flex justify-content-end align-baseline"
+                          },
+                          [
+                            _c(
+                              "b-button",
+                              {
+                                directives: [
+                                  {
+                                    name: "b-modal",
+                                    rawName: "v-b-modal.add-modal",
+                                    modifiers: { "add-modal": true }
+                                  }
+                                ],
+                                attrs: { variant: "primary", size: "sm" }
+                              },
+                              [
+                                _c("b-icon", { attrs: { icon: "pencil" } }),
+                                _vm._v(" "),
+                                _vm._v(
+                                  "\n                Add Test\n              "
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-row",
+                    { staticClass: "mb-2" },
+                    [
+                      _c(
+                        "b-col",
+                        { attrs: { lg: "6" } },
+                        [
+                          _c(
+                            "b-form",
+                            {
+                              staticClass: "text-muted text-md",
+                              attrs: { inline: "" }
+                            },
+                            [
+                              _c("small", [_vm._v("Show")]),
+                              _vm._v(" "),
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.limit,
+                                      expression: "limit"
+                                    }
+                                  ],
+                                  staticClass:
+                                    "form-control form-control-sm text-sm col-sm-2 mx-1",
+                                  attrs: { id: "row-limit" },
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.limit = $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      },
+                                      _vm.getTests
+                                    ]
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { value: "10" } }, [
+                                    _vm._v("10")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "25" } }, [
+                                    _vm._v("25")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "50" } }, [
+                                    _vm._v("50")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "100" } }, [
+                                    _vm._v("100")
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("small", [_vm._v("entries")])
+                            ]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-col",
+                        {
+                          staticClass:
+                            "d-flex justify-content-end align-content-end",
+                          attrs: { lg: "6" }
+                        },
+                        [
+                          _c(
+                            "b-form",
+                            { staticClass: "col-sm-12 col-md-6 px-0" },
+                            [
+                              _c("b-form-input", {
+                                attrs: { size: "sm", placeholder: "Search" },
+                                on: { input: _vm.getTests },
+                                model: {
+                                  value: _vm.search,
+                                  callback: function($$v) {
+                                    _vm.search = $$v
+                                  },
+                                  expression: "search"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("b-table", {
+                    attrs: {
+                      borderless: "",
+                      striped: "",
+                      hover: "",
+                      id: "province-table",
+                      items: _vm.tests,
+                      fields: _vm.tests_fields,
+                      responsive: "md"
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "cell(name)",
+                        fn: function(data) {
+                          return [_vm._v(_vm._s(data.item.name))]
+                        }
+                      },
+                      {
+                        key: "cell(teacher)",
+                        fn: function(data) {
+                          return [
+                            _vm._v(
+                              _vm._s(
+                                data.item.teacher.first_name +
+                                  " " +
+                                  data.item.teacher.last_name
+                              )
+                            )
+                          ]
+                        }
+                      },
+                      {
+                        key: "cell(index)",
+                        fn: function(data) {
+                          return [
+                            _c(
+                              "b-btn-group",
+                              [
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.edit-modal",
+                                        modifiers: { "edit-modal": true }
+                                      }
+                                    ],
+                                    staticClass: "text-white",
+                                    attrs: { size: "sm", variant: "warning" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.edit(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "pencil" } })],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "b-modal",
+                                        rawName: "v-b-modal.delete-modal",
+                                        modifiers: { "delete-modal": true }
+                                      }
+                                    ],
+                                    attrs: { size: "sm", variant: "danger" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.remove(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "trash" } })],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-button",
+                                  {
+                                    attrs: { size: "sm", variant: "info" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.manage(data.index)
+                                      }
+                                    }
+                                  },
+                                  [_c("b-icon", { attrs: { icon: "eye" } })],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-container",
+                    { staticClass: "clearfix px-0", attrs: { fluid: "" } },
+                    [
+                      _c("b-pagination", {
+                        staticClass: "float-right",
+                        attrs: {
+                          size: "sm",
+                          "per-page": Number(_vm.response.per_page),
+                          "total-rows": Number(_vm.response.total),
+                          "aria-controls": "province-table"
+                        },
+                        on: { change: _vm.getTests },
+                        model: {
+                          value: _vm.current_page,
+                          callback: function($$v) {
+                            _vm.current_page = $$v
+                          },
+                          expression: "current_page"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "add-modal",
+            title: "Add Test",
+            "ok-title": "Submit",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.submitAdd, hidden: _vm.resetForm }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Teacher", "label-class": "text-sm" } },
+                [
+                  _c(
+                    "b-form-select",
+                    {
+                      attrs: {
+                        state: _vm.validateState("teacher_id"),
+                        "aria-describedby": "input-teacher-feedback"
+                      },
+                      model: {
+                        value: _vm.$v.form.teacher_id.$model,
+                        callback: function($$v) {
+                          _vm.$set(_vm.$v.form.teacher_id, "$model", $$v)
+                        },
+                        expression: "$v.form.teacher_id.$model"
+                      }
+                    },
+                    _vm._l(_vm.teachers, function(teacher) {
+                      return _c(
+                        "b-form-select-option",
+                        { key: teacher.id, attrs: { value: teacher.id } },
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(teacher.name) +
+                              " -\n            " +
+                              _vm._s(teacher.school) +
+                              "\n          "
+                          )
+                        ]
+                      )
+                    }),
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "input-teacher-feedback" } },
+                    [_vm._v("This field is required")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Title", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    attrs: {
+                      state: _vm.validateState("title"),
+                      "aria-describedby": "input-title-feedback"
+                    },
+                    model: {
+                      value: _vm.$v.form.title.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.title, "$model", $$v)
+                      },
+                      expression: "$v.form.title.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "input-title-feedback" } },
+                    [
+                      _vm._v(
+                        "\n          This field is required and must be atleast 3\n          characters\n        "
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Description", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("description"),
+                      rows: "4",
+                      "aria-describedby": "input-description-feedback"
+                    },
+                    model: {
+                      value: _vm.$v.form.description.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.description, "$model", $$v)
+                      },
+                      expression: "$v.form.description.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("b-form-invalid-feedback", [
+                    _vm._v(
+                      "\n          This field is required and must be atleast 10\n          characters\n        "
+                    )
+                  ])
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "edit-modal",
+            title: "Update Province Information",
+            "ok-title": "Save Changes",
+            "ok-variant": "success",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.submitUpdate, hidden: _vm.resetForm }
+        },
+        [
+          _c(
+            "b-form",
+            [
+              _c(
+                "b-form-group",
+                { attrs: { label: "Teacher", "label-class": "text-sm" } },
+                [
+                  _c(
+                    "b-form-select",
+                    {
+                      attrs: {
+                        state: _vm.validateState("teacher_id"),
+                        "aria-describedby": "input-teacher-feedback"
+                      },
+                      model: {
+                        value: _vm.$v.form.teacher_id.$model,
+                        callback: function($$v) {
+                          _vm.$set(_vm.$v.form.teacher_id, "$model", $$v)
+                        },
+                        expression: "$v.form.teacher_id.$model"
+                      }
+                    },
+                    _vm._l(_vm.teachers, function(teacher) {
+                      return _c(
+                        "b-form-select-option",
+                        { key: teacher.id, attrs: { value: teacher.id } },
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(teacher.name) +
+                              " -\n            " +
+                              _vm._s(teacher.school) +
+                              "\n          "
+                          )
+                        ]
+                      )
+                    }),
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "input-teacher-feedback" } },
+                    [_vm._v("This field is required")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Title", "label-class": "text-sm" } },
+                [
+                  _c("b-form-input", {
+                    attrs: {
+                      state: _vm.validateState("title"),
+                      "aria-describedby": "input-title-feedback"
+                    },
+                    model: {
+                      value: _vm.$v.form.title.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.title, "$model", $$v)
+                      },
+                      expression: "$v.form.title.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "b-form-invalid-feedback",
+                    { attrs: { id: "input-title-feedback" } },
+                    [
+                      _vm._v(
+                        "\n          This field is required and must be atleast 3\n          characters\n        "
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-form-group",
+                { attrs: { label: "Description", "label-class": "text-sm" } },
+                [
+                  _c("b-form-textarea", {
+                    attrs: {
+                      state: _vm.validateState("description"),
+                      rows: "4",
+                      "aria-describedby": "input-description-feedback"
+                    },
+                    model: {
+                      value: _vm.$v.form.description.$model,
+                      callback: function($$v) {
+                        _vm.$set(_vm.$v.form.description, "$model", $$v)
+                      },
+                      expression: "$v.form.description.$model"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("b-form-invalid-feedback", [
+                    _vm._v(
+                      "\n          This field is required and must be atleast 10\n          characters\n        "
+                    )
+                  ])
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "delete-modal",
+            title: "Confirm",
+            "ok-title": "Continue",
+            "ok-variant": "danger",
+            "ok-only": "",
+            "button-size": "sm"
+          },
+          on: { ok: _vm.destroy }
+        },
+        [
+          _c("p", { staticClass: "text-center text-muted mb-1" }, [
+            _vm._v("Are you sure you want to remove this province?")
+          ])
+        ]
       )
     ],
     1
   )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=template&id=0c53335c&":
+/*!************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=template&id=0c53335c& ***!
+  \************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [_c("b-container", { staticClass: "mt-2" })], 1)
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -96743,7 +98467,11 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("schools-index", __webpack_
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("pupils-index", __webpack_require__(/*! ./components/backend/Pupils/Index.vue */ "./resources/js/components/backend/Pupils/Index.vue")["default"]); //BACKEND (Teachers)
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("teachers-index", __webpack_require__(/*! ./components/backend/Teachers/Index.vue */ "./resources/js/components/backend/Teachers/Index.vue")["default"]); //BACKEND (Teacher-Questions)
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("teachers-index", __webpack_require__(/*! ./components/backend/Teachers/Index.vue */ "./resources/js/components/backend/Teachers/Index.vue")["default"]); //BACKEND (Tests)
+
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("tests-index", __webpack_require__(/*! ./components/backend/Tests/Index.vue */ "./resources/js/components/backend/Tests/Index.vue")["default"]); //BACKEND (Tests - manage questions to test)
+
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("test-manage-questions", __webpack_require__(/*! ./components/backend/Tests/TestManageQuestions.vue */ "./resources/js/components/backend/Tests/TestManageQuestions.vue")["default"]); //BACKEND (Teacher-Questions)
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("teacher-questions-index", __webpack_require__(/*! ./components/backend/AssessmentQuestions/Index.vue */ "./resources/js/components/backend/AssessmentQuestions/Index.vue")["default"]);
 /** ChecklistCategories & Checklists */
@@ -96753,13 +98481,14 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("checklists-index", __webpa
 /** END ChecklistCategories & Checklists */
 //BACKEND (Reports)
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("reports-index", __webpack_require__(/*! ./components/backend/reports/Index.vue */ "./resources/js/components/backend/reports/Index.vue")["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("reports-index", __webpack_require__(/*! ./components/backend/Reports/Index.vue */ "./resources/js/components/backend/Reports/Index.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.prototype.$user = document.querySelector("meta[name='user']").getAttribute("content");
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: "#app"
 });
@@ -97156,6 +98885,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/backend/Reports/Index.vue":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/backend/Reports/Index.vue ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Index_vue_vue_type_template_id_42d62168___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=42d62168& */ "./resources/js/components/backend/Reports/Index.vue?vue&type=template&id=42d62168&");
+/* harmony import */ var _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js& */ "./resources/js/components/backend/Reports/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Index_vue_vue_type_template_id_42d62168___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Index_vue_vue_type_template_id_42d62168___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/backend/Reports/Index.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Reports/Index.vue?vue&type=script&lang=js&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/backend/Reports/Index.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Reports/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Reports/Index.vue?vue&type=template&id=42d62168&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/backend/Reports/Index.vue?vue&type=template&id=42d62168& ***!
+  \******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_42d62168___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=template&id=42d62168& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Reports/Index.vue?vue&type=template&id=42d62168&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_42d62168___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_42d62168___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/backend/Schools/Index.vue":
 /*!***********************************************************!*\
   !*** ./resources/js/components/backend/Schools/Index.vue ***!
@@ -97294,17 +99092,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/backend/reports/Index.vue":
-/*!***********************************************************!*\
-  !*** ./resources/js/components/backend/reports/Index.vue ***!
-  \***********************************************************/
+/***/ "./resources/js/components/backend/Tests/Index.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/backend/Tests/Index.vue ***!
+  \*********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Index_vue_vue_type_template_id_185ea128___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=185ea128& */ "./resources/js/components/backend/reports/Index.vue?vue&type=template&id=185ea128&");
-/* harmony import */ var _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js& */ "./resources/js/components/backend/reports/Index.vue?vue&type=script&lang=js&");
+/* harmony import */ var _Index_vue_vue_type_template_id_707c85ae___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=707c85ae& */ "./resources/js/components/backend/Tests/Index.vue?vue&type=template&id=707c85ae&");
+/* harmony import */ var _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js& */ "./resources/js/components/backend/Tests/Index.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -97315,8 +99113,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Index_vue_vue_type_template_id_185ea128___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Index_vue_vue_type_template_id_185ea128___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Index_vue_vue_type_template_id_707c85ae___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Index_vue_vue_type_template_id_707c85ae___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -97326,38 +99124,107 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/backend/reports/Index.vue"
+component.options.__file = "resources/js/components/backend/Tests/Index.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/backend/reports/Index.vue?vue&type=script&lang=js&":
-/*!************************************************************************************!*\
-  !*** ./resources/js/components/backend/reports/Index.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************/
+/***/ "./resources/js/components/backend/Tests/Index.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/backend/Tests/Index.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/reports/Index.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/Index.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/backend/reports/Index.vue?vue&type=template&id=185ea128&":
-/*!******************************************************************************************!*\
-  !*** ./resources/js/components/backend/reports/Index.vue?vue&type=template&id=185ea128& ***!
-  \******************************************************************************************/
+/***/ "./resources/js/components/backend/Tests/Index.vue?vue&type=template&id=707c85ae&":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/components/backend/Tests/Index.vue?vue&type=template&id=707c85ae& ***!
+  \****************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_185ea128___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=template&id=185ea128& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/reports/Index.vue?vue&type=template&id=185ea128&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_185ea128___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_707c85ae___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=template&id=707c85ae& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/Index.vue?vue&type=template&id=707c85ae&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_707c85ae___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_185ea128___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_707c85ae___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Tests/TestManageQuestions.vue":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/backend/Tests/TestManageQuestions.vue ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _TestManageQuestions_vue_vue_type_template_id_0c53335c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TestManageQuestions.vue?vue&type=template&id=0c53335c& */ "./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=template&id=0c53335c&");
+/* harmony import */ var _TestManageQuestions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TestManageQuestions.vue?vue&type=script&lang=js& */ "./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _TestManageQuestions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TestManageQuestions_vue_vue_type_template_id_0c53335c___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TestManageQuestions_vue_vue_type_template_id_0c53335c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/backend/Tests/TestManageQuestions.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************!*\
+  !*** ./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TestManageQuestions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./TestManageQuestions.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TestManageQuestions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=template&id=0c53335c&":
+/*!******************************************************************************************************!*\
+  !*** ./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=template&id=0c53335c& ***!
+  \******************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TestManageQuestions_vue_vue_type_template_id_0c53335c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./TestManageQuestions.vue?vue&type=template&id=0c53335c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/backend/Tests/TestManageQuestions.vue?vue&type=template&id=0c53335c&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TestManageQuestions_vue_vue_type_template_id_0c53335c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TestManageQuestions_vue_vue_type_template_id_0c53335c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
