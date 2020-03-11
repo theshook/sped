@@ -17,9 +17,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('login', 'API\Backend\UserController@login');
-Route::post('register', 'API\Backend\UserController@register');
-
 Route::group(['middleware' => ['auth:api']], function () {
     //BACKEND (PROVINCES)
     Route::get('/provinces', 'API\Backend\ProvincesController@index');
