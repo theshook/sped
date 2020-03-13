@@ -12,7 +12,10 @@ import Vue from "vue";
 import Swal from "sweetalert2";
 
 //Bootstrap-vue
-import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
+import {
+  BootstrapVue,
+  BootstrapVueIcons
+} from "bootstrap-vue";
 //Bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -39,54 +42,64 @@ window.swal = Swal;
 
 //BACKEND (Provinces)
 Vue.component(
-    "provinces-index",
-    require("./components/backend/Province/Index.vue").default
+  "provinces-index",
+  require("./components/backend/Province/Index.vue").default
+);
+//BACKEND (Provinces-TRASH)
+Vue.component(
+  "provinces-trash",
+  require("./components/backend/Province/Trash.vue").default
 );
 //BACKEND (Schools)
 Vue.component(
-    "schools-index",
-    require("./components/backend/Schools/Index.vue").default
+  "schools-index",
+  require("./components/backend/Schools/Index.vue").default
+);
+//BACKEND (Schools- TRASH)
+Vue.component(
+  "schools-trash",
+  require("./components/backend/Schools/Trash.vue").default
 );
 //BACKEND (Pupils)
 Vue.component(
-    "pupils-index",
-    require("./components/backend/Pupils/Index.vue").default
+  "pupils-index",
+  require("./components/backend/Pupils/Index.vue").default
 );
 //BACKEND (Teachers)
 Vue.component(
-    "teachers-index",
-    require("./components/backend/Teachers/Index.vue").default
+  "teachers-index",
+  require("./components/backend/Teachers/Index.vue").default
 );
 //BACKEND (Tests)
 Vue.component(
-    "tests-index",
-    require("./components/backend/Tests/Index.vue").default
+  "tests-index",
+  require("./components/backend/Tests/Index.vue").default
 );
 //BACKEND (Tests - manage questions to test)
 Vue.component(
-    "test-manage-questions",
-    require("./components/backend/Tests/TestManageQuestions.vue").default
+  "test-manage-questions",
+  require("./components/backend/Tests/TestManageQuestions.vue").default
 );
 //BACKEND (Teacher-Questions)
 Vue.component(
-    "teacher-questions-index",
-    require("./components/backend/AssessmentQuestions/Index.vue").default
+  "teacher-questions-index",
+  require("./components/backend/AssessmentQuestions/Index.vue").default
 );
 
 /** ChecklistCategories & Checklists */
 Vue.component(
-    "checklist-categories-index",
-    require("./components/backend/ChecklistCategories/Index.vue").default
+  "checklist-categories-index",
+  require("./components/backend/ChecklistCategories/Index.vue").default
 );
 Vue.component(
-    "checklists-index",
-    require("./components/backend/Checklists/Index.vue").default
+  "checklists-index",
+  require("./components/backend/Checklists/Index.vue").default
 );
 /** END ChecklistCategories & Checklists */
 //BACKEND (Reports)
 Vue.component(
-    "reports-index",
-    require("./components/backend/Reports/Index.vue").default
+  "reports-index",
+  require("./components/backend/Reports/Index.vue").default
 );
 
 /**
@@ -95,9 +108,9 @@ Vue.component(
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 Vue.prototype.$user = document
-    .querySelector("meta[name='user']")
-    .getAttribute("content");
+  .querySelector("meta[name='user']")
+  .getAttribute("content");
 
 const app = new Vue({
-    el: "#app"
+  el: "#app"
 });

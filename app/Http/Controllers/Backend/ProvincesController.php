@@ -20,4 +20,9 @@ class ProvincesController extends Controller
 	{
 		return view('pages.backend.province.index');
 	}
+
+	public function trash_index()
+	{
+		return view('pages.backend.province.trash');
+	}
 }

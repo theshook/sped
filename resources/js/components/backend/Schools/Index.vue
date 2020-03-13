@@ -478,6 +478,14 @@ export default {
               text: "School information successfully deleted",
               timer: 3000
             });
+          } else if (response.data.status == 400) {
+            swal.fire({
+              icon: "error",
+              title: "Failed",
+              text:
+                "Cannot be deleted, one or more pupils are assigned to this school",
+              timer: 3000
+            });
           } else {
             swal.fire({
               icon: "error",
@@ -487,7 +495,14 @@ export default {
             });
           }
         })
-        .catch(err => console.log(err.response.data));
+        .catch(err => {
+          swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            text: err.response.data.errors.name[0],
+            timer: 3000
+          });
+        });
     },
 
     resetForm: function() {
