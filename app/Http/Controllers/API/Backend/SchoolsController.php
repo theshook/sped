@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\SchoolsStoreRequest;
+use App\Http\Requests\API\pupilsStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\School;
 use App\Http\Resources\Backend\SchoolsResource;
@@ -129,7 +129,7 @@ class SchoolsController extends Controller
     if (count($school->pupils) > 0) {
       $response = array(
         'status' => 400,
-        'message' => 'Province cannot be deleted, contains one or more schools'
+        'message' => 'School cannot be deleted, contains one or more pupils'
       );
       return response()->json($response);
     } else {

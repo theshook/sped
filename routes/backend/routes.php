@@ -42,6 +42,7 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
       Route::get('/schools/trash', 'Backend\SchoolsController@trash_index')->name('admin.schools.trash');
       //BACKEND (Teachers)
       Route::get('/teachers', 'Backend\TeachersController@index')->name('admin.teachers');
+      Route::get('/teachers/trash', 'Backend\TeachersController@trash_index')->name('admin.teachers.trash');
       //BACKEND (Checklists & Categories)
       Route::get('/categories', 'Backend\PagesController@checklistCategoriesIndex')->name('admin.categories');
       Route::get('/checklists', 'Backend\PagesController@checklistsIndex')->name('admin.checklists');

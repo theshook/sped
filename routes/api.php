@@ -69,6 +69,13 @@ Route::group(['middleware' => ['auth:api']], function () {
   Route::put('/teacher/{id}', 'API\Backend\TeachersController@update');
   Route::delete('/teacher/{id}', 'API\Backend\TeachersController@destroy');
 
+  //BACKEND (SCHOOLS-TRASH)
+  Route::get('/teachers/deleted', 'API\Backend\TeachersTrashController@index');
+  Route::post('/teachers/restore/all', 'API\Backend\TeachersTrashController@restore_all');
+  Route::post('/teachers/restore/{id}', 'API\Backend\TeachersTrashController@restore');
+  Route::delete('/teachers/delete/all', 'API\Backend\TeachersTrashController@delete_all');
+  Route::delete('/teachers/delete/{id}', 'API\Backend\TeachersTrashController@delete');
+
   /* ========================================================================================================== */
 
 

@@ -70,6 +70,11 @@ Vue.component(
   "teachers-index",
   require("./components/backend/Teachers/Index.vue").default
 );
+//BACKEND (Teachers- TRASH)
+Vue.component(
+  "teachers-trash",
+  require("./components/backend/Teachers/Trash.vue").default
+);
 //BACKEND (Tests)
 Vue.component(
   "tests-index",
