@@ -16,6 +16,12 @@ class ProvincesTrashController extends Controller
     return ($search) ? Province::onlyTrashed()->where('name', 'like', "$search%")->paginate($limit) : Province::onlyTrashed()->paginate($limit);
   }
 
+  public function restore(Request $request)
+  {
+    $key = $request->key;
+    return $key == 'all' ? $this->restore_all() : $this->restore_province($key);
+  }
+
   public function restore_all()
   {
     $restore = Province::onlyTrashed()->restore();
@@ -28,13 +34,13 @@ class ProvincesTrashController extends Controller
     } else {
       $response = array(
         'status' => 500,
-        'message' => 'Failed to restore all province'
+        'message' => 'Failed to restore all provinces'
       );
       return response()->json($response, 500);
     }
   }
 
-  public function restore($id)
+  public function restore_province($id)
   {
     $restore = Province::onlyTrashed()->where('id', '=', $id)->restore();
     if ($restore) {
@@ -47,24 +53,6 @@ class ProvincesTrashController extends Controller
       $response = array(
         'status' => 500,
         'message' => 'Failed to restore province'
-      );
-      return response()->json($response, 500);
-    }
-  }
-
-  public function delete_all()
-  {
-    $restore = Province::onlyTrashed()->forceDelete();
-    if ($restore) {
-      $response = array(
-        'status' => 201,
-        'message' => 'All province successfully deleted'
-      );
-      return response()->json($response, 201);
-    } else {
-      $response = array(
-        'status' => 500,
-        'message' => 'Failed to delete all province'
       );
       return response()->json($response, 500);
     }

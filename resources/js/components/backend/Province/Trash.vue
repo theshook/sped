@@ -10,8 +10,13 @@
 
             <b-col lg="6">
               <div class="d-flex justify-content-end align-baseline">
-                <b-button class="text-white" variant="warning" size="sm" v-b-modal.delete-all-modal>
-                  <b-icon icon="trash"></b-icon>Empty Trash
+                <b-button
+                  class="text-white"
+                  variant="success"
+                  size="sm"
+                  v-b-modal.restore-all-modal
+                >
+                  <b-icon class="mr-1" icon="check-circle"></b-icon>Restore All
                 </b-button>
               </div>
             </b-col>
@@ -19,15 +24,6 @@
 
           <b-row class="mb-2">
             <b-col lg="6">
-              <!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
-							@change="getDeletedProvinces"
-							v-model="limit">
-								<b-form-select-option value="10" selected>10</b-form-select-option>
-								<b-form-select-option value="25">25</b-form-select-option>
-								<b-form-select-option value="50">50</b-form-select-option>
-								<b-form-select-option value="100">100</b-form-select-option>
-              </b-form-select>-->
-
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
                 <select
@@ -73,7 +69,7 @@
                 <b-button
                   v-b-modal.restore-modal
                   size="sm"
-                  variant="success"
+                  variant="info"
                   class="text-white"
                   @click="restore(data.index)"
                 >
@@ -108,32 +104,30 @@
       </b-card>
     </b-container>
 
+    <!-- DELETE ALL CONFIRM -->
+    <b-modal
+      id="restore-all-modal"
+      title="Confirm"
+      ok-title="Continue"
+      ok-variant="success"
+      ok-only
+      @ok="restoreAll"
+      button-size="sm"
+    >
+      <p class="text-center text-muted mb-1">Are you sure you want to restore these provinces?</p>
+    </b-modal>
+
     <!-- RESTORE CONFIRM -->
     <b-modal
       id="restore-modal"
       title="Confirm"
       ok-title="Continue"
-      ok-variant="danger"
+      ok-variant="success"
       ok-only
       @ok="restoreConfirm"
       button-size="sm"
     >
       <p class="text-center text-muted mb-1">Are you sure you want to restore this province?</p>
-    </b-modal>
-
-    <!-- DELETE ALL CONFIRM -->
-    <b-modal
-      id="delete-all-modal"
-      title="Confirm"
-      ok-title="Continue"
-      ok-variant="danger"
-      ok-only
-      @ok="removeAll"
-      button-size="sm"
-    >
-      <p
-        class="text-center text-muted mb-1"
-      >Are you sure you want to permanently delete these provinces?</p>
     </b-modal>
 
     <!-- DELETE CONFIRM -->
@@ -202,9 +196,12 @@ export default {
 
     restoreConfirm: function() {
       let id = this.provinces[this.restore_index].id;
-      const deletedProvincesAPI = `${this.host}/provinces/restore/${id}`;
+      const deletedProvincesAPI = `${this.host}/provinces/restore`;
+      const data = {
+        key: id
+      };
       axios
-        .post(deletedProvincesAPI)
+        .post(deletedProvincesAPI, data)
         .then(response => {
           if (response.data.status == 201) {
             this.provinces.splice(this.restore_index, 1);
@@ -234,7 +231,42 @@ export default {
         });
     },
 
-    restoreAll: function() {},
+    restoreAll: function() {
+      const deletedProvincesAPI = `${this.host}/provinces/restore`;
+      const data = {
+        key: "all"
+      };
+      axios
+        .post(deletedProvincesAPI, data)
+        .then(response => {
+          console.log(response.data);
+          if (response.data.status == 201) {
+            this.provinces = null;
+            this.restore_index = null;
+            swal.fire({
+              icon: "success",
+              title: "Restored",
+              text: "All province successfully restored",
+              timer: 3000
+            });
+          } else {
+            swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to restore all province",
+              timer: 3000
+            });
+          }
+        })
+        .catch(err => {
+          swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            text: err.response.data.errors,
+            timer: 3000
+          });
+        });
+    },
 
     remove: function(index) {
       this.delete_index = index;
@@ -268,38 +300,6 @@ export default {
             icon: "error",
             title: err.response.data.message,
             text: err.response.data.errors,
-            timer: 3000
-          });
-        });
-    },
-
-    removeAll: function() {
-      const deletedProvincesAPI = `${this.host}/provinces/delete/all`;
-      axios
-        .delete(deletedProvincesAPI)
-        .then(response => {
-          if (response.data.status == 201) {
-            this.getDeletedProvinces();
-            swal.fire({
-              icon: "success",
-              title: "Deleted",
-              text: "All provinces successfully deleted",
-              timer: 3000
-            });
-          } else {
-            swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Failed to delete all province",
-              timer: 3000
-            });
-          }
-        })
-        .catch(err => {
-          swal.fire({
-            icon: "error",
-            title: err.response.data.message,
-            text: err.response.data.errors.name[0],
             timer: 3000
           });
         });
