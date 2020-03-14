@@ -10,8 +10,13 @@
 
             <b-col lg="6">
               <div class="d-flex justify-content-end align-baseline">
-                <b-button class="text-white" variant="warning" size="sm" v-b-modal.delete-all-modal>
-                  <b-icon icon="trash"></b-icon>Empty Trash
+                <b-button
+                  class="text-white"
+                  variant="success"
+                  size="sm"
+                  v-b-modal.restore-all-modal
+                >
+                  <b-icon class="mr-2" icon="check-circle"></b-icon>Restore All
                 </b-button>
               </div>
             </b-col>
@@ -19,15 +24,6 @@
 
           <b-row class="mb-2">
             <b-col lg="6">
-              <!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
-							@change="getDeletedTeachers"
-							v-model="limit">
-								<b-form-select-option value="10" selected>10</b-form-select-option>
-								<b-form-select-option value="25">25</b-form-select-option>
-								<b-form-select-option value="50">50</b-form-select-option>
-								<b-form-select-option value="100">100</b-form-select-option>
-              </b-form-select>-->
-
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
                 <select
@@ -115,7 +111,7 @@
       id="restore-modal"
       title="Confirm"
       ok-title="Continue"
-      ok-variant="danger"
+      ok-variant="success"
       ok-only
       @ok="restoreConfirm"
       button-size="sm"
@@ -123,19 +119,17 @@
       <p class="text-center text-muted mb-1">Are you sure you want to restore this school?</p>
     </b-modal>
 
-    <!-- DELETE ALL CONFIRM -->
+    <!-- RESTORE ALL CONFIRM -->
     <b-modal
-      id="delete-all-modal"
+      id="restore-all-modal"
       title="Confirm"
       ok-title="Continue"
-      ok-variant="danger"
+      ok-variant="success"
       ok-only
-      @ok="removeAll"
+      @ok="restoreAll"
       button-size="sm"
     >
-      <p
-        class="text-center text-muted mb-1"
-      >Are you sure you want to permanently delete these teachers?</p>
+      <p class="text-center text-muted mb-1">Are you sure you want to restore these schools?</p>
     </b-modal>
 
     <!-- DELETE CONFIRM -->
@@ -214,9 +208,12 @@ export default {
 
     restoreConfirm: function() {
       let id = this.teachers[this.restore_index].id;
-      const deletedTeachersAPI = `${this.host}/teachers/restore/${id}`;
+      const deletedTeachersAPI = `${this.host}/teachers/restore`;
+      const data = {
+        key: id
+      };
       axios
-        .post(deletedTeachersAPI)
+        .post(deletedTeachersAPI, data)
         .then(response => {
           if (response.data.status == 201) {
             this.teachers.splice(this.restore_index, 1);
@@ -224,14 +221,14 @@ export default {
             swal.fire({
               icon: "success",
               title: "Restored",
-              text: "School successfully restored",
+              text: "Teacher successfully restored",
               timer: 3000
             });
           } else {
             swal.fire({
               icon: "error",
               title: "Error",
-              text: "Failed to restore school",
+              text: "Failed to teacher school",
               timer: 3000
             });
           }
@@ -240,13 +237,46 @@ export default {
           swal.fire({
             icon: "error",
             title: err.response.data.message,
-            text: err.response.data.errors.name[0],
+            text: err.response.data.errors,
             timer: 3000
           });
         });
     },
 
-    restoreAll: function() {},
+    restoreAll: function() {
+      const deletedTeachersAPI = `${this.host}/teachers/restore`;
+      const data = {
+        key: "all"
+      };
+      axios
+        .post(deletedTeachersAPI, data)
+        .then(response => {
+          if (response.data.status == 201) {
+            this.teachers = null;
+            swal.fire({
+              icon: "success",
+              title: "Restored",
+              text: "All teacher successfully restored",
+              timer: 3000
+            });
+          } else {
+            swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to restore teachers",
+              timer: 3000
+            });
+          }
+        })
+        .catch(err => {
+          swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            text: err.response.data.errors,
+            timer: 3000
+          });
+        });
+    },
 
     remove: function(index) {
       this.delete_index = index;
@@ -280,38 +310,6 @@ export default {
             icon: "error",
             title: err.response.data.message,
             text: err.response.data.errors,
-            timer: 3000
-          });
-        });
-    },
-
-    removeAll: function() {
-      const deletedTeachersAPI = `${this.host}/teachers/delete/all`;
-      axios
-        .delete(deletedTeachersAPI)
-        .then(response => {
-          if (response.data.status == 201) {
-            this.getDeletedTeachers();
-            swal.fire({
-              icon: "success",
-              title: "Deleted",
-              text: "All teachers successfully deleted",
-              timer: 3000
-            });
-          } else {
-            swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Failed to delete all teachers",
-              timer: 3000
-            });
-          }
-        })
-        .catch(err => {
-          swal.fire({
-            icon: "error",
-            title: err.response.data.message,
-            text: err.response.data.errors.name[0],
             timer: 3000
           });
         });

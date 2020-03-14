@@ -16,6 +16,12 @@ class TeachersTrashController extends Controller
     return ($search) ? Teacher::onlyTrashed()->with('school')->where('name', 'like', "$search%")->paginate($limit) : Teacher::onlyTrashed()->with('school')->paginate($limit);
   }
 
+  public function restore(Request $request)
+  {
+    $key = $request->key;
+    return $key == 'all' ? $this->restore_all() : $this->restore_teacher($key);
+  }
+
   public function restore_all()
   {
     $restore = Teacher::onlyTrashed()->restore();
@@ -34,7 +40,7 @@ class TeachersTrashController extends Controller
     }
   }
 
-  public function restore($id)
+  public function restore_teacher($id)
   {
     $restore = Teacher::onlyTrashed()->where('id', '=', $id)->restore();
     if ($restore) {
@@ -47,24 +53,6 @@ class TeachersTrashController extends Controller
       $response = array(
         'status' => 500,
         'message' => 'Failed to restore school'
-      );
-      return response()->json($response, 500);
-    }
-  }
-
-  public function delete_all()
-  {
-    $restore = Teacher::onlyTrashed()->forceDelete();
-    if ($restore) {
-      $response = array(
-        'status' => 201,
-        'message' => 'All teachers successfully deleted'
-      );
-      return response()->json($response, 201);
-    } else {
-      $response = array(
-        'status' => 500,
-        'message' => 'Failed to delete all teachers'
       );
       return response()->json($response, 500);
     }
