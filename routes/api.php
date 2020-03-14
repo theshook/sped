@@ -28,9 +28,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
   //BACKEND (PROVINCES-TRASH)
   Route::get('/provinces/deleted', 'API\Backend\ProvincesTrashController@index');
-  Route::post('/provinces/restore/all', 'API\Backend\ProvincesTrashController@restore_all');
-  Route::post('/provinces/restore/{id}', 'API\Backend\ProvincesTrashController@restore');
-  Route::delete('/provinces/delete/all', 'API\Backend\ProvincesTrashController@delete_all');
+  Route::post('/provinces/restore', 'API\Backend\ProvincesTrashController@restore');
   Route::delete('/provinces/delete/{id}', 'API\Backend\ProvincesTrashController@delete');
 
   /* ========================================================================================================== */
@@ -45,9 +43,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
   //BACKEND (SCHOOLS-TRASH)
   Route::get('/schools/deleted', 'API\Backend\SchoolsTrashController@index');
-  Route::post('/schools/restore/all', 'API\Backend\SchoolsTrashController@restore_all');
-  Route::post('/schools/restore/{id}', 'API\Backend\SchoolsTrashController@restore');
-  Route::delete('/schools/delete/all', 'API\Backend\SchoolsTrashController@delete_all');
+  Route::post('/schools/restore', 'API\Backend\SchoolsTrashController@restore_all');
   Route::delete('/schools/delete/{id}', 'API\Backend\SchoolsTrashController@delete');
 
   /* ========================================================================================================== */
@@ -69,11 +65,9 @@ Route::group(['middleware' => ['auth:api']], function () {
   Route::put('/teacher/{id}', 'API\Backend\TeachersController@update');
   Route::delete('/teacher/{id}', 'API\Backend\TeachersController@destroy');
 
-  //BACKEND (SCHOOLS-TRASH)
+  //BACKEND (TEACHERS-TRASH)
   Route::get('/teachers/deleted', 'API\Backend\TeachersTrashController@index');
-  Route::post('/teachers/restore/all', 'API\Backend\TeachersTrashController@restore_all');
-  Route::post('/teachers/restore/{id}', 'API\Backend\TeachersTrashController@restore');
-  Route::delete('/teachers/delete/all', 'API\Backend\TeachersTrashController@delete_all');
+  Route::post('/teachers/restore', 'API\Backend\TeachersTrashController@restore_all');
   Route::delete('/teachers/delete/{id}', 'API\Backend\TeachersTrashController@delete');
 
   /* ========================================================================================================== */
@@ -85,6 +79,11 @@ Route::group(['middleware' => ['auth:api']], function () {
   Route::get('/test/{id}', 'API\Backend\TestsController@show');
   Route::put('/test/{id}', 'API\Backend\TestsController@update');
   Route::delete('/test/{id}', 'API\Backend\TestsController@destroy');
+
+  //BACKEND (SCHOOLS-TRASH)
+  Route::get('/tests/deleted', 'API\Backend\TestsTrashController@index');
+  Route::post('/tests/restore', 'API\Backend\TestsTrashController@restore');
+  Route::delete('/tests/delete/{id}', 'API\Backend\TestsTrashController@delete');
 
   /* ========================================================================================================== */
   //BACKEND (ASSESSMENT QUESTIONS) --GENERAL
