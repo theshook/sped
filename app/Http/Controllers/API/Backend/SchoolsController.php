@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\pupilsStoreRequest;
+use App\Http\Requests\API\SchoolsStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\School;
 use App\Http\Resources\Backend\SchoolsResource;

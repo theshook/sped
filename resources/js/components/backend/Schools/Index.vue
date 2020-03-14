@@ -396,7 +396,7 @@ export default {
           swal.fire({
             icon: "error",
             title: err.response.data.message,
-            text: err.response.data.errors.name[0],
+            text: err.response.data.errors,
             timer: 3000
           })
         );

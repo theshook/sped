@@ -10,8 +10,13 @@
 
             <b-col lg="6">
               <div class="d-flex justify-content-end align-baseline">
-                <b-button class="text-white" variant="warning" size="sm" v-b-modal.delete-all-modal>
-                  <b-icon icon="trash"></b-icon>Empty Trash
+                <b-button
+                  class="text-white"
+                  variant="success"
+                  size="sm"
+                  v-b-modal.restore-all-modal
+                >
+                  <b-icon class="mr-2" icon="check-circle"></b-icon>Restore All
                 </b-button>
               </div>
             </b-col>
@@ -19,15 +24,6 @@
 
           <b-row class="mb-2">
             <b-col lg="6">
-              <!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
-							@change="getDeletedSchools"
-							v-model="limit">
-								<b-form-select-option value="10" selected>10</b-form-select-option>
-								<b-form-select-option value="25">25</b-form-select-option>
-								<b-form-select-option value="50">50</b-form-select-option>
-								<b-form-select-option value="100">100</b-form-select-option>
-              </b-form-select>-->
-
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
                 <select
@@ -73,7 +69,7 @@
                 <b-button
                   v-b-modal.restore-modal
                   size="sm"
-                  variant="success"
+                  variant="info"
                   class="text-white"
                   @click="restore(data.index)"
                 >
@@ -113,7 +109,7 @@
       id="restore-modal"
       title="Confirm"
       ok-title="Continue"
-      ok-variant="danger"
+      ok-variant="success"
       ok-only
       @ok="restoreConfirm"
       button-size="sm"
@@ -121,19 +117,17 @@
       <p class="text-center text-muted mb-1">Are you sure you want to restore this school?</p>
     </b-modal>
 
-    <!-- DELETE ALL CONFIRM -->
+    <!-- RESTORE ALL CONFIRM -->
     <b-modal
-      id="delete-all-modal"
+      id="restore-all-modal"
       title="Confirm"
       ok-title="Continue"
-      ok-variant="danger"
+      ok-variant="success"
       ok-only
-      @ok="removeAll"
+      @ok="restoreAll"
       button-size="sm"
     >
-      <p
-        class="text-center text-muted mb-1"
-      >Are you sure you want to permanently delete these schools?</p>
+      <p class="text-center text-muted mb-1">Are you sure you want to restore all these school?</p>
     </b-modal>
 
     <!-- DELETE CONFIRM -->
@@ -203,9 +197,12 @@ export default {
 
     restoreConfirm: function() {
       let id = this.schools[this.restore_index].id;
-      const deletedSchoolsAPI = `${this.host}/schools/restore/${id}`;
+      const deletedSchoolsAPI = `${this.host}/schools/restore`;
+      const data = {
+        key: id
+      };
       axios
-        .post(deletedSchoolsAPI)
+        .post(deletedSchoolsAPI, data)
         .then(response => {
           if (response.data.status == 201) {
             this.schools.splice(this.restore_index, 1);
@@ -235,7 +232,41 @@ export default {
         });
     },
 
-    restoreAll: function() {},
+    restoreAll: function() {
+      const deletedSchoolsAPI = `${this.host}/schools/restore`;
+      const data = {
+        key: "all"
+      };
+      axios
+        .post(deletedSchoolsAPI, data)
+        .then(response => {
+          if (response.data.status == 201) {
+            this.schools = null;
+            this.restore_index = null;
+            swal.fire({
+              icon: "success",
+              title: "Restored",
+              text: "All school successfully restored",
+              timer: 3000
+            });
+          } else {
+            swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to restore all school",
+              timer: 3000
+            });
+          }
+        })
+        .catch(err => {
+          swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            text: err.response.data.errors,
+            timer: 3000
+          });
+        });
+    },
 
     remove: function(index) {
       this.delete_index = index;
@@ -269,38 +300,6 @@ export default {
             icon: "error",
             title: err.response.data.message,
             text: err.response.data.errors,
-            timer: 3000
-          });
-        });
-    },
-
-    removeAll: function() {
-      const deletedSchoolsAPI = `${this.host}/schools/delete/all`;
-      axios
-        .delete(deletedSchoolsAPI)
-        .then(response => {
-          if (response.data.status == 201) {
-            this.getDeletedSchools();
-            swal.fire({
-              icon: "success",
-              title: "Deleted",
-              text: "All schools successfully deleted",
-              timer: 3000
-            });
-          } else {
-            swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Failed to delete all schools",
-              timer: 3000
-            });
-          }
-        })
-        .catch(err => {
-          swal.fire({
-            icon: "error",
-            title: err.response.data.message,
-            text: err.response.data.errors.name[0],
             timer: 3000
           });
         });
