@@ -55,6 +55,11 @@ Route::group(['middleware' => ['auth:api']], function () {
   Route::put('/pupil/{id}', 'API\Backend\PupilsController@update');
   Route::delete('/pupil/{id}', 'API\Backend\PupilsController@destroy');
 
+  //BACKEND (TESTS-TRASH)
+  Route::get('/pupils/deleted', 'API\Backend\PupilsTrashController@index');
+  Route::post('/pupils/restore', 'API\Backend\PupilsTrashController@restore');
+  Route::delete('/pupils/delete/{id}', 'API\Backend\PupilsTrashController@delete');
+
   /* ========================================================================================================== */
 
   //BACKEND (TEACHERS)
@@ -80,7 +85,7 @@ Route::group(['middleware' => ['auth:api']], function () {
   Route::put('/test/{id}', 'API\Backend\TestsController@update');
   Route::delete('/test/{id}', 'API\Backend\TestsController@destroy');
 
-  //BACKEND (SCHOOLS-TRASH)
+  //BACKEND (TESTS-TRASH)
   Route::get('/tests/deleted', 'API\Backend\TestsTrashController@index');
   Route::post('/tests/restore', 'API\Backend\TestsTrashController@restore');
   Route::delete('/tests/delete/{id}', 'API\Backend\TestsTrashController@delete');

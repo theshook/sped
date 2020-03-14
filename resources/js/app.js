@@ -65,6 +65,11 @@ Vue.component(
   "pupils-index",
   require("./components/backend/Pupils/Index.vue").default
 );
+//BACKEND (Teachers- TRASH)
+Vue.component(
+  "pupils-trash",
+  require("./components/backend/Pupils/Trash.vue").default
+);
 //BACKEND (Teachers)
 Vue.component(
   "teachers-index",
@@ -79,6 +84,11 @@ Vue.component(
 Vue.component(
   "tests-index",
   require("./components/backend/Tests/Index.vue").default
+);
+//BACKEND (Schools- TRASH)
+Vue.component(
+  "tests-trash",
+  require("./components/backend/Tests/Trash.vue").default
 );
 //BACKEND (Tests - manage questions to test)
 Vue.component(

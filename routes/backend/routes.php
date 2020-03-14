@@ -51,6 +51,7 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
     Route::group(['middleware' => ['roles:admin,teachers']], function () {
       //BACKEND (Pupils)
       Route::get('/pupils', 'Backend\PupilsController@index')->name('admin.pupils');
+      Route::get('/pupils/trash', 'Backend\PupilsController@trash_index')->name('admin.pupils.trash');
       //BACKEND (Tests)
       Route::get('/tests', 'Backend\TestsController@index')->name('admin.tests');
       Route::get('/tests/trash', 'Backend\TestsController@trash_index')->name('admin.test.trash');
