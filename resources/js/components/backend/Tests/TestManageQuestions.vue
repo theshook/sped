@@ -143,7 +143,10 @@ export default {
           this.test = response.data.test;
           this.teacher_questions = response.data.teacher_questions;
           this.questions = response.data.questions;
-          this.questions_id = JSON.parse(response.data.questions_id);
+          this.questions_id =
+            JSON.parse(response.data.questions_id) == null
+              ? []
+              : JSON.parse(response.data.questions_id);
 
           for (let i = 0; i < this.teacher_questions.length; i++) {
             for (let q = 0; q < this.questions.length; q++) {
