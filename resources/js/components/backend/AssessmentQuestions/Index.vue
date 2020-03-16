@@ -124,11 +124,11 @@
         </b-form-group>
 
         <b-form-group label="Question" label-class="text-sm">
-          <b-form-input
+          <b-form-textarea
             v-model="$v.form.question.$model"
             :state="validateState('question')"
             aria-describedby="invalid-input-question"
-          ></b-form-input>
+          ></b-form-textarea>
 
           <b-form-invalid-feedback
             id="invalid-input-question"
@@ -198,6 +198,19 @@
           <b-form-invalid-feedback
             id="invalid-input-answer"
           >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Explanation" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.explanation.$model"
+            :state="validateState('explanation')"
+            aria-describedby="invalid-input-choice1"
+            rows="2"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-explanation"
+          >This field must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -230,11 +243,11 @@
         </b-form-group>
 
         <b-form-group label="Question" label-class="text-sm">
-          <b-form-input
+          <b-form-textarea
             v-model="$v.form.question.$model"
             :state="validateState('question')"
             aria-describedby="invalid-input-question"
-          ></b-form-input>
+          ></b-form-textarea>
 
           <b-form-invalid-feedback
             id="invalid-input-question"
@@ -304,6 +317,19 @@
           <b-form-invalid-feedback
             id="invalid-input-answer"
           >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Explanation" label-class="text-sm">
+          <b-form-textarea
+            v-model="$v.form.explanation.$model"
+            :state="validateState('explanation')"
+            aria-describedby="invalid-input-choice1"
+            rows="2"
+          ></b-form-textarea>
+
+          <b-form-invalid-feedback
+            id="invalid-input-explanation"
+          >This field must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -356,7 +382,8 @@ export default {
         choice2: null,
         choice3: null,
         choice4: null,
-        answer: null
+        answer: null,
+        explanation: null
       },
 
       // EDIT
@@ -376,7 +403,7 @@ export default {
       question: {
         required,
         minLength: minLength(10),
-        maxLength: maxLength(100)
+        maxLength: maxLength(200)
       },
       choice1: {
         required,
@@ -400,6 +427,10 @@ export default {
       },
       answer: {
         required,
+        minLength: minLength(3),
+        maxLength: maxLength(200)
+      },
+      explanation: {
         minLength: minLength(3),
         maxLength: maxLength(200)
       }
@@ -464,7 +495,8 @@ export default {
         choice2: this.form.choice2,
         choice3: this.form.choice3,
         choice4: this.form.choice4,
-        answer: this.form.answer
+        answer: this.form.answer,
+        explanatin: this.form.explanation
       };
 
       axios
@@ -510,6 +542,7 @@ export default {
       this.form.choice3 = this.questions[index].choice3;
       this.form.choice4 = this.questions[index].choice4;
       this.form.answer = this.questions[index].answer;
+      this.form.explanation = this.questions[index].explanation;
     },
 
     submitUpdate: function(event) {
@@ -541,6 +574,7 @@ export default {
       this.questions[this.edit_index].choice3 = this.form.choice3;
       this.questions[this.edit_index].choice4 = this.form.choice4;
       this.questions[this.edit_index].answer = this.form.answer;
+      this.questions[this.edit_index].explanation = this.form.explanation;
 
       axios
         .put(questionsAPI, data)
@@ -622,6 +656,7 @@ export default {
       this.form.choice3 = null;
       this.form.choice4 = null;
       this.form.answer = null;
+      this.form.explanation = null;
     }
   }
 };
