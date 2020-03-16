@@ -12,6 +12,11 @@ class TestsController extends Controller
     return view('pages.backend.tests.index');
   }
 
+  public function show($id)
+  {
+    return view('pages.backend.tests.show')->with('test_id', $id);
+  }
+
   public function trash_index()
   {
     return view('pages.backend.tests.trash');

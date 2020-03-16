@@ -81,9 +81,11 @@
                   <b-icon icon="trash"></b-icon>
                 </b-button>
 
+                <b-button size="sm" variant="primary" @click="view(data.index)">View</b-button>
+
                 <b-button size="sm" variant="info" @click="manage(data.index)">
                   <!-- <b-icon class="mr-1" icon="eye"></b-icon> -->
-                  Manage
+                  Manage questions
                 </b-button>
               </b-btn-group>
             </template>
@@ -333,10 +335,14 @@ export default {
         .catch(err => console.log(err.response));
     },
 
+    view: function(index) {
+      let id = this.tests[index].id;
+      window.location = `/configure/test/${id}/show`;
+    },
+
     manage: function(index) {
       let id = this.tests[index].id;
       window.location = `/configure/test/${id}/manage`;
-      console.log(id);
     },
 
     submitAdd: function(event) {
