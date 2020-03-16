@@ -82,7 +82,8 @@
                 </b-button>
 
                 <b-button size="sm" variant="info" @click="manage(data.index)">
-                  <b-icon icon="eye"></b-icon>
+                  <!-- <b-icon class="mr-1" icon="eye"></b-icon> -->
+                  Manage
                 </b-button>
               </b-btn-group>
             </template>
@@ -334,6 +335,7 @@ export default {
 
     manage: function(index) {
       let id = this.tests[index].id;
+      window.location = `/configure/test/${id}/manage`;
       console.log(id);
     },
 

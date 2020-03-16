@@ -83,6 +83,8 @@ Route::group(['middleware' => ['auth:api']], function () {
   Route::post('/tests', 'API\Backend\TestsController@store');
   Route::get('/test/{id}', 'API\Backend\TestsController@show');
   Route::put('/test/{id}', 'API\Backend\TestsController@update');
+  Route::put('/test/{id}', 'API\Backend\TestsController@update_questions');
+  Route::delete('/test/{id}', 'API\Backend\TestsController@delete_question');
   Route::delete('/test/{id}', 'API\Backend\TestsController@destroy');
 
   //BACKEND (TESTS-TRASH)
