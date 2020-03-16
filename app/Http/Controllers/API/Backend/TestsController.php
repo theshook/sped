@@ -180,5 +180,21 @@ class TestsController extends Controller
   public function delete_question(Request $request, $id)
   {
     $test = Test::find($id);
+    $test->questions_id = $request->questions_id;
+    if ($test->update()) {
+      $response = array(
+        'status' => 201,
+        'message' => 'Test questions successfully updated'
+      );
+
+      return response()->json($response, 201);
+    } else {
+      $response = array(
+        'status' => 500,
+        'message' => 'Failed to update test questions'
+      );
+
+      return response()->json($response, 500);
+    }
   }
 }

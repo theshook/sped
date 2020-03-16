@@ -6,11 +6,11 @@
           <b-row class="mb-2">
             <b-col lg="6">
               <p class="text-muted">Title</p>
-              <h3 class="text-primary front-weight-bolder">{{test.title}}</h3>
+              <h3 class="text-primary front-weight-bolder">{{ test.title }}</h3>
             </b-col>
             <b-col lg="6">
               <p class="text-muted">Description</p>
-              <p class="text-muted font-weight-bold pt-2">{{test.description}}</p>
+              <p class="text-muted font-weight-bold pt-2">{{ test.description }}</p>
             </b-col>
           </b-row>
 
@@ -20,7 +20,7 @@
               <h4
                 class="text-muted font-weight-bold"
                 v-if="questions.length != 0"
-              >{{questions.length}}</h4>
+              >{{ questions.length }}</h4>
               <p class="text-muted font-weight-bold" v-if="questions.length == 0">N/A</p>
             </b-col>
 
@@ -64,7 +64,11 @@
               :fields="questions_fields"
               responsive="md"
             >
-              <template v-slot:cell(question)="data">{{ data.item.question }}</template>
+              <template v-slot:cell(question)="data">
+                {{
+                data.item.question
+                }}
+              </template>
 
               <template v-slot:cell(index)="data">
                 <b-button variant="danger" size="sm" @click="removeQuestion(data.index)">Remove</b-button>
@@ -90,7 +94,7 @@
       <section v-for="(question, i) in teacher_questions" :key="i">
         <b-row class="border-bottom p-3 mb-2">
           <b-col lg="11">
-            <small class="text-muted">{{question.question}}</small>
+            <small class="text-muted">{{ question.question }}</small>
           </b-col>
           <b-col lg="1">
             <b-button variant="primary" size="sm" @click="addQuestion(i)">
@@ -155,7 +159,7 @@ export default {
     addQuestion: function(index) {
       let id = this.teacher_questions[index].id;
       this.questions_id.push(id);
-      this.teacher_questions.splice(this.teacher_questions[index], 1);
+      this.teacher_questions.splice(index, 1);
 
       this.$bvToast.toast(`Question added`, {
         title: "Added!",
@@ -201,12 +205,35 @@ export default {
     },
 
     removeQuestion: function(index) {
-      this.questions.splice(index, 1);
+      let id = this.questions[index].id;
+      for (let i = 0; i < this.questions_id.length; i++) {
+        if (this.questions_id[i] === id) {
+          this.questions_id.splice(i, 1);
+          this.questions.splice(index, 1);
+          break;
+        }
+      }
+
+      let testsAPI = `${this.host}/test/${this.test_id}`;
+      const data = {
+        questions_id: this.questions_id
+      };
+      axios
+        .put(testsAPI, data)
+        .then(response => {})
+        .catch(err =>
+          swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            text: err.response.data.errors,
+            timer: 3000
+          })
+        );
 
       this.$bvToast.toast(`Question removed`, {
         title: "Removed!",
-        variant: "warning",
-        autoHideDelay: 1000,
+        variant: "danger",
+        autoHideDelay: 2000,
         appendToast: true
       });
     }
