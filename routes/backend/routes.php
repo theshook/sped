@@ -55,6 +55,7 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
       //BACKEND (Tests)
       Route::get('/tests', 'Backend\TestsController@index')->name('admin.tests');
       Route::get('/tests/trash', 'Backend\TestsController@trash_index')->name('admin.test.trash');
+      Route::get('/test/{id}/pdf', 'Backend\TestsController@show_pdf')->name('admin.show.pdf');
       Route::get('/test/{id}/show', 'Backend\TestsController@show')->name('admin.show.manage');
       Route::get('/test/{id}/manage', 'Backend\TestsController@test_manage_questions')->name('admin.test.manage');
       //BACKEND (Teachers/Questions)
