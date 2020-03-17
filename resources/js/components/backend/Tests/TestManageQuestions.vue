@@ -6,22 +6,18 @@
           <b-row class="mb-2">
             <b-col lg="6">
               <p class="text-muted">Title</p>
-              <h3 class="text-primary front-weight-bolder">{{ test.title }}</h3>
+              <h3 class="text-primary font-weight-bolder mt-2">{{ test.title }}</h3>
             </b-col>
             <b-col lg="6">
-              <p class="text-muted">Description</p>
-              <p class="text-muted font-weight-bold pt-2">{{ test.description }}</p>
+              <p class="text-muted">Last updated</p>
+              <p class="text-muted">{{test.updated_at}}</p>
             </b-col>
           </b-row>
 
           <b-row>
             <b-col lg="6">
-              <p class="text-muted">No. of questions</p>
-              <h4
-                class="text-muted font-weight-bold"
-                v-if="questions.length != 0"
-              >{{ questions.length }}</h4>
-              <p class="text-muted font-weight-bold" v-if="questions.length == 0">N/A</p>
+              <p class="text-muted">Description</p>
+              <p class="text-muted font-weight-bold pt-2">{{ test.description }}</p>
             </b-col>
 
             <b-col lg="6">
@@ -34,6 +30,10 @@
                 v-if="!questions.length == 0"
               >
                 <b-icon icon="plus"></b-icon>Add question
+              </b-button>
+
+              <b-button class="shadow-sm" variant="info" size="sm">
+                <b-icon icon="documents"></b-icon>View PDF
               </b-button>
 
               <b-button class="shadow-sm" variant="success" size="sm">
