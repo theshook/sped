@@ -19,7 +19,7 @@ class QuestionsController extends Controller
     $search = $request->search;
     $limit = $request->limit;
 
-    return ($search) ? Question::with('teacher')->where('question', 'like', "%$search%")->paginate($limit) : Question::with('teacher')->paginate($limit);
+    return ($search) ? Question::with('teacher', 'category')->where('question', 'like', "%$search%")->paginate($limit) : Question::with('teacher', 'category')->paginate($limit);
   }
 
   /**
@@ -28,9 +28,10 @@ class QuestionsController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(QuestionStoreRequest $request)
+  public function store(Request $request)
   {
     $question = new Question;
+    $question->checklist_category_id = $request->checklist_category_id;
     $question->teacher_id = $request->teacher_id;
     $question->question = $request->question;
     $question->choice1 = $request->choice1;
@@ -90,6 +91,7 @@ class QuestionsController extends Controller
     $question = Question::find($id);
     if (!empty($question)) {
       $question = new Question;
+      $question->checklist_category_id = $request->checklist_category_id;
       $question->teacher_id = $request->teacher_id;
       $question->question = $request->question;
       $question->choice1 = $request->choice1;

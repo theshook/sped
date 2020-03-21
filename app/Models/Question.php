@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Question extends Model
 {
-	use SoftDeletes;
-	protected $table = 'assessment_questions';
-	protected $fillable = ['teacher_id', 'question', 'choice1', 'choice2', 'choice3', 'choice4', 'answer'];
+  use SoftDeletes;
+  protected $table = 'assessment_questions';
+  protected $fillable = ['teacher_id', 'checklist_category_id', 'question', 'choice1', 'choice2', 'choice3', 'choice4', 'answer'];
 
-	public function teacher()
-	{
-		return $this->belongsTo(Teacher::class);
-	}
+  public function teacher()
+  {
+    return $this->belongsTo(Teacher::class);
+  }
+
+  public function category()
+  {
+    return $this->belongsTo(ChecklistCategory::class, 'checklist_category_id');
+  }
 }

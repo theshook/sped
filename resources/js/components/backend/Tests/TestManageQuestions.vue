@@ -37,7 +37,7 @@
               </b-button>
 
               <b-button class="shadow-sm" variant="success" size="sm">
-                <b-icon icon="check"></b-icon>Publish
+                <b-icon icon="check"></b-icon>Publish assessment
               </b-button>
             </b-col>
           </b-row>
@@ -91,18 +91,34 @@
       @ok="confirmAddQuestion"
       button-size="sm"
     >
-      <section v-for="(question, i) in teacher_questions" :key="i">
-        <b-row class="border-bottom p-3 mb-2">
-          <b-col lg="11">
-            <small class="text-muted">{{ question.question }}</small>
-          </b-col>
-          <b-col lg="1">
-            <b-button variant="primary" size="sm" @click="addQuestion(i)">
-              <b-icon icon="plus"></b-icon>
-            </b-button>
-          </b-col>
-        </b-row>
-      </section>
+      <b-table
+        borderless
+        striped
+        hover
+        sticky-header="500px"
+        id="questions-table"
+        :items="teacher_questions"
+        :fields="teacher_questions_fields"
+        responsive="md"
+      >
+        <template v-slot:cell(question)="data">
+          {{
+          data.item.question
+          }}
+        </template>
+
+        <template v-slot:cell(category)="data">
+          {{
+          data.item.category.name
+          }}
+        </template>
+
+        <template v-slot:cell(index)="data">
+          <b-button variant="primary" size="sm" @click="addQuestion(data.index)">
+            <b-icon class="mr-2" icon="plus"></b-icon>Add
+          </b-button>
+        </template>
+      </b-table>
     </b-modal>
   </div>
 </template>
@@ -121,12 +137,30 @@ export default {
           label: "Question"
         },
         {
+          key: "category",
+          label: "Category"
+        },
+        {
           key: "index",
           label: "Action"
         }
       ],
       questions_id: [],
-      teacher_questions: null
+      teacher_questions: null,
+      teacher_questions_fields: [
+        {
+          key: "question",
+          label: "Question"
+        },
+        {
+          key: "category",
+          label: "Category"
+        },
+        {
+          key: "index",
+          label: "Action"
+        }
+      ]
     };
   },
   validations: {},
@@ -155,6 +189,8 @@ export default {
               }
             }
           }
+
+          console.log(this.teacher_questions);
         })
         .catch(err => console.log(err));
     },

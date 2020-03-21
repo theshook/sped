@@ -6,28 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateChecklistCategoriesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('checklist_categories', function (Blueprint $table) {
-            $table->bigIncrements('id');
-			$table->string('name');
-			$table->softDeletes();
-            $table->timestamps();
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('checklist_categories', function (Blueprint $table) {
+      $table->bigIncrements('id');
+      $table->string('name');
+      $table->softDeletes();
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('checklist_categories');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('checklist_categories');
+  }
 }

@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ChecklistCategory extends Model
 {
-    use SoftDeletes;
+  use SoftDeletes;
 
-    protected $fillable = ['name'];
+  protected $fillable = ['name'];
 
-    public function checklists()
-    {
-        return $this->hasMany(Checklist::class, 'checklist_categories_id');
-    }
+  public function checklists()
+  {
+    return $this->hasMany(Checklist::class, 'checklist_categories_id');
+  }
+
+  public function questions()
+  {
+    return $this->hasMany(Question::class);
+  }
 }

@@ -56,6 +56,8 @@
           >
             <template v-slot:cell(name)="data">{{ data.item.name }}</template>
 
+            <template v-slot:cell(category)="data">{{ data.item.category.name }}</template>
+
             <template v-slot:cell(index)="data">
               <b-btn-group>
                 <b-button
@@ -108,6 +110,21 @@
       button-size="sm"
     >
       <b-form>
+        <b-form-group label="Category" label-class="text-sm">
+          <b-form-select
+            v-model="$v.form.checklist_category_id.$model"
+            :state="validateState('checklist_category_id')"
+            aria-describedby="input-category-feedback"
+          >
+            <b-form-select-option
+              v-for="category in checklistCategories"
+              :key="category.id"
+              :value="category.id"
+            >{{ category.name }}</b-form-select-option>
+          </b-form-select>
+          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
+        </b-form-group>
+
         <b-form-group label="Teacher" label-class="text-sm">
           <b-form-select
             v-model="$v.form.teacher_id.$model"
@@ -130,9 +147,10 @@
             aria-describedby="invalid-input-question"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-question"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-question">
+            This field is required and must be atleast 10
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #1" label-class="text-sm">
@@ -143,9 +161,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice1"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice1">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #2" label-class="text-sm">
@@ -156,9 +175,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice2"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice2">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #3" label-class="text-sm">
@@ -169,9 +189,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice3"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice3">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #4" label-class="text-sm">
@@ -182,9 +203,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice4"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice4">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Answer" label-class="text-sm">
@@ -195,9 +217,10 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-answer"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-answer">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Explanation" label-class="text-sm">
@@ -227,6 +250,21 @@
       button-size="sm"
     >
       <b-form>
+        <b-form-group label="Category" label-class="text-sm">
+          <b-form-select
+            v-model="$v.form.checklist_category_id.$model"
+            :state="validateState('checklist_category_id')"
+            aria-describedby="input-category-feedback"
+          >
+            <b-form-select-option
+              v-for="category in checklistCategories"
+              :key="category.id"
+              :value="category.id"
+            >{{ category.name }}</b-form-select-option>
+          </b-form-select>
+          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
+        </b-form-group>
+
         <b-form-group label="Teacher" label-class="text-sm">
           <b-form-select
             v-model="$v.form.teacher_id.$model"
@@ -249,9 +287,10 @@
             aria-describedby="invalid-input-question"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-question"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-question">
+            This field is required and must be atleast 10
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #1" label-class="text-sm">
@@ -262,9 +301,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice1"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice1">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #2" label-class="text-sm">
@@ -275,9 +315,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice2"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice2">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #3" label-class="text-sm">
@@ -288,9 +329,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice3"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice3">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Choice #4" label-class="text-sm">
@@ -301,9 +343,10 @@
             rows="4"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-choice4"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-choice4">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Answer" label-class="text-sm">
@@ -314,9 +357,10 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-answer"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-answer">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Explanation" label-class="text-sm">
@@ -368,14 +412,21 @@ export default {
           sortable: true
         },
         {
+          key: "category",
+          label: "Category",
+          sortable: true
+        },
+        {
           key: "index",
           label: "Action"
         }
       ],
+      checklistCategories: null,
       response: {},
 
       // ADD
       form: {
+        checklist_category_id: null,
         teacher_id: null,
         question: null,
         choice1: null,
@@ -397,6 +448,9 @@ export default {
   },
   validations: {
     form: {
+      checklist_category_id: {
+        required
+      },
       teacher_id: {
         required
       },
@@ -440,6 +494,7 @@ export default {
   mounted() {
     this.getQuestions();
     this.getTeachers();
+    this.getChecklistCategories();
   },
   methods: {
     validateState: function(name) {
@@ -454,6 +509,7 @@ export default {
         .then(response => {
           this.questions = response.data.data;
           this.response = response.data;
+          console.log(response.data);
         })
         .catch(err => console.log(err));
     },
@@ -476,6 +532,16 @@ export default {
         .catch(err => console.log(err.response));
     },
 
+    getChecklistCategories: function() {
+      let checklistCategoriesAPI = `${this.host}/checklists/categories/raw`;
+      axios
+        .get(checklistCategoriesAPI)
+        .then(response => {
+          this.checklistCategories = response.data;
+        })
+        .catch(err => console.log(err.response));
+    },
+
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
@@ -489,6 +555,7 @@ export default {
     add: function() {
       const questionsAPI = `${this.host}/questions`;
       const data = {
+        checklist_category_id: this.form.checklist_category_id,
         teacher_id: this.form.teacher_id,
         question: this.form.question,
         choice1: this.form.choice1,
@@ -535,6 +602,9 @@ export default {
     edit: function(index) {
       this.edit_id = this.questions[index].id;
       this.edit_index = index;
+      this.form.checklist_category_id = this.questions[
+        index
+      ].checklist_category_id;
       this.form.teacher_id = this.questions[index].teacher_id;
       this.form.question = this.questions[index].question;
       this.form.choice1 = this.questions[index].choice1;
@@ -558,6 +628,7 @@ export default {
     update: function() {
       const questionsAPI = `${this.host}/question/${this.edit_id}`;
       const data = {
+        checklist_category_id: this.form.checklist_category_id,
         teacher_id: this.form.teacher_id,
         question: this.form.question,
         choice1: this.form.choice1,
@@ -567,6 +638,9 @@ export default {
         answer: this.form.answer
       };
 
+      this.questions[
+        this.edit_index
+      ].checklist_category_id = this.form.checklist_category_id;
       this.questions[this.edit_index].teacher_id = this.form.teacher_id;
       this.questions[this.edit_index].question = this.form.question;
       this.questions[this.edit_index].choice1 = this.form.choice1;
