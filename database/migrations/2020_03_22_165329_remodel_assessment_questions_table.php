@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAssessmentQuestionsTable extends Migration
+class RemodelAssessmentQuestionsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,19 +13,20 @@ class CreateAssessmentQuestionsTable extends Migration
    */
   public function up()
   {
+    Schema::dropIfExists('assessment_questions');
+
     Schema::create('assessment_questions', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->unsignedBigInteger('teacher_id');
-      $table->string('question');
-      $table->string('choice1');
-      $table->string('choice2');
-      $table->string('choice3');
-      $table->string('choice4');
+      $table->unsignedBigInteger('assessment_pupil_id');
+      $table->unsignedBigInteger('question_id');
+      $table->unsignedBigInteger('question_type');
       $table->string('answer');
-      $table->softDeletes();
+      $table->string('correct');
+      $table->string('wrong');
       $table->timestamps();
 
-      $table->foreign('teacher_id')->references('id')->on('teachers');
+      $table->foreign('assessment_pupil_id')->references('id')->on('assessment_pupils');
+      $table->foreign('question_id')->references('id')->on('questions');
     });
   }
 
@@ -36,6 +37,6 @@ class CreateAssessmentQuestionsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('assessment_questions');
+    //
   }
 }
