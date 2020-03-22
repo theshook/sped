@@ -61,7 +61,9 @@
             id="province-table"
             :items="provinces"
             :fields="provinces_fields"
+            :busy="table_busy"
             responsive="md"
+            show-empty
           >
             <template v-slot:cell(name)="data">{{ data.item.name }}</template>
 
@@ -86,6 +88,19 @@
                   <b-icon icon="trash"></b-icon>
                 </b-button>
               </b-btn-group>
+            </template>
+
+            <template v-slot:table-busy>
+              <div class="text-center py-3">
+                <b-spinner class="mb-2" variant="primary"></b-spinner>
+                <p class="text-muted mb-0">Loading ...</p>
+              </div>
+            </template>
+
+            <template v-slot:empty="scope">
+              <div class="text-center py-3">
+                <p class="text-muted mb-0">{{scope.emptyText}}</p>
+              </div>
             </template>
           </b-table>
 
@@ -180,6 +195,7 @@ export default {
   props: ["host"],
   data() {
     return {
+      table_busy: false,
       search: "",
       limit: 10,
       current_page: 1,
@@ -233,6 +249,7 @@ export default {
     },
 
     getProvinces: function(page) {
+      this.table_busy = true;
       const provincesAPI = `${this.host}/provinces?search=${this.search}&limit=${this.limit}&page=${page}`;
       axios
         .get(provincesAPI)
@@ -240,56 +257,8 @@ export default {
           this.provinces = response.data.data;
           this.response = response.data;
         })
-        .catch(err => console.log(err));
-    },
-
-    formatDate: function(index) {
-      const provinces = this.provinces;
-      //return provinces[index].created_at.split('-')
-      const month = provinces[index].created_at.split("-")[1];
-      const dateDay = provinces[index].created_at.split("-")[2].split(" ")[0];
-      const dateYear = provinces[index].created_at.split("-")[0];
-      let dateMonth = null;
-      switch (month) {
-        case "01":
-          dateMonth = "January";
-          break;
-        case "02":
-          dateMonth = "February";
-          break;
-        case "03":
-          dateMonth = "March";
-          break;
-        case "04":
-          dateMonth = "April";
-          break;
-        case "05":
-          dateMonth = "May";
-          break;
-        case "06":
-          dateMonth = "June";
-          break;
-        case "07":
-          dateMonth = "July";
-          break;
-        case "08":
-          dateMonth = "August";
-          break;
-        case "09":
-          dateMonth = "September";
-          break;
-        case "10":
-          dateMonth = "October";
-          break;
-        case "11":
-          dateMonth = "November";
-          break;
-        case "12":
-          dateMonth = "December";
-          break;
-      }
-
-      return `${dateMonth} ${dateDay}, ${dateYear}`;
+        .catch(err => console.log(err))
+        .finally(() => this.table_busy = false);
     },
 
     submitAdd: function(event) {
