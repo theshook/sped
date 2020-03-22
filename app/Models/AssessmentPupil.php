@@ -21,4 +21,19 @@ class AssessmentPupil extends Model
     'closed_by',
     'closed_date',
   ];
+
+  public function assessment()
+  {
+    return $this->belongsTo(Assessment::class);
+  }
+
+  public function assessment_questions()
+  {
+    return $this->hasMany(AssessmentQuestion::class);
+  }
+
+  public function pupil()
+  {
+    return $this->belongsTo(Pupil::class);
+  }
 }

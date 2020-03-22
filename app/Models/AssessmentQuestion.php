@@ -17,4 +17,14 @@ class AssessmentQuestion extends Model
     'correct',
     'wrong',
   ];
+
+  public function assessment_pupil()
+  {
+    return $this->belongsTo(AssessmentPupil::class, 'assessment_pupil_id');
+  }
+
+  public function question()
+  {
+    return $this->hasOne(Question::class);
+  }
 }

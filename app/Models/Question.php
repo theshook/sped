@@ -9,7 +9,7 @@ class Question extends Model
 {
   use SoftDeletes;
   protected $table = 'assessment_questions';
-  protected $fillable = ['teacher_id', 'checklist_category_id', 'question', 'choice1', 'choice2', 'choice3', 'choice4', 'answer'];
+  protected $fillable = ['teacher_id', 'checklist_category_id', 'question_type', 'question', 'choice1', 'choice2', 'choice3', 'choice4', 'answer'];
 
   public function teacher()
   {

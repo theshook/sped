@@ -7,17 +7,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pupil extends Model
 {
-	use SoftDeletes;
-    protected $fillable = [
-		'school_id',
-		'first_name',
-		'last_name',
-		'middle_name',
-		'birth_date',
-		'prof_pic'
-	];
+  use SoftDeletes;
+  protected $fillable = [
+    'school_id',
+    'parent_id',
+    'first_name',
+    'last_name',
+    'middle_name',
+    'birth_date',
+    'prof_pic'
+  ];
 
-	public function school() {
-		return $this->belongsTo(School::class);
-	}
+  public function school()
+  {
+    return $this->belongsTo(School::class);
+  }
+
+  public function parent()
+  {
+    return $this->hasOne(PupilParent::class);
+  }
+
+  public function assessments()
+  {
+    return $this->hasMany(Assessment::class);
+  }
 }
