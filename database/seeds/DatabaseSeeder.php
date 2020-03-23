@@ -16,6 +16,13 @@ class DatabaseSeeder extends Seeder
     $this->call(TeachersTableSeeder::class);
     $this->call(ParentsTableSeeder::class);
     $this->call(PupilsTableSeeder::class);
+    $this->call(TestsTableSeeder::class);
+    $this->call(AssessmentsTableSeeder::class);
+    $this->call(ChecklistCategoryTableSeeder::class);
+    $this->call(ChecklistsTableSeeder::class);
+    $this->call(QuestionsTableSeeder::class);
+    $this->call(AssessmentPupilsTableSeeder::class);
+    $this->call(AssessmentQuestionsTableSeeder::class);
     $this->call(RolesTableSeeder::class);
   }
 }

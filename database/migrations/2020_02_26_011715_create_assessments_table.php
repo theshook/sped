@@ -20,6 +20,7 @@ class CreateAssessmentsTable extends Migration
       $table->unsignedBigInteger('test_id');
       $table->integer('assessment_no');
       $table->dateTime('assessment_date');
+      $table->softDeletes();
       $table->timestamps();
 
 
