@@ -7,9 +7,9 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Models\Teacher::class, function (Faker $faker) {
     return [
-		'school_id' => 1,
-		'first_name' => $faker->word,
-		'last_name' => $faker->word,
-		'middle_name' => $faker->word,
+        'school_id' => rand(1, 10),
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
+        'middle_name' => $faker->lastName,
     ];
 });
