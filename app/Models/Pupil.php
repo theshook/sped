@@ -25,7 +25,7 @@ class Pupil extends Model
 
   public function parent()
   {
-    return $this->hasOne(PupilParent::class);
+    return $this->belongsTo(PupilParent::class);
   }
 
   public function assessments()

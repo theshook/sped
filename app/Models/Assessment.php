@@ -17,6 +17,11 @@ class Assessment extends Model
     'assessment_date',
   ];
 
+  public function teacher()
+  {
+    return $this->belongsTo(Teacher::class);
+  }
+
   public function pupil()
   {
     return $this->belongsTo(Pupil::class);
@@ -25,11 +30,6 @@ class Assessment extends Model
   public function assessment_pupils()
   {
     return $this->hasMany(AssessmentPupil::class);
-  }
-
-  public function teacher()
-  {
-    return $this->belongsTo(Teacher::class);
   }
 
   public function test()
