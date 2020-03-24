@@ -1,0 +1,17 @@
+body {
+  /* font-family: Nunito !important; */
+  background: #f1f1f1 !important;
+}
+
+.text-sm {
+  font-size: .9rem !important;
+}
+
+.navbar {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+.navbar .navbar-nav>li a {
+  margin-left: 1rem !important;
+}

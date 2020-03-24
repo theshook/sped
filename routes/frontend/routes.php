@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'client'], function () {
-	//Browse assessment test
-	Route::get('test/browse', 'Frontend\TestsController@index')->name('tests.index');
+Route::group(['prefix' => 'parent'], function () {
+  Route::get('/intake-form', 'Frontend\ClientPagesController@intake_form')->name('parent.intake-form');
+  Route::get('/intake-form/fill-up', 'Frontend\ClientPagesController@intake_form_fillup')->name('parent.intake-form-fillup');
 });

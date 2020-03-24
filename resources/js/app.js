@@ -21,10 +21,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 //Vuelidate
 import Vuelidate from "vuelidate";
+//CkEditor5
+import CKEditor from '@ckeditor/ckeditor5-vue';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(Vuelidate);
+Vue.use(CKEditor);
 
 // window.Vue = require("vue");
 window.swal = Swal;
@@ -39,6 +42,8 @@ window.swal = Swal;
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+
+/* ==================== FRONTEND ====================== */
 
 //BACKEND (Provinces)
 Vue.component(
@@ -119,6 +124,13 @@ Vue.component(
 Vue.component(
   "reports-index",
   require("./components/backend/Reports/Index.vue").default
+);
+
+/* ==================== FRONTEND ====================== */
+//BACKEND (Teacher-Questions)
+Vue.component(
+  "intake-form",
+  require("./components/frontend/Parents/IntakeForm.vue").default
 );
 
 /**
