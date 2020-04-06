@@ -238,28 +238,137 @@
               label-class="text-sm"
             >
               <div class="mt-2" v-if="form.q6.length > 0">
-                <div class="text-muted" v-for="(d, i) in form.q6" :key="i">
-                  <b-row>
-                    <b-col lg="4">
-                      <small>Name</small>
-                      <p class="font-weight-bold mb-2">{{d.name}}</p>
-                    </b-col>
-                    <b-col lg="4">
-                      <small>Role</small>
-                      <p class="font-weight-bold mb-2">{{d.role}}</p>
-                    </b-col>
-                    <b-col lg="4">
-                      <small>Contact</small>
-                      <p class="font-weight-bold mb-2">{{d.contact}}</p>
-                    </b-col>
-                  </b-row>
-                </div>
+                <b-table stiped hover borderless :items="form.q6"></b-table>
               </div>
 
               <div class="text-center mt-2">
                 <b-button variant="primary" size="sm" class="rounded" v-b-modal.q6-modal>Add</b-button>
                 <b-button variant="danger" size="sm" class="rounded">Clear</b-button>
               </div>
+            </b-form-group>
+
+            <b-form-group
+              label="7.) Who is your child's primary pediatrician?"
+              label-class="text-sm"
+            >
+              <b-form-textarea
+                v-model="$v.form.q7.$model"
+                :state="validateState('q7')"
+                aria-describedby="invalid-input-q7"
+                rows="3"
+              ></b-form-textarea>
+
+              <b-form-invalid-feedback id="invalid-input-q7">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group label="8.) Mother's age at time of birth" label-class="text-sm">
+              <b-form-input
+                type="number"
+                maxlength="2"
+                v-model="$v.form.q8.$model"
+                :state="validateState('q8')"
+                aria-describedby="invalid-input-q8"
+              ></b-form-input>
+
+              <b-form-invalid-feedback id="invalid-input-q8">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group
+              label="9.) How many times has the biological mother been pregnant?"
+              label-class="text-sm"
+            >
+              <b-form-input
+                type="number"
+                maxlength="2"
+                v-model="$v.form.q9.$model"
+                :state="validateState('q9')"
+                aria-describedby="invalid-input-q9"
+              ></b-form-input>
+
+              <b-form-invalid-feedback id="invalid-input-q9">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group label="9-b.) How many resulted in a live birth?" label-class="text-sm">
+              <b-form-input
+                type="number"
+                maxlength="2"
+                v-model="form.q9b"
+                aria-describedby="invalid-input-q9b"
+              ></b-form-input>
+
+              <b-form-invalid-feedback id="invalid-input-q9b">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group label="9-c.) How many resulted in a miscarriage?" label-class="text-sm">
+              <b-form-input
+                type="number"
+                maxlength="2"
+                v-model="form.q9b"
+                aria-describedby="invalid-input-q9c"
+              ></b-form-input>
+
+              <b-form-invalid-feedback id="invalid-input-q9c">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group
+              label="10.) Was this child the product of a multiple birth pregnancy?"
+              label-class="text-sm"
+            >
+              <b-form-select
+                v-model="q10_input_show"
+                maxlength="2"
+                aria-describedby="invalid-input-10"
+              >
+                <b-form-select-option value="true">Yes</b-form-select-option>
+                <b-form-select-option value="false">No</b-form-select-option>
+              </b-form-select>
+
+              <div class="mt-2" v-if="q10_input_show">
+                <small class="text-muted">Please specify what type</small>
+                <b-form-input v-model="$v.form.q10.$model" :state="validateState('q10')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-10">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+          </section>
+
+          <section v-if="page === 4">
+            <b-form-group
+              label="11.) Was reproductive technology or assistance used for this pregnancy?"
+              label-class="text-sm"
+            >
+              <b-form-select
+                v-model="q11_input_show"
+                maxlength="2"
+                aria-describedby="invalid-input-10"
+              >
+                <b-form-select-option value="true">Yes</b-form-select-option>
+                <b-form-select-option value="false">No</b-form-select-option>
+              </b-form-select>
+
+              <div class="mt-2" v-if="q11_input_show">
+                <small class="text-muted">Please specify what type</small>
+                <b-form-input v-model="$v.form.q11.$model" :state="validateState('q11')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-11">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group
+              label="12.) Was reproductive technology or assistance used for this pregnancy?"
+              label-class="text-sm"
+            >
+              <b-form-checkbox-group class="text-muted text-small mt-2" v-model="form.q12_arr">
+                <b-form-checkbox value="High blood pressume">High blood pressume</b-form-checkbox>
+                <b-form-checkbox value="Diabete">Diabete</b-form-checkbox>
+                <b-form-checkbox value="Depression or mood swings">Depression or mood swings</b-form-checkbox>
+                <b-form-checkbox value="Anxiety">Anxiety</b-form-checkbox>
+                <b-form-checkbox value="Other" @change="toggleQ12input">Other</b-form-checkbox>
+              </b-form-checkbox-group>
+
+              <div class="mt-2" v-if="q12_input_show">
+                <small class="text-muted">Please specify what type</small>
+                <b-form-input v-model="$v.form.q12.$model" :state="validateState('q12')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-12">This field is required</b-form-invalid-feedback>
             </b-form-group>
           </section>
         </b-form>
@@ -287,20 +396,20 @@
         <b-form-input
           v-model="$v.q6_arr.name.$model"
           :state="validateStateQ6('name')"
-          aria-describedby="invalid-input-q5"
+          aria-describedby="invalid-input-q6a"
         ></b-form-input>
 
-        <b-form-invalid-feedback id="invalid-input-q6">This field is required</b-form-invalid-feedback>
+        <b-form-invalid-feedback id="invalid-input-q6a">This field is required</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group label="Role" label-class="text-sm">
         <b-form-input
           v-model="$v.q6_arr.role.$model"
           :state="validateStateQ6('role')"
-          aria-describedby="invalid-input-q5"
+          aria-describedby="invalid-input-q6b"
         ></b-form-input>
 
-        <b-form-invalid-feedback id="invalid-input-q6">This field is required</b-form-invalid-feedback>
+        <b-form-invalid-feedback id="invalid-input-q6b">This field is required</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group label="Contact" label-class="text-sm">
@@ -309,10 +418,10 @@
           max="11"
           v-model="$v.q6_arr.contact.$model"
           :state="validateStateQ6('contact')"
-          aria-describedby="invalid-input-q6"
+          aria-describedby="invalid-input-q6c"
         ></b-form-input>
 
-        <b-form-invalid-feedback id="invalid-input-q4">This field is required</b-form-invalid-feedback>
+        <b-form-invalid-feedback id="invalid-input-q6c">This field is required</b-form-invalid-feedback>
       </b-form-group>
     </b-modal>
   </div>
@@ -367,6 +476,39 @@ export default {
             "A recent video or DVD of your child is also useful in helping us to plan for your visit if you have one available"
         }
       ],
+      form_q6_fields: [
+        {
+          label: "Name"
+        },
+        {
+          label: "Role"
+        },
+        {
+          label: "Contact"
+        }
+      ],
+      q12_options: [
+        {
+          text: "High Blood Pressure",
+          value: "High Blood Pressure"
+        },
+        {
+          text: "Diabetes",
+          value: "Diabetes"
+        },
+        {
+          text: "Depression or mood swings",
+          value: "Depression or mood swings"
+        },
+        {
+          text: "Anxiety",
+          value: "Anxiety"
+        },
+        {
+          text: "Other",
+          value: "Other"
+        }
+      ],
       form: {
         email: null,
         phone: null,
@@ -388,7 +530,12 @@ export default {
         q7: null,
         q8: null,
         q9: null,
-        q10: null
+        q9b: null,
+        q9c: null,
+        q10: null,
+        q11: null,
+        q12: null,
+        q12_arr: []
       },
 
       //Intake form inputs subdata (1 or more value)
@@ -399,10 +546,12 @@ export default {
       },
 
       q5_input_show: false,
-      q5_input_show: false,
+      q10_input_show: null,
+      q11_input_show: null,
+      q12_input_show: false,
 
       //Form page
-      page: 3
+      page: 4
     };
   },
   validations: {
@@ -456,7 +605,33 @@ export default {
       q2: {},
       q3: {},
       q4: {},
-      q5: {}
+      q5: {},
+      q7: {
+        required,
+        minLength: minLength(3)
+      },
+      q8: {
+        required,
+        minLength: minLength(2),
+        maxLength: maxLength(2)
+      },
+      q9: {
+        required,
+        minLength: minLength(1)
+      },
+      q10: {
+        required,
+        minLength: minLength(3)
+      },
+
+      q11: {
+        minLength: minLength(3)
+      },
+
+      q12: {
+        required,
+        minLength: minLength(3)
+      }
     },
 
     q6_arr: {
@@ -491,17 +666,16 @@ export default {
     },
 
     q6addData: function(event) {
-      event.preventDefault();
       this.$v.q6_arr.$touch();
       if (this.$v.q6_arr.$anyError) {
         return;
       } else {
-        this.$bvModal.hide("q6-modal"); //TODO - close modal not working
         this.form.q6.push({
           name: this.q6_arr.name,
           role: this.q6_arr.role,
           contact: this.q6_arr.contact
         });
+        this.$bvModal.hide("q6-modal");
         this.q6resetData();
       }
     },
@@ -512,6 +686,11 @@ export default {
       this.q6_arr.contact = null;
 
       this.$v.q6_arr.$reset();
+    },
+
+    toggleQ12input: function() {
+      this.q12_input_show = !this.q12_input_show;
+      console.log(this.q12_input_show);
     }
   }
 };
