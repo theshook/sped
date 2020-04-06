@@ -370,7 +370,149 @@
               </div>
               <b-form-invalid-feedback id="invalid-input-12">This field is required</b-form-invalid-feedback>
             </b-form-group>
+
+            <b-form-group
+              label="13.) Was genetic screening/testing done during the pregnancy? If yes, please indicate the result."
+              label-class="text-sm"
+            >
+              <b-form-checkbox-group class="text-muted text-small mt-2" v-model="form.q13_arr">
+                <b-form-checkbox value="Blood Tests" @change="toggleQ13Ainput">Blood Tests:</b-form-checkbox>
+                <div class="mt-2" v-if="q13A_input_show">
+                  <b-form-input></b-form-input>
+                </div> 
+
+                <b-form-checkbox value="Amniocentesis" @change="toggleQ13Binput">Amniocentesis:</b-form-checkbox>
+                <div class="mt-2" v-if="q13B_input_show">
+                  <b-form-input></b-form-input>
+                </div>
+
+                <b-form-checkbox value="Chorionic Villi Sampling" @change="toggleQ13Cinput">Chorionic Villi Sampling:</b-form-checkbox>
+                <div class="mt-2" v-if="q13C_input_show">
+                  <b-form-input></b-form-input>
+                </div>   
+              </b-form-checkbox-group>
+            </b-form-group>
+
+             <b-form-group
+              label="14.) During pregnancy with this child, did the mother take any of the following? If yes, please indicate the name of the medicine."
+              label-class="text-sm"
+            >
+              <b-form-checkbox-group class="text-muted text-small mt-2" v-model="form.q14_arr">
+                <b-form-checkbox value="Pre-natal vitamins / iron">Pre-natal vitamins / iron</b-form-checkbox>
+                <b-form-checkbox value="Thyroid medicine">Thyroid medicine</b-form-checkbox>
+                <b-form-checkbox value="Blood pressure medicine">Blood pressure medicine</b-form-checkbox>
+                <b-form-checkbox value="Insulin">Insulin</b-form-checkbox>
+                <b-form-checkbox value="Glucophage (Metformin)">Glucophage (Metformin)</b-form-checkbox>
+                <b-form-checkbox value="Depression medication">Depression medication</b-form-checkbox>
+                <b-form-checkbox value="Anxiety medication">Anxiety medication</b-form-checkbox>
+                <b-form-checkbox value="Other" @change="toggleQ14input">Other</b-form-checkbox>
+              </b-form-checkbox-group>
+
+              <div class="mt-2" v-if="q14_input_show">
+                <small class="text-muted">Please specify what type</small>
+                <b-form-input v-model="$v.form.q14.$model" :state="validateState('q14')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-14">This field is required</b-form-invalid-feedback>         
+            </b-form-group>
+
+            <b-form-group
+              label="15.) Smoking? How many packs / day?"
+              label-class="text-sm"
+            >
+              <b-form-select
+                v-model="q15_input_show"
+                maxlength="2"
+                aria-describedby="invalid-input-15"
+              >
+                <b-form-select-option value="true">Yes</b-form-select-option>
+                <b-form-select-option value="false">No</b-form-select-option>
+              </b-form-select>
+
+              <div class="mt-2" v-if="q15_input_show">
+                <small class="text-muted">Comment</small>
+                <b-form-input v-model="$v.form.q15.$model" :state="validateState('q15')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-15">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group
+              label="16.) Drank alcohol? Please specify."
+              label-class="text-sm"
+            >
+              <b-form-select
+                v-model="q16_input_show"
+                maxlength="2"
+                aria-describedby="invalid-input-16"
+              >
+                <b-form-select-option value="true">Yes</b-form-select-option>
+                <b-form-select-option value="false">No</b-form-select-option>
+              </b-form-select>
+
+              <div class="mt-2" v-if="q16_input_show">
+                <small class="text-muted">Comment</small>
+                <b-form-input v-model="$v.form.q16.$model" :state="validateState('q16')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-16">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group
+              label="17.) Used drugs? If so which?"
+              label-class="text-sm"
+            >
+              <b-form-select
+                v-model="q17_input_show"
+                maxlength="2"
+                aria-describedby="invalid-input-17"
+              >
+                <b-form-select-option value="true">Yes</b-form-select-option>
+                <b-form-select-option value="false">No</b-form-select-option>
+              </b-form-select>
+
+              <div class="mt-2" v-if="q17_input_show">
+                <small class="text-muted">Comment</small>
+                <b-form-input v-model="$v.form.q17.$model" :state="validateState('q17')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-17">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group
+              label="18.) Is the child adopted?"
+              label-class="text-sm"
+            >
+              <b-form-select
+                v-model="q18_input_show"
+                maxlength="2"
+                aria-describedby="invalid-input-18"
+              >
+                <b-form-select-option value="true">Yes</b-form-select-option>
+                <b-form-select-option value="false">No</b-form-select-option>
+              </b-form-select>
+
+              <div class="mt-2" v-if="q18_input_show">
+                <small class="text-muted">Comment</small>
+                <b-form-input v-model="$v.form.q18.$model" :state="validateState('q18')"></b-form-input>
+              </div>
+              <b-form-invalid-feedback id="invalid-input-18">This field is required</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group
+              label="18-a) If child is adopted: At what age did the child come into your home: years months Is the child aware of the adoption?"
+              label-class="text-sm"
+            >
+              <b-form-textarea
+                v-model="$v.form.q18a.$model"
+                :state="validateState('q18a')"
+                aria-describedby="invalid-input-q18a"
+                rows="3"
+              ></b-form-textarea>
+
+              <b-form-invalid-feedback id="invalid-input-q18a">This field is required</b-form-invalid-feedback>
+            </b-form-group>
           </section>
+
+          <section v-if="page === 5">
+          </section>
+
         </b-form>
       </b-card-body>
 
@@ -535,7 +677,15 @@ export default {
         q10: null,
         q11: null,
         q12: null,
-        q12_arr: []
+        q12_arr: [],
+        q13: null,
+        q13_arr: [],
+        q14: null,
+        q15: null,
+        q16: null,
+        q17: null,
+        q18: null,
+        q18a: null,
       },
 
       //Intake form inputs subdata (1 or more value)
@@ -548,7 +698,18 @@ export default {
       q5_input_show: false,
       q10_input_show: null,
       q11_input_show: null,
+
       q12_input_show: false,
+      q13A_input_show: false,
+      q13B_input_show: false,
+      q13C_input_show: false,
+
+      q14_input_show: false,
+      q15_input_show: false,
+      q16_input_show: false,
+      q17_input_show: false,
+      q18_input_show: false,
+
 
       //Form page
       page: 4
@@ -631,7 +792,39 @@ export default {
       q12: {
         required,
         minLength: minLength(3)
-      }
+      },
+
+      q14: {
+        required,
+        minLength: minLength(3)
+      },
+
+      q15: {
+        required,
+        minLength: minLength(3)
+      },
+
+      q16: {
+        required,
+        minLength: minLength(3)
+      },
+
+      q17: {
+        required,
+        minLength: minLength(3)
+      },
+
+      q18: {
+        required,
+        minLength: minLength(3)
+      },
+
+      q18a: {
+        required,
+        minLength: minLength(3)
+      },
+
+
     },
 
     q6_arr: {
@@ -691,7 +884,24 @@ export default {
     toggleQ12input: function() {
       this.q12_input_show = !this.q12_input_show;
       console.log(this.q12_input_show);
-    }
+    },
+
+    toggleQ13Ainput: function() {
+      this.q13A_input_show = !this.q13A_input_show;
+    },
+
+    toggleQ13Binput: function() {
+      this.q13B_input_show = !this.q13B_input_show;
+    },
+
+    toggleQ13Cinput: function() {
+      this.q13C_input_show = !this.q13C_input_show;
+    },
+
+    toggleQ14input: function() {
+      this.q14_input_show = !this.q14_input_show;
+    },
+    
   }
 };
 </script>
