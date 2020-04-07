@@ -5,9 +5,7 @@
         <b-card-body>
           <b-row>
             <b-col lg="6">
-              <h2 class="text-primary font-weight-bold">
-                Questions
-              </h2>
+              <h2 class="text-primary font-weight-bold">Questions</h2>
             </b-col>
 
             <b-col lg="6">
@@ -42,12 +40,7 @@
 
             <b-col lg="6" class="d-flex justify-content-end align-content-end">
               <b-form class="col-sm-12 col-md-6 px-0">
-                <b-form-input
-                  size="sm"
-                  v-model="search"
-                  @input="getQuestions"
-                  placeholder="Search"
-                ></b-form-input>
+                <b-form-input size="sm" v-model="search" @input="getQuestions" placeholder="Search"></b-form-input>
               </b-form>
             </b-col>
           </b-row>
@@ -59,15 +52,21 @@
             id="question-table"
             :items="questions"
             :fields="questions_fields"
+            :busy="table_busy"
             responsive="md"
+            show-empty
           >
-            <template v-slot:cell(question)="data">{{
+            <template v-slot:cell(question)="data">
+              {{
               data.item.question
-            }}</template>
+              }}
+            </template>
 
-            <template v-slot:cell(category)="data">{{
+            <template v-slot:cell(category)="data">
+              {{
               data.item.category.name
-            }}</template>
+              }}
+            </template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
@@ -90,6 +89,18 @@
                   <b-icon icon="trash"></b-icon>
                 </b-button>
               </b-btn-group>
+            </template>
+
+            <template v-slot:table-busy>
+              <div class="text-center py-3">
+                <b-spinner type="grow" variant="primary"></b-spinner>
+              </div>
+            </template>
+
+            <template v-slot:empty="scope">
+              <div class="text-center py-3">
+                <p class="text-muted mb-0">{{scope.emptyText}}</p>
+              </div>
             </template>
           </b-table>
 
@@ -131,12 +142,9 @@
               v-for="category in checklistCategories"
               :key="category.id"
               :value="category.id"
-              >{{ category.name }}</b-form-select-option
-            >
+            >{{ category.name }}</b-form-select-option>
           </b-form-select>
-          <b-form-invalid-feedback id="input-category-feedback"
-            >This field is required</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Teacher" label-class="text-sm">
@@ -149,12 +157,9 @@
               v-for="teacher in teachers"
               :key="teacher.id"
               :value="teacher.id"
-              >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option
-            >
+            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback"
-            >This field is required</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Question type" label-class="text-sm">
@@ -164,21 +169,13 @@
             aria-describedby="input-question-type-feedback"
           >
             <template v-slot:first>
-              <b-form-select-option :value="null" disabled
-                >Choose</b-form-select-option
-              >
+              <b-form-select-option :value="null" disabled>Choose</b-form-select-option>
             </template>
-            <b-form-select-option value="1"
-              >Multiple choices</b-form-select-option
-            >
-            <b-form-select-option value="2">Enumeration</b-form-select-option>
-            <b-form-select-option value="3"
-              >Identification</b-form-select-option
-            >
+            <b-form-select-option :value="1">Multiple choices</b-form-select-option>
+            <b-form-select-option :value="2">Enumeration</b-form-select-option>
+            <b-form-select-option :value="3">Identification</b-form-select-option>
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback"
-            >This field is required</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Question" label-class="text-sm">
@@ -188,9 +185,9 @@
             aria-describedby="invalid-input-question"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-question">
-            This field is required and must be atleast 10 characters.
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="invalid-input-question"
+          >This field is required and must be atleast 10 characters.</b-form-invalid-feedback>
         </b-form-group>
 
         <section v-if="form.question_type == 1">
@@ -202,9 +199,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice1">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice1"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #2" label-class="text-sm">
@@ -215,9 +212,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice2">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice2"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #3" label-class="text-sm">
@@ -228,9 +225,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice3">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice3"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #4" label-class="text-sm">
@@ -241,9 +238,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice4">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice4"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
         </section>
 
@@ -255,9 +252,9 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-answer">
-            This field is required and must be atleast 3 characters.
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="invalid-input-answer"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Explanation" label-class="text-sm">
@@ -268,9 +265,9 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-explanation"
-            >This field must be atleast 3 characters.</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback
+            id="invalid-input-explanation"
+          >This field must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -297,12 +294,9 @@
               v-for="category in checklistCategories"
               :key="category.id"
               :value="category.id"
-              >{{ category.name }}</b-form-select-option
-            >
+            >{{category.name}}</b-form-select-option>
           </b-form-select>
-          <b-form-invalid-feedback id="input-category-feedback"
-            >This field is required</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Teacher" label-class="text-sm">
@@ -315,12 +309,9 @@
               v-for="teacher in teachers"
               :key="teacher.id"
               :value="teacher.id"
-              >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option
-            >
+            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback"
-            >This field is required</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Question" label-class="text-sm">
@@ -330,9 +321,9 @@
             aria-describedby="invalid-input-question"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-question">
-            This field is required and must be atleast 10 characters.
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="invalid-input-question"
+          >This field is required and must be atleast 10 characters.</b-form-invalid-feedback>
         </b-form-group>
 
         <section v-if="form.question_type === 1">
@@ -344,9 +335,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice1">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice1"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #2" label-class="text-sm">
@@ -357,9 +348,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice2">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice2"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #3" label-class="text-sm">
@@ -370,9 +361,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice3">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice3"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #4" label-class="text-sm">
@@ -383,9 +374,9 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback id="invalid-input-choice4">
-              This field is required and must be atleast 3 characters.
-            </b-form-invalid-feedback>
+            <b-form-invalid-feedback
+              id="invalid-input-choice4"
+            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
           </b-form-group>
         </section>
 
@@ -397,9 +388,9 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-answer">
-            This field is required and must be atleast 3 characters.
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="invalid-input-answer"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Explanation" label-class="text-sm">
@@ -410,9 +401,9 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-explanation"
-            >This field must be atleast 3 characters.</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback
+            id="invalid-input-explanation"
+          >This field must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -427,9 +418,7 @@
       ok-only
       button-size="sm"
     >
-      <p class="text-center text-muted mb-1">
-        Are you sure you want to remove this province?
-      </p>
+      <p class="text-center text-muted mb-1">Are you sure you want to remove this province?</p>
     </b-modal>
   </div>
 </template>
@@ -441,10 +430,12 @@ export default {
   props: ["host"],
   data() {
     return {
+      table_busy: false,
       search: "",
       limit: 10,
       current_page: 1,
       teachers: [],
+      checklists: [],
       questions: null,
       questions_fields: [
         {
@@ -465,7 +456,7 @@ export default {
       checklistCategories: null,
       response: {},
 
-      // ADD
+      // FORM
       form: {
         checklist_category_id: null,
         teacher_id: null,
@@ -548,15 +539,16 @@ export default {
     },
 
     getQuestions: function(page) {
+      this.table_busy = true;
       const questionsAPI = `${this.host}/questions?search=${this.search}&limit=${this.limit}&page=${page}`;
       axios
         .get(questionsAPI)
         .then(response => {
           this.questions = response.data.data;
           this.response = response.data;
-          console.log(response.data);
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
+        .finally(() => (this.table_busy = false));
     },
 
     getTeachers: function() {
@@ -612,13 +604,11 @@ export default {
         explanation: this.form.explanation
       };
 
-      console.log(data);
-
       axios
         .post(questionsAPI, data)
         .then(response => {
           if (response.data.status == 201) {
-            this.questions.push({ data });
+            this.getQuestions();
             this.$bvModal.hide("add-modal");
             this.resetForm();
 
@@ -654,7 +644,7 @@ export default {
         index
       ].checklist_category_id;
       this.form.teacher_id = this.questions[index].teacher_id;
-      this.form.question_type = this._types[index].question_type;
+      this.form.question_type = this.questions[index].question_type;
       this.form.question = this.questions[index].question;
       this.form.choice1 = this.questions[index].choice1;
       this.form.choice2 = this.questions[index].choice2;
@@ -679,6 +669,7 @@ export default {
       const data = {
         checklist_category_id: this.form.checklist_category_id,
         teacher_id: this.form.teacher_id,
+        question_type: this.form.question_type,
         question: this.form.question,
         choice1: this.form.choice1,
         choice2: this.form.choice2,
@@ -704,7 +695,6 @@ export default {
         .put(questionsAPI, data)
         .then(response => {
           if (response.data.status == 201) {
-            this.question[this.edit_index].name = this.form.name;
             this.$bvModal.hide("edit-modal");
             this.resetForm();
 
