@@ -5,7 +5,9 @@
         <b-card-body>
           <b-row>
             <b-col lg="6">
-              <h2 class="text-primary font-weight-bold">Questions</h2>
+              <h2 class="text-primary font-weight-bold">
+                Questions
+              </h2>
             </b-col>
 
             <b-col lg="6">
@@ -40,7 +42,12 @@
 
             <b-col lg="6" class="d-flex justify-content-end align-content-end">
               <b-form class="col-sm-12 col-md-6 px-0">
-                <b-form-input size="sm" v-model="search" @input="getQuestions" placeholder="Search"></b-form-input>
+                <b-form-input
+                  size="sm"
+                  v-model="search"
+                  @input="getQuestions"
+                  placeholder="Search"
+                ></b-form-input>
               </b-form>
             </b-col>
           </b-row>
@@ -54,9 +61,13 @@
             :fields="questions_fields"
             responsive="md"
           >
-            <template v-slot:cell(name)="data">{{ data.item.name }}</template>
+            <template v-slot:cell(question)="data">{{
+              data.item.question
+            }}</template>
 
-            <template v-slot:cell(category)="data">{{ data.item.category.name }}</template>
+            <template v-slot:cell(category)="data">{{
+              data.item.category.name
+            }}</template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
@@ -120,9 +131,12 @@
               v-for="category in checklistCategories"
               :key="category.id"
               :value="category.id"
-            >{{ category.name }}</b-form-select-option>
+              >{{ category.name }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-category-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Teacher" label-class="text-sm">
@@ -135,9 +149,36 @@
               v-for="teacher in teachers"
               :key="teacher.id"
               :value="teacher.id"
-            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
+              >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-teacher-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
+        </b-form-group>
+
+        <b-form-group label="Question type" label-class="text-sm">
+          <b-form-select
+            v-model="$v.form.question_type.$model"
+            :state="validateState('question_type')"
+            aria-describedby="input-question-type-feedback"
+          >
+            <template v-slot:first>
+              <b-form-select-option :value="null" disabled
+                >Choose</b-form-select-option
+              >
+            </template>
+            <b-form-select-option value="1"
+              >Multiple choices</b-form-select-option
+            >
+            <b-form-select-option value="2">Enumeration</b-form-select-option>
+            <b-form-select-option value="3"
+              >Identification</b-form-select-option
+            >
+          </b-form-select>
+          <b-form-invalid-feedback id="input-teacher-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Question" label-class="text-sm">
@@ -148,66 +189,63 @@
           ></b-form-textarea>
 
           <b-form-invalid-feedback id="invalid-input-question">
-            This field is required and must be atleast 10
-            characters.
+            This field is required and must be atleast 10 characters.
           </b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Choice #1" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice1.$model"
-            :state="validateState('choice1')"
-            aria-describedby="invalid-input-choice1"
-            rows="4"
-          ></b-form-textarea>
+        <section v-if="form.question_type == 1">
+          <b-form-group label="Choice #1" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice1.$model"
+              :state="validateState('choice1')"
+              aria-describedby="invalid-input-choice1"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice1">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice1">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
 
-        <b-form-group label="Choice #2" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice2.$model"
-            :state="validateState('choice2')"
-            aria-describedby="invalid-input-choice2"
-            rows="4"
-          ></b-form-textarea>
+          <b-form-group label="Choice #2" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice2.$model"
+              :state="validateState('choice2')"
+              aria-describedby="invalid-input-choice2"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice2">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice2">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
 
-        <b-form-group label="Choice #3" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice3.$model"
-            :state="validateState('choice3')"
-            aria-describedby="invalid-input-choice3"
-            rows="4"
-          ></b-form-textarea>
+          <b-form-group label="Choice #3" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice3.$model"
+              :state="validateState('choice3')"
+              aria-describedby="invalid-input-choice3"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice3">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice3">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
 
-        <b-form-group label="Choice #4" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice4.$model"
-            :state="validateState('choice4')"
-            aria-describedby="invalid-input-choice4"
-            rows="4"
-          ></b-form-textarea>
+          <b-form-group label="Choice #4" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice4.$model"
+              :state="validateState('choice4')"
+              aria-describedby="invalid-input-choice4"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice4">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice4">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
+        </section>
 
         <b-form-group label="Answer" label-class="text-sm">
           <b-form-textarea
@@ -218,8 +256,7 @@
           ></b-form-textarea>
 
           <b-form-invalid-feedback id="invalid-input-answer">
-            This field is required and must be atleast 3
-            characters.
+            This field is required and must be atleast 3 characters.
           </b-form-invalid-feedback>
         </b-form-group>
 
@@ -231,9 +268,9 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-explanation"
-          >This field must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-explanation"
+            >This field must be atleast 3 characters.</b-form-invalid-feedback
+          >
         </b-form-group>
       </b-form>
     </b-modal>
@@ -260,9 +297,12 @@
               v-for="category in checklistCategories"
               :key="category.id"
               :value="category.id"
-            >{{ category.name }}</b-form-select-option>
+              >{{ category.name }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-category-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Teacher" label-class="text-sm">
@@ -275,9 +315,12 @@
               v-for="teacher in teachers"
               :key="teacher.id"
               :value="teacher.id"
-            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
+              >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-teacher-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Question" label-class="text-sm">
@@ -288,66 +331,63 @@
           ></b-form-textarea>
 
           <b-form-invalid-feedback id="invalid-input-question">
-            This field is required and must be atleast 10
-            characters.
+            This field is required and must be atleast 10 characters.
           </b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Choice #1" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice1.$model"
-            :state="validateState('choice1')"
-            aria-describedby="invalid-input-choice1"
-            rows="4"
-          ></b-form-textarea>
+        <section v-if="form.question_type === 1">
+          <b-form-group label="Choice #1" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice1.$model"
+              :state="validateState('choice1')"
+              aria-describedby="invalid-input-choice1"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice1">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice1">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
 
-        <b-form-group label="Choice #2" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice2.$model"
-            :state="validateState('choice2')"
-            aria-describedby="invalid-input-choice2"
-            rows="4"
-          ></b-form-textarea>
+          <b-form-group label="Choice #2" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice2.$model"
+              :state="validateState('choice2')"
+              aria-describedby="invalid-input-choice2"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice2">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice2">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
 
-        <b-form-group label="Choice #3" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice3.$model"
-            :state="validateState('choice3')"
-            aria-describedby="invalid-input-choice3"
-            rows="4"
-          ></b-form-textarea>
+          <b-form-group label="Choice #3" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice3.$model"
+              :state="validateState('choice3')"
+              aria-describedby="invalid-input-choice3"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice3">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice3">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
 
-        <b-form-group label="Choice #4" label-class="text-sm">
-          <b-form-textarea
-            v-model="$v.form.choice4.$model"
-            :state="validateState('choice4')"
-            aria-describedby="invalid-input-choice4"
-            rows="4"
-          ></b-form-textarea>
+          <b-form-group label="Choice #4" label-class="text-sm">
+            <b-form-textarea
+              v-model="$v.form.choice4.$model"
+              :state="validateState('choice4')"
+              aria-describedby="invalid-input-choice4"
+              rows="4"
+            ></b-form-textarea>
 
-          <b-form-invalid-feedback id="invalid-input-choice4">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
-        </b-form-group>
+            <b-form-invalid-feedback id="invalid-input-choice4">
+              This field is required and must be atleast 3 characters.
+            </b-form-invalid-feedback>
+          </b-form-group>
+        </section>
 
         <b-form-group label="Answer" label-class="text-sm">
           <b-form-textarea
@@ -358,8 +398,7 @@
           ></b-form-textarea>
 
           <b-form-invalid-feedback id="invalid-input-answer">
-            This field is required and must be atleast 3
-            characters.
+            This field is required and must be atleast 3 characters.
           </b-form-invalid-feedback>
         </b-form-group>
 
@@ -371,9 +410,9 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-explanation"
-          >This field must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-explanation"
+            >This field must be atleast 3 characters.</b-form-invalid-feedback
+          >
         </b-form-group>
       </b-form>
     </b-modal>
@@ -388,7 +427,9 @@
       ok-only
       button-size="sm"
     >
-      <p class="text-center text-muted mb-1">Are you sure you want to remove this province?</p>
+      <p class="text-center text-muted mb-1">
+        Are you sure you want to remove this province?
+      </p>
     </b-modal>
   </div>
 </template>
@@ -428,6 +469,7 @@ export default {
       form: {
         checklist_category_id: null,
         teacher_id: null,
+        question_type: null,
         question: null,
         choice1: null,
         choice2: null,
@@ -452,6 +494,9 @@ export default {
         required
       },
       teacher_id: {
+        required
+      },
+      question_type: {
         required
       },
       question: {
@@ -557,14 +602,17 @@ export default {
       const data = {
         checklist_category_id: this.form.checklist_category_id,
         teacher_id: this.form.teacher_id,
+        question_type: this.form.question_type,
         question: this.form.question,
         choice1: this.form.choice1,
         choice2: this.form.choice2,
         choice3: this.form.choice3,
         choice4: this.form.choice4,
         answer: this.form.answer,
-        explanatin: this.form.explanation
+        explanation: this.form.explanation
       };
+
+      console.log(data);
 
       axios
         .post(questionsAPI, data)
@@ -606,6 +654,7 @@ export default {
         index
       ].checklist_category_id;
       this.form.teacher_id = this.questions[index].teacher_id;
+      this.form.question_type = this._types[index].question_type;
       this.form.question = this.questions[index].question;
       this.form.choice1 = this.questions[index].choice1;
       this.form.choice2 = this.questions[index].choice2;
@@ -642,6 +691,7 @@ export default {
         this.edit_index
       ].checklist_category_id = this.form.checklist_category_id;
       this.questions[this.edit_index].teacher_id = this.form.teacher_id;
+      this.questions[this.edit_index].question_type = this.form.question_type;
       this.questions[this.edit_index].question = this.form.question;
       this.questions[this.edit_index].choice1 = this.form.choice1;
       this.questions[this.edit_index].choice2 = this.form.choice2;
@@ -723,7 +773,9 @@ export default {
 
     resetForm: function() {
       this.$v.$reset();
+      this.form.checklist_category_id = null;
       this.form.teacher_id = null;
+      this.form.question_type = null;
       this.form.question = null;
       this.form.choice1 = null;
       this.form.choice2 = null;
