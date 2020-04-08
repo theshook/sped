@@ -46,7 +46,6 @@
 
       <b-card class="shadow-sm">
         <b-card-body>
-          {{questions}}
           <section class="text-center" v-if="questions.length == 0">
             <p class="test-black-50">No questions available.</p>
             <b-button class="shadow-sm" variant="primary" size="sm" v-b-modal.questions-modal>
@@ -86,12 +85,15 @@
       id="questions-modal"
       size="xl"
       title="Browse questions"
-      ok-title="Done"
+      ok-title="Save Changes"
       ok-variant="success"
       ok-only
-      @ok="confirmAddQuestion"
+      :ok-disabled="checkTestQuestionsLength"
+      @ok="openQuestionsAddConfirmModal"
       button-size="sm"
     >
+      {{checkTestQuestionsLength}}
+      {{questions_id}}
       <b-table
         borderless
         striped
@@ -121,6 +123,20 @@
         </template>
       </b-table>
     </b-modal>
+
+    <!-- CONFIRM ADD QUESTIONS -->
+    <b-modal
+      id="confirm-questions-add-modal"
+      title="Confirm"
+      ok-title="Proceed"
+      ok-variant="success"
+      @ok="confirmAddQuestion"
+      cancel-title="Cancel"
+      cancel-variant="light"
+      button-size="sm"
+    >
+      <p class="text-muted">Do confirm to add these questions to this test?</p>
+    </b-modal>
   </div>
 </template>
 
@@ -133,7 +149,7 @@ export default {
       test: {},
       questions: [],
       questions_id: [],
-      question_multiple_choices: [],
+      questions_multiple_choices: [],
       questions_enumeration: [],
       questions_identification: [],
       questions_fields: [
@@ -168,14 +184,18 @@ export default {
     };
   },
   validations: {},
-  computed: {},
+  computed: {
+    checkTestQuestionsLength: function() {
+      return !this.questions_id.length ? true : false;
+    }
+  },
   mounted() {
     this.getTest();
   },
   methods: {
-    getTest: async function() {
+    getTest: function() {
       const testsAPI = `${this.host}/test/${this.test_id}`;
-      await axios
+      axios
         .get(testsAPI)
         .then(response => {
           this.test = response.data.test;
@@ -207,26 +227,25 @@ export default {
       const multiple_choices = this.teacher_questions.filter(question => {
         return question.question_type == 1;
       });
-      this.question_multiple_choices.push(multiple_choices);
+      this.questions_multiple_choices.push(multiple_choices);
 
       //Filtering question type == 2 (enumeration)
       const enumeration = this.teacher_questions.filter(question => {
         return question.question_type == 2;
       });
-      this.question_enumeration.push(enumeration);
+      this.questions_enumeration.push(enumeration);
 
       //Filtering question type == 3 (identification)
       const identification = this.teacher_questions.filter(question => {
         return question.question_type == 3;
       });
-      this.question_identification.push(identification);
+      this.questions_identification.push(identification);
     },
 
     addQuestion: function(index) {
       let id = this.teacher_questions[index].id;
       this.questions_id.push(id);
       this.teacher_questions.splice(index, 1);
-      console.log(this.questions);
 
       this.$bvToast.toast(`Question added`, {
         title: "Added!",
@@ -236,7 +255,8 @@ export default {
       });
     },
 
-    confirmAddQuestion: function() {
+    confirmAddQuestion: function(event) {
+      event.preventDefault();
       let testsAPI = `${this.host}/test/${this.test_id}`;
       const data = {
         questions_id: this.questions_id
@@ -246,6 +266,7 @@ export default {
         .then(response => {
           if (response.data.status == 201) {
             this.getTest();
+            this.$bvModal.hide("confirm-questions-add-modal");
             swal.fire({
               icon: "success",
               title: "Added",
@@ -303,6 +324,10 @@ export default {
         autoHideDelay: 2000,
         appendToast: true
       });
+    },
+
+    openQuestionsAddConfirmModal: function() {
+      this.$bvModal.show("confirm-questions-add-modal");
     }
   }
 };
