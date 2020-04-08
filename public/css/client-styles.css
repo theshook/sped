@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap');
+
 body {
   /* font-family: Nunito !important; */
+  font-family: 'Poppins', sans-serif !important;
   background: #f1f1f1 !important;
 }
 
@@ -12,6 +15,21 @@ body {
   padding-bottom: 1rem !important;
 }
 
+.navbar-brand {
+  color: #666 !important;
+  font-weight: 700;
+}
+
 .navbar .navbar-nav>li a {
-  margin-left: 1rem !important;
+  color: #666 !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  font-size: 12px !important;
+}
+
+.navbar .navbar-nav>li a.nav-link-fill {
+  color: #fff !important;
+  background: #81C784 !important;
+  border-color: #81C784 !important;
+  border-radius: .2rem;
 }
