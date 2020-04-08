@@ -19,7 +19,7 @@ class QuestionsController extends Controller
     $search = $request->search;
     $limit = $request->limit;
 
-    return ($search) ? Question::with('teacher', 'category')->where('question', 'like', "%$search%")->paginate($limit) : Question::with('teacher', 'category')->paginate($limit);
+    return ($search) ? Question::with('teacher', 'category')->where('question', 'like', "%$search%")->orderBy('question_type', 'desc')->paginate($limit) : Question::with('teacher', 'category')->orderBy('question_type', 'desc')->paginate($limit);
   }
 
   /**

@@ -59,9 +59,18 @@
             <template v-slot:cell(question)="data">{{ data.item.question }}</template>
 
             <template v-slot:cell(question_type)="data">
-              <span v-if="data.item.question_type === 1">Multiple choices</span>
-              <span v-if="data.item.question_type === 2">Enumeration</span>
-              <span v-if="data.item.question_type === 3">Identification</span>
+              <span
+                class="badge badge-primary mb-0 p-1"
+                v-if="data.item.question_type === 1"
+              >Multiple choices</span>
+              <span
+                class="badge badge-info mb-0 p-1"
+                v-if="data.item.question_type === 2"
+              >Enumeration</span>
+              <span
+                class="badge badge-secondary mb-0 p-1"
+                v-if="data.item.question_type === 3"
+              >Identification</span>
             </template>
 
             <template v-slot:cell(category)="data">{{ data.item.category.name }}</template>
