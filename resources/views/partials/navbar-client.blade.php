@@ -13,11 +13,11 @@
         </li>
 
         <li class="nav-item">
-          <a href="#" class="nav-link">Login</a>
+          <a href="#" class="nav-link">Announcements</a>
         </li>
 
         <li class="nav-item">
-          <a href="#" class="nav-link">Register</a>
+          <a href="#" class="nav-link nav-link-fill">Login</a>
         </li>
       </ul>
     </div>
