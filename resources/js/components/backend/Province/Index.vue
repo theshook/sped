@@ -92,8 +92,7 @@
 
             <template v-slot:table-busy>
               <div class="text-center py-3">
-                <b-spinner class="mb-2" variant="primary"></b-spinner>
-                <p class="text-muted mb-0">Loading ...</p>
+                <b-spinner type="grow" variant="primary"></b-spinner>
               </div>
             </template>
 
@@ -258,7 +257,7 @@ export default {
           this.response = response.data;
         })
         .catch(err => console.log(err))
-        .finally(() => this.table_busy = false);
+        .finally(() => (this.table_busy = false));
     },
 
     submitAdd: function(event) {
