@@ -77,9 +77,18 @@
               </template>
 
               <template v-slot:cell(question_type)="data">
-                <span v-if="data.item.question_type == 1">Multiple Choices</span>
-                <span v-if="data.item.question_type == 2">Enumeration</span>
-                <span v-if="data.item.question_type == 3">Identification</span>
+                <span
+                  class="badge badge-primary mb-0 p-1"
+                  v-if="data.item.question_type === 1"
+                >Multiple choices</span>
+                <span
+                  class="badge badge-info mb-0 p-1"
+                  v-if="data.item.question_type === 2"
+                >Enumeration</span>
+                <span
+                  class="badge badge-secondary mb-0 p-1"
+                  v-if="data.item.question_type === 3"
+                >Identification</span>
               </template>
 
               <template v-slot:cell(index)="data">
@@ -93,7 +102,6 @@
 
     <!-- ADD QUESTIONS -->
     <b-modal
-      scrollable
       id="questions-modal"
       class="px-0"
       size="xl"
@@ -106,15 +114,20 @@
       button-size="sm"
     >
       <b-tabs pills vertical small>
+        <!-- MULTIPLE CHOICES QUESTIONS TABLE -->
         <b-tab class="pt-0 mt-0" title="Multiple Choices">
           <b-table
             borderless
             striped
             hover
+            sticky-header="400px"
             id="multiple-choices-questions-table"
             :items="questions_multiple_choices"
             :fields="questions_fields"
+            :current-page="Number(tbl_multiple_choices_current_page)"
+            :per-page="Number(10)"
             responsive="md"
+            small
           >
             <template v-slot:cell(question)="data">
               {{
@@ -128,35 +141,59 @@
               }}
             </template>
 
+            <template v-slot:cell(question_type)="data">
+              <span
+                class="badge badge-primary mb-0 p-1"
+                v-if="data.item.question_type === 1"
+              >Multiple choices</span>
+              <span
+                class="badge badge-info mb-0 p-1"
+                v-if="data.item.question_type === 2"
+              >Enumeration</span>
+              <span
+                class="badge badge-secondary mb-0 p-1"
+                v-if="data.item.question_type === 3"
+              >Identification</span>
+            </template>
+
             <template v-slot:cell(index)="data">
               <b-btn-group>
-                <b-button variant="primary" size="sm" @click="addQuestion(data.index)">
-                  <b-icon icon="plus" class="mr-2"></b-icon>Add
+                <b-button
+                  variant="secondary"
+                  class="shadow-sm border-0"
+                  size="sm"
+                  @click="addQuestion(data.index)"
+                >
+                  <b-icon icon="plus"></b-icon>
                 </b-button>
               </b-btn-group>
             </template>
           </b-table>
 
-          <!-- <b-container class="clearfix px-0" fluid>
+          <b-container class="clearfix px-0" fluid>
             <b-pagination
               class="float-right"
               size="sm"
-              v-model="current_page"
-              :per-page="Number(response.per_page)"
-              :total-rows="Number(response.total)"
-              @change="getTests"
+              v-model="tbl_multiple_choices_current_page"
+              :per-page="Number(10)"
+              :total-rows="Number(questions_multiple_choices.length)"
               aria-controls="multiple-choices-questions-table"
             ></b-pagination>
-          </b-container>-->
+          </b-container>
         </b-tab>
+        <!-- //MULTIPLE CHOICES QUESTIONS TABLE -->
 
+        <!-- ENUMARATION QUESTIONS TABLE -->
         <b-tab title="Enumeration">
           <p>Enumeration</p>
         </b-tab>
+        <!-- //ENUMARATION QUESTIONS TABLE -->
 
+        <!-- IDENTIFICATION QUESTIONS TABLE -->
         <b-tab title="Identification">
           <p>Identification</p>
         </b-tab>
+        <!-- //IDENTIFICATION QUESTIONS TABLE -->
       </b-tabs>
     </b-modal>
 
@@ -173,35 +210,6 @@
     >
       <p class="text-muted">Do confirm to add these questions to this test?</p>
     </b-modal>
-
-    <!-- <b-table
-        borderless
-        striped
-        hover
-        sticky-header="500px"
-        id="questions-table"
-        :items="teacher_questions"
-        :fields="teacher_questions_fields"
-        responsive="md"
-      >
-        <template v-slot:cell(question)="data">
-          {{
-          data.item.question
-          }}
-        </template>
-
-        <template v-slot:cell(category)="data">
-          {{
-          data.item.category.name
-          }}
-        </template>
-
-        <template v-slot:cell(index)="data">
-          <b-button variant="primary" size="sm" @click="addQuestion(data.index)">
-            <b-icon class="mr-2" icon="plus"></b-icon>Add
-          </b-button>
-        </template>
-    </b-table>-->
   </div>
 </template>
 
@@ -230,7 +238,7 @@ export default {
           sortable: true
         },
         {
-          key: "question_typq",
+          key: "question_type",
           label: "Type",
           sortable: true
         },
@@ -255,7 +263,12 @@ export default {
           key: "index",
           label: "Action"
         }
-      ]
+      ],
+
+      //BROWSE QUESTIONS TAB TABLE/SEARCH/FILTER/PAGINATION
+      tbl_multiple_choices_current_page: 1,
+      tbl_enumeration_current_page: 1,
+      tbl_identification_current_page: 1
     };
   },
   validations: {},
