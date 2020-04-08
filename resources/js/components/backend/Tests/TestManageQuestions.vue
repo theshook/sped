@@ -108,14 +108,14 @@
       title="Browse questions"
       ok-title="Save Changes"
       ok-variant="success"
-      ok-only
       :ok-disabled="checkTestQuestionsLength"
       @ok="openQuestionsAddConfirmModal"
+      hide-header-close
       button-size="sm"
     >
       <b-tabs pills vertical small>
         <!-- MULTIPLE CHOICES QUESTIONS TABLE -->
-        <b-tab class="pt-0 mt-0" title="Multiple Choices">
+        <b-tab title="Multiple Choices" active>
           <b-table
             borderless
             striped
@@ -162,7 +162,7 @@
                   variant="secondary"
                   class="shadow-sm border-0"
                   size="sm"
-                  @click="addQuestion(data.index)"
+                  @click="addMultipleChoicesQuestion(data.index)"
                 >
                   <b-icon icon="plus"></b-icon>
                 </b-button>
@@ -185,16 +185,153 @@
 
         <!-- ENUMARATION QUESTIONS TABLE -->
         <b-tab title="Enumeration">
-          <p>Enumeration</p>
+          <b-table
+            borderless
+            striped
+            hover
+            sticky-header="400px"
+            id="enumeration-questions-table"
+            :items="questions_enumeration"
+            :fields="questions_fields"
+            :current-page="Number(tbl_enumeration_current_page)"
+            :per-page="Number(10)"
+            responsive="md"
+            small
+          >
+            <template v-slot:cell(question)="data">
+              {{
+              data.item.question
+              }}
+            </template>
+
+            <template v-slot:cell(category)="data">
+              {{
+              data.item.category.name
+              }}
+            </template>
+
+            <template v-slot:cell(question_type)="data">
+              <span
+                class="badge badge-primary mb-0 p-1"
+                v-if="data.item.question_type === 1"
+              >Multiple choices</span>
+              <span
+                class="badge badge-info mb-0 p-1"
+                v-if="data.item.question_type === 2"
+              >Enumeration</span>
+              <span
+                class="badge badge-secondary mb-0 p-1"
+                v-if="data.item.question_type === 3"
+              >Identification</span>
+            </template>
+
+            <template v-slot:cell(index)="data">
+              <b-btn-group>
+                <b-button
+                  variant="secondary"
+                  class="shadow-sm border-0"
+                  size="sm"
+                  @click="addEnumerationQuestion(data.index)"
+                >
+                  <b-icon icon="plus"></b-icon>
+                </b-button>
+              </b-btn-group>
+            </template>
+          </b-table>
+
+          <b-container class="clearfix px-0" fluid>
+            <b-pagination
+              class="float-right"
+              size="sm"
+              v-model="tbl_enumeration_current_page"
+              :per-page="Number(10)"
+              :total-rows="Number(questions_enumeration.length)"
+              aria-controls="enumeration-questions-table"
+            ></b-pagination>
+          </b-container>
         </b-tab>
         <!-- //ENUMARATION QUESTIONS TABLE -->
 
         <!-- IDENTIFICATION QUESTIONS TABLE -->
         <b-tab title="Identification">
-          <p>Identification</p>
+          <b-table
+            borderless
+            striped
+            hover
+            sticky-header="400px"
+            id="identification-questions-table"
+            :items="questions_identification"
+            :fields="questions_fields"
+            :current-page="Number(tbl_identification_current_page)"
+            :per-page="Number(10)"
+            responsive="md"
+            small
+          >
+            <template v-slot:cell(question)="data">
+              {{
+              data.item.question
+              }}
+            </template>
+
+            <template v-slot:cell(category)="data">
+              {{
+              data.item.category.name
+              }}
+            </template>
+
+            <template v-slot:cell(question_type)="data">
+              <span
+                class="badge badge-primary mb-0 p-1"
+                v-if="data.item.question_type === 1"
+              >Multiple choices</span>
+              <span
+                class="badge badge-info mb-0 p-1"
+                v-if="data.item.question_type === 2"
+              >Enumeration</span>
+              <span
+                class="badge badge-secondary mb-0 p-1"
+                v-if="data.item.question_type === 3"
+              >Identification</span>
+            </template>
+
+            <template v-slot:cell(index)="data">
+              <b-btn-group>
+                <b-button
+                  variant="secondary"
+                  class="shadow-sm border-0"
+                  size="sm"
+                  @click="addIdentificationQuestion(data.index)"
+                >
+                  <b-icon icon="plus"></b-icon>
+                </b-button>
+              </b-btn-group>
+            </template>
+          </b-table>
+
+          <b-container class="clearfix px-0" fluid>
+            <b-pagination
+              class="float-right"
+              size="sm"
+              v-model="tbl_identification_current_page"
+              :per-page="Number(10)"
+              :total-rows="Number(questions_identification.length)"
+              aria-controls="identification-questions-table"
+            ></b-pagination>
+          </b-container>
         </b-tab>
         <!-- //IDENTIFICATION QUESTIONS TABLE -->
       </b-tabs>
+
+      <template v-slot:modal-footer>
+        <b-button size="sm" variant="light" @click="closeQuestionsModal">Cancel</b-button>
+
+        <b-button
+          size="sm"
+          variant="success"
+          :disabled="checkTestQuestionsLength"
+          @click="openQuestionsAddConfirmModal"
+        >Submit Questions</b-button>
+      </template>
     </b-modal>
 
     <!-- CONFIRM ADD QUESTIONS -->
@@ -208,7 +345,8 @@
       cancel-variant="light"
       button-size="sm"
     >
-      <p class="text-muted">Do confirm to add these questions to this test?</p>
+      <p class="text-muted" v-if="questions_id_queue.length > 1">Do confirm to add these questions?</p>
+      <p class="text-muted" v-else>Do confirm to add this question?</p>
     </b-modal>
   </div>
 </template>
@@ -279,8 +417,6 @@ export default {
   },
   mounted() {
     this.getTest();
-
-    this.$bvModal.show("questions-modal");
   },
   methods: {
     getTest: function() {
@@ -332,10 +468,39 @@ export default {
       this.questions_identification = identification;
     },
 
-    addQuestion: function(index) {
-      let id = this.teacher_questions[index].id;
+    //Add multiple choices question
+    addMultipleChoicesQuestion: function(index) {
+      let id = this.questions_multiple_choices[index].id;
       this.questions_id_queue.push(id);
-      this.teacher_questions.splice(index, 1);
+      this.questions_multiple_choices.splice(index, 1);
+
+      this.$bvToast.toast(`Question added`, {
+        title: "Added!",
+        variant: "success",
+        autoHideDelay: 1000,
+        appendToast: true
+      });
+    },
+
+    //Add enumeration question
+    addEnumerationQuestion: function(index) {
+      let id = this.questions_enumeration[index].id;
+      this.questions_id_queue.push(id);
+      this.questions_enumeration.splice(index, 1);
+
+      this.$bvToast.toast(`Question added`, {
+        title: "Added!",
+        variant: "success",
+        autoHideDelay: 1000,
+        appendToast: true
+      });
+    },
+
+    //Add identification question
+    addIdentificationQuestion: function(index) {
+      let id = this.questions_identification[index].id;
+      this.questions_id_queue.push(id);
+      this.questions_identification.splice(index, 1);
 
       this.$bvToast.toast(`Question added`, {
         title: "Added!",
@@ -363,6 +528,7 @@ export default {
           if (response.data.status == 201) {
             this.getTest();
             this.resetQuestionsIdQueue();
+            this.$bvModal.hide("questions-modal");
             this.$bvModal.hide("confirm-questions-add-modal");
             swal.fire({
               icon: "success",
@@ -389,7 +555,14 @@ export default {
         );
     },
 
-    removeQuestion: function(index) {
+    removeQuestion: async function(index) {
+      this.$bvToast.toast(`Question removed`, {
+        title: "Removed!",
+        variant: "danger",
+        autoHideDelay: 2000,
+        appendToast: true
+      });
+
       let id = this.questions[index].id;
       for (let i = 0; i < this.questions_id.length; i++) {
         if (this.questions_id[i] === id) {
@@ -403,9 +576,11 @@ export default {
       const data = {
         questions_id: this.questions_id
       };
-      axios
+      await axios
         .put(testsAPI, data)
-        .then(response => {})
+        .then(response => {
+          this.getTest();
+        })
         .catch(err =>
           swal.fire({
             icon: "error",
@@ -414,17 +589,16 @@ export default {
             timer: 3000
           })
         );
-
-      this.$bvToast.toast(`Question removed`, {
-        title: "Removed!",
-        variant: "danger",
-        autoHideDelay: 2000,
-        appendToast: true
-      });
     },
 
     resetQuestionsIdQueue: function() {
       this.questions_id_queue = [];
+    },
+
+    closeQuestionsModal: function() {
+      this.$bvModal.hide("questions-modal");
+      this.resetQuestionsIdQueue();
+      this.getTest();
     },
 
     openQuestionsAddConfirmModal: function() {
