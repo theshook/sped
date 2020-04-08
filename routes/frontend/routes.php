@@ -13,7 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//PARENT
 Route::group(['prefix' => 'parent'], function () {
-  Route::get('/intake-form', 'Frontend\ClientPagesController@intake_form')->name('parent.intake-form');
-  Route::get('/intake-form/fill-up', 'Frontend\ClientPagesController@intake_form_fillup')->name('parent.intake-form-fillup');
+  Route::get('/intake-form', 'Frontend\ParentPagesController@intake_form')->name('parent.intake-form');
+  Route::get('/intake-form/fill-up', 'Frontend\ParentPagesController@intake_form_fillup')->name('parent.intake-form-fillup');
+});
+
+//PUPIL
+Route::group(['prefix' => 'pupil'], function () {
+  Route::get('/tests', 'Frontend\PupilPagesController@tests_index')->name('pupils.test.index');
 });
