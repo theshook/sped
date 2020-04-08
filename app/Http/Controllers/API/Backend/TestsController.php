@@ -66,7 +66,7 @@ class TestsController extends Controller
     $teacher_id = auth()->user()->id;
     $test = Test::find($id);
     $test_questionsArr = $test->questions_id;
-    $test_questions = empty($test_questionsArr) ? [] : $test_questions = Question::whereIn('id', json_decode($test_questionsArr))->get();
+    $test_questions = empty($test_questionsArr) ? [] : $test_questions = Question::with('category')->whereIn('id', json_decode($test_questionsArr))->get();
     $teacher_questions = Question::with('category')->where('teacher_id', '=', $teacher_id)->get();
 
     $response = array(
