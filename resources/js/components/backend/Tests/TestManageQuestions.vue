@@ -89,6 +89,7 @@
     <b-modal
       scrollable
       id="questions-modal"
+      class="px-0"
       size="xl"
       title="Browse questions"
       ok-title="Save Changes"
@@ -98,34 +99,19 @@
       @ok="openQuestionsAddConfirmModal"
       button-size="sm"
     >
-      <b-table
-        borderless
-        striped
-        hover
-        sticky-header="500px"
-        id="questions-table"
-        :items="teacher_questions"
-        :fields="teacher_questions_fields"
-        responsive="md"
-      >
-        <template v-slot:cell(question)="data">
-          {{
-          data.item.question
-          }}
-        </template>
+      <b-tabs card pills vertical>
+        <b-tab title="Multiple Choices">
+          <p>Multiple choices</p>
+        </b-tab>
 
-        <template v-slot:cell(category)="data">
-          {{
-          data.item.category.name
-          }}
-        </template>
+        <b-tab title="Enumeration">
+          <p>Enumeration</p>
+        </b-tab>
 
-        <template v-slot:cell(index)="data">
-          <b-button variant="primary" size="sm" @click="addQuestion(data.index)">
-            <b-icon class="mr-2" icon="plus"></b-icon>
-          </b-button>
-        </template>
-      </b-table>
+        <b-tab title="Identification">
+          <p>Identification</p>
+        </b-tab>
+      </b-tabs>
     </b-modal>
 
     <!-- CONFIRM ADD QUESTIONS -->
@@ -226,7 +212,7 @@ export default {
   mounted() {
     this.getTest();
 
-    // this.$bvModal.show("questions-modal");
+    this.$bvModal.show("questions-modal");
   },
   methods: {
     getTest: function() {
