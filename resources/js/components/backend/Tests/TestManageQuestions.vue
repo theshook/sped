@@ -33,11 +33,11 @@
               </b-button>
 
               <b-button class="shadow-sm" variant="info" size="sm">
-                <b-icon icon="documents"></b-icon>View PDF
+                <b-icon icon="file-earmark"></b-icon>View PDF
               </b-button>
 
               <b-button class="shadow-sm" variant="success" size="sm">
-                <b-icon icon="check"></b-icon>Publish assessment
+                <b-icon icon="check-circle"></b-icon>Publish assessment
               </b-button>
             </b-col>
           </b-row>
@@ -46,6 +46,7 @@
 
       <b-card class="shadow-sm">
         <b-card-body>
+          {{questions}}
           <section class="text-center" v-if="questions.length == 0">
             <p class="test-black-50">No questions available.</p>
             <b-button class="shadow-sm" variant="primary" size="sm" v-b-modal.questions-modal>
@@ -131,6 +132,10 @@ export default {
     return {
       test: {},
       questions: [],
+      questions_id: [],
+      question_multiple_choices: [],
+      questions_enumeration: [],
+      questions_identification: [],
       questions_fields: [
         {
           key: "question",
@@ -145,7 +150,6 @@ export default {
           label: "Action"
         }
       ],
-      questions_id: [],
       teacher_questions: null,
       teacher_questions_fields: [
         {
@@ -169,9 +173,9 @@ export default {
     this.getTest();
   },
   methods: {
-    getTest: function() {
+    getTest: async function() {
       const testsAPI = `${this.host}/test/${this.test_id}`;
-      axios
+      await axios
         .get(testsAPI)
         .then(response => {
           this.test = response.data.test;
@@ -182,23 +186,47 @@ export default {
               ? []
               : JSON.parse(response.data.questions_id);
 
-          for (let i = 0; i < this.teacher_questions.length; i++) {
-            for (let q = 0; q < this.questions.length; q++) {
-              if (this.teacher_questions[i].id === this.questions[q].id) {
-                this.teacher_questions.splice(i, 1);
-              }
-            }
-          }
-
-          console.log(this.teacher_questions);
+          this.checkTestQuestions(); //Check test questions over available teacher questions to add/browse to avoid duplicate
+          this.sortTeacherQuestions(); //Check question type and sort it to 3 questions types array (multiple choice, enumeration, identification)
         })
         .catch(err => console.log(err));
+    },
+
+    checkTestQuestions: function() {
+      for (let i = 0; i < this.teacher_questions.length; i++) {
+        for (let q = 0; q < this.questions.length; q++) {
+          if (this.teacher_questions[i].id === this.questions[q].id) {
+            this.teacher_questions.splice(i, 1);
+          }
+        }
+      }
+    },
+
+    sortTeacherQuestions: function() {
+      //Filtering question type == 1 (multiple choice)
+      const multiple_choices = this.teacher_questions.filter(question => {
+        return question.question_type == 1;
+      });
+      this.question_multiple_choices.push(multiple_choices);
+
+      //Filtering question type == 2 (enumeration)
+      const enumeration = this.teacher_questions.filter(question => {
+        return question.question_type == 2;
+      });
+      this.question_enumeration.push(enumeration);
+
+      //Filtering question type == 3 (identification)
+      const identification = this.teacher_questions.filter(question => {
+        return question.question_type == 3;
+      });
+      this.question_identification.push(identification);
     },
 
     addQuestion: function(index) {
       let id = this.teacher_questions[index].id;
       this.questions_id.push(id);
       this.teacher_questions.splice(index, 1);
+      console.log(this.questions);
 
       this.$bvToast.toast(`Question added`, {
         title: "Added!",
