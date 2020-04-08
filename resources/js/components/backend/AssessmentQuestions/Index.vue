@@ -251,7 +251,7 @@
             <b-form-textarea
               v-model="$v.form.answer.$model"
               :state="validateState('answer')"
-              aria-describedby="invalid-input-choice1"
+              aria-describedby="invalid-input-answer"
               rows="2"
             ></b-form-textarea>
 
@@ -262,11 +262,12 @@
 
           <b-form-group label="Explanation" label-class="text-sm">
             <b-form-textarea
-              v-model="$v.form.explanation.$model"
-              :state="validateState('explanation')"
-              aria-describedby="invalid-input-choice1"
+              v-model="form.explanation"
+              aria-describedby="invalid-input-explanation"
               rows="2"
             ></b-form-textarea>
+
+            <b-form-text class="text-muted text-small">* This field is optional</b-form-text>
 
             <b-form-invalid-feedback
               id="invalid-input-explanation"
@@ -388,7 +389,7 @@
           <b-form-textarea
             v-model="$v.form.answer.$model"
             :state="validateState('answer')"
-            aria-describedby="invalid-input-choice1"
+            aria-describedby="invalid-input-answer"
             rows="2"
           ></b-form-textarea>
 
@@ -399,9 +400,8 @@
 
         <b-form-group label="Explanation" label-class="text-sm">
           <b-form-textarea
-            v-model="$v.form.explanation.$model"
-            :state="validateState('explanation')"
-            aria-describedby="invalid-input-choice1"
+            v-model="form.explanation"
+            aria-describedby="invalid-input-explanation"
             rows="2"
           ></b-form-textarea>
 
@@ -541,10 +541,6 @@ export default {
       },
       answer: {
         required,
-        minLength: minLength(3),
-        maxLength: maxLength(200)
-      },
-      explanation: {
         minLength: minLength(3),
         maxLength: maxLength(200)
       }
