@@ -70,6 +70,12 @@
                 }}
               </template>
 
+              <template v-slot:cell(category)="data">
+                {{
+                data.item.category.name
+                }}
+              </template>
+
               <template v-slot:cell(index)="data">
                 <b-button variant="danger" size="sm" @click="removeQuestion(data.index)">Remove</b-button>
               </template>
@@ -92,9 +98,51 @@
       @ok="openQuestionsAddConfirmModal"
       button-size="sm"
     >
-      {{checkTestQuestionsLength}}
-      {{questions_id}}
       <b-table
+        borderless
+        striped
+        hover
+        sticky-header="500px"
+        id="questions-table"
+        :items="teacher_questions"
+        :fields="teacher_questions_fields"
+        responsive="md"
+      >
+        <template v-slot:cell(question)="data">
+          {{
+          data.item.question
+          }}
+        </template>
+
+        <template v-slot:cell(category)="data">
+          {{
+          data.item.category.name
+          }}
+        </template>
+
+        <template v-slot:cell(index)="data">
+          <b-button variant="primary" size="sm" @click="addQuestion(data.index)">
+            <b-icon class="mr-2" icon="plus"></b-icon>
+          </b-button>
+        </template>
+      </b-table>
+    </b-modal>
+
+    <!-- CONFIRM ADD QUESTIONS -->
+    <b-modal
+      id="confirm-questions-add-modal"
+      title="Confirm"
+      ok-title="Proceed"
+      ok-variant="success"
+      @ok="confirmAddQuestion"
+      cancel-title="Cancel"
+      cancel-variant="light"
+      button-size="sm"
+    >
+      <p class="text-muted">Do confirm to add these questions to this test?</p>
+    </b-modal>
+
+    <!-- <b-table
         borderless
         striped
         hover
@@ -121,22 +169,7 @@
             <b-icon class="mr-2" icon="plus"></b-icon>Add
           </b-button>
         </template>
-      </b-table>
-    </b-modal>
-
-    <!-- CONFIRM ADD QUESTIONS -->
-    <b-modal
-      id="confirm-questions-add-modal"
-      title="Confirm"
-      ok-title="Proceed"
-      ok-variant="success"
-      @ok="confirmAddQuestion"
-      cancel-title="Cancel"
-      cancel-variant="light"
-      button-size="sm"
-    >
-      <p class="text-muted">Do confirm to add these questions to this test?</p>
-    </b-modal>
+    </b-table>-->
   </div>
 </template>
 
@@ -149,6 +182,7 @@ export default {
       test: {},
       questions: [],
       questions_id: [],
+      questions_id_queue: [],
       questions_multiple_choices: [],
       questions_enumeration: [],
       questions_identification: [],
@@ -186,11 +220,13 @@ export default {
   validations: {},
   computed: {
     checkTestQuestionsLength: function() {
-      return !this.questions_id.length ? true : false;
+      return this.questions_id_queue.length ? false : true;
     }
   },
   mounted() {
     this.getTest();
+
+    // this.$bvModal.show("questions-modal");
   },
   methods: {
     getTest: function() {
@@ -244,7 +280,7 @@ export default {
 
     addQuestion: function(index) {
       let id = this.teacher_questions[index].id;
-      this.questions_id.push(id);
+      this.questions_id_queue.push(id);
       this.teacher_questions.splice(index, 1);
 
       this.$bvToast.toast(`Question added`, {
@@ -258,14 +294,21 @@ export default {
     confirmAddQuestion: function(event) {
       event.preventDefault();
       let testsAPI = `${this.host}/test/${this.test_id}`;
+
+      this.questions_id_queue.forEach(id => {
+        this.questions_id.push(id);
+      });
+
       const data = {
         questions_id: this.questions_id
       };
+
       axios
         .put(testsAPI, data)
         .then(response => {
           if (response.data.status == 201) {
             this.getTest();
+            this.resetQuestionsIdQueue();
             this.$bvModal.hide("confirm-questions-add-modal");
             swal.fire({
               icon: "success",
@@ -324,6 +367,10 @@ export default {
         autoHideDelay: 2000,
         appendToast: true
       });
+    },
+
+    resetQuestionsIdQueue: function() {
+      this.questions_id_queue = [];
     },
 
     openQuestionsAddConfirmModal: function() {
