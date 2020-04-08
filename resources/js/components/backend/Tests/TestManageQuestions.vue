@@ -76,6 +76,12 @@
                 }}
               </template>
 
+              <template v-slot:cell(question_type)="data">
+                <span v-if="data.item.question_type == 1">Multiple Choices</span>
+                <span v-if="data.item.question_type == 2">Enumeration</span>
+                <span v-if="data.item.question_type == 3">Identification</span>
+              </template>
+
               <template v-slot:cell(index)="data">
                 <b-button variant="danger" size="sm" @click="removeQuestion(data.index)">Remove</b-button>
               </template>
@@ -99,9 +105,49 @@
       @ok="openQuestionsAddConfirmModal"
       button-size="sm"
     >
-      <b-tabs card pills vertical>
-        <b-tab title="Multiple Choices">
-          <p>Multiple choices</p>
+      <b-tabs pills vertical small>
+        <b-tab class="pt-0 mt-0" title="Multiple Choices">
+          <b-table
+            borderless
+            striped
+            hover
+            id="multiple-choices-questions-table"
+            :items="questions_multiple_choices"
+            :fields="questions_fields"
+            responsive="md"
+          >
+            <template v-slot:cell(question)="data">
+              {{
+              data.item.question
+              }}
+            </template>
+
+            <template v-slot:cell(category)="data">
+              {{
+              data.item.category.name
+              }}
+            </template>
+
+            <template v-slot:cell(index)="data">
+              <b-btn-group>
+                <b-button variant="primary" size="sm" @click="addQuestion(data.index)">
+                  <b-icon icon="plus" class="mr-2"></b-icon>Add
+                </b-button>
+              </b-btn-group>
+            </template>
+          </b-table>
+
+          <!-- <b-container class="clearfix px-0" fluid>
+            <b-pagination
+              class="float-right"
+              size="sm"
+              v-model="current_page"
+              :per-page="Number(response.per_page)"
+              :total-rows="Number(response.total)"
+              @change="getTests"
+              aria-controls="multiple-choices-questions-table"
+            ></b-pagination>
+          </b-container>-->
         </b-tab>
 
         <b-tab title="Enumeration">
@@ -175,11 +221,18 @@ export default {
       questions_fields: [
         {
           key: "question",
-          label: "Question"
+          label: "Question",
+          sortable: true
         },
         {
           key: "category",
-          label: "Category"
+          label: "Category",
+          sortable: true
+        },
+        {
+          key: "question_typq",
+          label: "Type",
+          sortable: true
         },
         {
           key: "index",
@@ -190,11 +243,13 @@ export default {
       teacher_questions_fields: [
         {
           key: "question",
-          label: "Question"
+          label: "Question",
+          sortable: true
         },
         {
           key: "category",
-          label: "Category"
+          label: "Category",
+          sortable: true
         },
         {
           key: "index",
@@ -249,19 +304,19 @@ export default {
       const multiple_choices = this.teacher_questions.filter(question => {
         return question.question_type == 1;
       });
-      this.questions_multiple_choices.push(multiple_choices);
+      this.questions_multiple_choices = multiple_choices;
 
       //Filtering question type == 2 (enumeration)
       const enumeration = this.teacher_questions.filter(question => {
         return question.question_type == 2;
       });
-      this.questions_enumeration.push(enumeration);
+      this.questions_enumeration = enumeration;
 
       //Filtering question type == 3 (identification)
       const identification = this.teacher_questions.filter(question => {
         return question.question_type == 3;
       });
-      this.questions_identification.push(identification);
+      this.questions_identification = identification;
     },
 
     addQuestion: function(index) {
