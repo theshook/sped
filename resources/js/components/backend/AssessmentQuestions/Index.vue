@@ -56,17 +56,15 @@
             responsive="md"
             show-empty
           >
-            <template v-slot:cell(question)="data">
-              {{
-              data.item.question
-              }}
+            <template v-slot:cell(question)="data">{{ data.item.question }}</template>
+
+            <template v-slot:cell(question_type)="data">
+              <span v-if="data.item.question_type === 1">Multiple choices</span>
+              <span v-if="data.item.question_type === 2">Enumeration</span>
+              <span v-if="data.item.question_type === 3">Identification</span>
             </template>
 
-            <template v-slot:cell(category)="data">
-              {{
-              data.item.category.name
-              }}
-            </template>
+            <template v-slot:cell(category)="data">{{ data.item.category.name }}</template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
@@ -99,7 +97,7 @@
 
             <template v-slot:empty="scope">
               <div class="text-center py-3">
-                <p class="text-muted mb-0">{{scope.emptyText}}</p>
+                <p class="text-muted mb-0">{{ scope.emptyText }}</p>
               </div>
             </template>
           </b-table>
@@ -188,9 +186,10 @@
               aria-describedby="invalid-input-question"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback
-              id="invalid-input-question"
-            >This field is required and must be atleast 10 characters.</b-form-invalid-feedback>
+            <b-form-invalid-feedback id="invalid-input-question">
+              This field is required and must be atleast 10
+              characters.
+            </b-form-invalid-feedback>
           </b-form-group>
 
           <section v-if="form.question_type == 1">
@@ -202,9 +201,10 @@
                 rows="4"
               ></b-form-textarea>
 
-              <b-form-invalid-feedback
-                id="invalid-input-choice1"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+              <b-form-invalid-feedback id="invalid-input-choice1">
+                This field is required and must be atleast 3
+                characters.
+              </b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group label="Choice #2" label-class="text-sm">
@@ -215,9 +215,10 @@
                 rows="4"
               ></b-form-textarea>
 
-              <b-form-invalid-feedback
-                id="invalid-input-choice2"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+              <b-form-invalid-feedback id="invalid-input-choice2">
+                This field is required and must be atleast 3
+                characters.
+              </b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group label="Choice #3" label-class="text-sm">
@@ -228,9 +229,10 @@
                 rows="4"
               ></b-form-textarea>
 
-              <b-form-invalid-feedback
-                id="invalid-input-choice3"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+              <b-form-invalid-feedback id="invalid-input-choice3">
+                This field is required and must be atleast 3
+                characters.
+              </b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group label="Choice #4" label-class="text-sm">
@@ -241,9 +243,10 @@
                 rows="4"
               ></b-form-textarea>
 
-              <b-form-invalid-feedback
-                id="invalid-input-choice4"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+              <b-form-invalid-feedback id="invalid-input-choice4">
+                This field is required and must be atleast 3
+                characters.
+              </b-form-invalid-feedback>
             </b-form-group>
           </section>
 
@@ -255,9 +258,10 @@
               rows="2"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback
-              id="invalid-input-answer"
-            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+            <b-form-invalid-feedback id="invalid-input-answer">
+              This field is required and must be atleast 3
+              characters.
+            </b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Explanation" label-class="text-sm">
@@ -299,7 +303,7 @@
               v-for="category in checklistCategories"
               :key="category.id"
               :value="category.id"
-            >{{category.name}}</b-form-select-option>
+            >{{ category.name }}</b-form-select-option>
           </b-form-select>
           <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
         </b-form-group>
@@ -326,9 +330,10 @@
             aria-describedby="invalid-input-question"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-question"
-          >This field is required and must be atleast 10 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-question">
+            This field is required and must be atleast 10
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <section v-if="form.question_type === 1">
@@ -340,9 +345,10 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback
-              id="invalid-input-choice1"
-            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+            <b-form-invalid-feedback id="invalid-input-choice1">
+              This field is required and must be atleast 3
+              characters.
+            </b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #2" label-class="text-sm">
@@ -353,9 +359,10 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback
-              id="invalid-input-choice2"
-            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+            <b-form-invalid-feedback id="invalid-input-choice2">
+              This field is required and must be atleast 3
+              characters.
+            </b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #3" label-class="text-sm">
@@ -366,9 +373,10 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback
-              id="invalid-input-choice3"
-            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+            <b-form-invalid-feedback id="invalid-input-choice3">
+              This field is required and must be atleast 3
+              characters.
+            </b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Choice #4" label-class="text-sm">
@@ -379,9 +387,10 @@
               rows="4"
             ></b-form-textarea>
 
-            <b-form-invalid-feedback
-              id="invalid-input-choice4"
-            >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+            <b-form-invalid-feedback id="invalid-input-choice4">
+              This field is required and must be atleast 3
+              characters.
+            </b-form-invalid-feedback>
           </b-form-group>
         </section>
 
@@ -393,9 +402,10 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-answer"
-          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-answer">
+            This field is required and must be atleast 3
+            characters.
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Explanation" label-class="text-sm">
@@ -451,6 +461,11 @@ export default {
         {
           key: "question",
           label: "Question",
+          sortable: true
+        },
+        {
+          key: "question_type",
+          label: "Type",
           sortable: true
         },
         {
