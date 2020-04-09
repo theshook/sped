@@ -11,10 +11,11 @@
 	  <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/client-styles.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/fontawesome-5.11/css/all.min.css') }}" rel="stylesheet" type="text/css">
     @yield('link')
+    @yield('style')
 </head>
 
 <body>
@@ -31,7 +32,7 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('plugins/fontawesome-5.11/js/all.min.js') }}"></script>
-    @yield('js')
+    @yield('scripts')
 </body>
 
 </html>
