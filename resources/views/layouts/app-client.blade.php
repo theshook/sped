@@ -32,7 +32,7 @@
 
       <footer>
         <div class="container">
-          <h1 class="font-weight-bolder">SPECIAL EDUCATION ASSESSMENT SYSTEM (beta)</h1>
+          <small>Footer</small>
         </div>
       </footer>
     </div>
