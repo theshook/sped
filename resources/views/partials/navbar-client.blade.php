@@ -6,7 +6,7 @@
         <div class="col-lg-6 px-0">
           <ul class="nav">
             <li class="nav-item">
-              <a href="#" class="nav-link disabled">We are still on beta version</a>
+              <a href="#" class="nav-link disabled">Beta version</a>
             </li>
           </ul>
         </div>
