@@ -127,10 +127,16 @@ Vue.component(
 );
 
 /* ==================== FRONTEND ====================== */
-//BACKEND (Teacher-Questions)
+//FRONTEND (Parent intake form (fill-up))
 Vue.component(
   "intake-form",
   require("./components/frontend/Parents/IntakeForm.vue").default
+);
+
+//FRONTEND (Pupil assessment tests list)
+Vue.component(
+  "pupil-assessments-index",
+  require("./components/frontend/Pupils/Assessments/Tests/Index.vue").default
 );
 
 /**
