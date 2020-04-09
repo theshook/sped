@@ -19,11 +19,16 @@
 </head>
 
 <body>
+    <div id="top"></div>
     <div class="container-fluid px-0" id="app">
       @include('partials.navbar-client')
       <div class="container main-content">
         @yield('content')
       </div>
+
+      <a href="#top" class="btn-scroll-top shadow-sm">
+        <span class="fa fa-chevron-up"></span>
+      </a>
 
       <footer>
         <div class="container">
@@ -34,6 +39,24 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('plugins/fontawesome-5.11/js/all.min.js') }}"></script>
+    <script>
+      $('a.btn-scroll-top').on('click', e => {
+        $('a.btn-scroll-top').hide();
+        $("html, body").animate({scrollTop: $("#top").offset().top}, 500);
+      });
+
+      //TOGGLE SCROLL-TO-TOP BUTTON
+      $('a.btn-scroll-top').hide();
+      $(window).scroll(() => {
+        let scrollTop = $(window).scrollTop();
+
+        if(scrollTop > 200) {
+          $('a.btn-scroll-top').fadeIn();
+        } else {
+          $('a.btn-scroll-top').fadeOut();
+        }
+      });
+    </script>
     @yield('scripts')
 </body>
 
