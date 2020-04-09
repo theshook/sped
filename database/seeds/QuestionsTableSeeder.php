@@ -13,14 +13,14 @@ class QuestionsTableSeeder extends Seeder
   public function run()
   {
     $faker = \Faker\Factory::create();
-    $teacher_id = 0;
-    $checklist_id = 0;
+    $count = 0;
     for ($i = 0; $i < 10; $i++) {
       Question::create([
-        'teacher_id' => rand(1, 10),
-        'checklist_category_id' => rand(1, 10),
-        'question_type' => rand(1, 3),
-        'question' => $faker->sentence,
+        'teacher_id' => 1,
+        'checklist_category_id' => rand(1, 3),
+        'question_type' => 3,
+        // 'question' => $faker->sentence,
+        'question' => 'Identification #' . $count++,
         'choice1' => $faker->sentence,
         'choice2' => $faker->sentence,
         'choice3' => $faker->sentence,
