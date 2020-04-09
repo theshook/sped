@@ -21,12 +21,14 @@
 <body>
     <div class="container-fluid px-0" id="app">
       @include('partials.navbar-client')
-      <div class="container pt-3 mt-4">
+      <div class="container main-content">
         @yield('content')
       </div>
 
-      <footer class="py-2 mt-5">
-
+      <footer>
+        <div class="container">
+          <h1 class="font-weight-bolder">SPECIAL EDUCATION ASSESSMENT SYSTEM (beta)</h1>
+        </div>
       </footer>
     </div>
     <!-- Scripts -->
