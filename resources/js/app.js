@@ -129,6 +129,11 @@ Vue.component(
 /* ==================== FRONTEND ====================== */
 //FRONTEND (Parent intake form (fill-up))
 Vue.component(
+  "parent-login",
+  require("./components/frontend/Parents/Login.vue").default
+);
+
+Vue.component(
   "intake-form",
   require("./components/frontend/Parents/IntakeForm.vue").default
 );
