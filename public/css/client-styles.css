@@ -19,9 +19,9 @@ a.btn-scroll-top {
 
 /* BS4 OVERRIDES */
 input:focus {
-  outline: none !important;
+  /* outline: none !important; */
   box-shadow: none !important;
-  border-color: #eee !important;
+  /* border-color: #eee !important; */
 }
 
 /* TEXT SIZE */
