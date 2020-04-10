@@ -12,17 +12,17 @@
           <b-input-group>
             <b-form-input
               v-model="search"
-              class="col-lg-6 text-sm py-4 px-3 ml-auto"
+              class="col-lg-6 text-sm border-custom-light shadow-sm py-4 px-3 ml-auto"
               placeholder="Search"
             ></b-form-input>
 
             <template v-slot:append>
-              <b-button class="text-muted text-sm" variant="light">
+              <b-button class="text-muted text-sm shadow-sm" variant="light">
                 <b-icon icon="search"></b-icon>
               </b-button>
 
               <b-button
-                class="text-muted text-sm"
+                class="text-muted text-sm shadow-sm"
                 variant="light"
                 v-b-toggle.filter-collapse
               >
@@ -42,16 +42,8 @@
             </p>
 
             <div class="text-right pt-3">
-              <b-button
-                class="border-light text-sm text-muted py-2 px-3"
-                variant="light"
-                >Reset</b-button
-              >
-              <b-button
-                class="border-light text-sm bg-green py-2 px-3"
-                variant="success"
-                >Apply</b-button
-              >
+              <b-button class="border-light text-sm text-muted py-2 px-3" variant="light">Reset</b-button>
+              <b-button class="border-light text-sm bg-green py-2 px-3" variant="success">Apply</b-button>
             </div>
           </b-card-body>
         </b-card>
@@ -63,11 +55,7 @@
           v-for="(assessment, index) in assessment_categories"
           :key="index"
         >
-          <b-button
-            class="text-decoration-none px-0"
-            variant="link"
-            v-b-modal.checklist-modal
-          >
+          <b-button class="text-decoration-none px-0" variant="link" v-b-modal.checklist-modal>
             <h5>{{ assessment.title }}</h5>
           </b-button>
           <p class="assessment-test-description text-sm lh-1">
