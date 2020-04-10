@@ -17,6 +17,6 @@ class Question extends Model
 
   public function checklist()
   {
-    return $this->belongsTo(Checklist::class)->with('category');
+    return $this->belongsTo(Checklist::class);
   }
 }

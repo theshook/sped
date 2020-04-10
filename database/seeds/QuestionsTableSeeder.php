@@ -17,7 +17,7 @@ class QuestionsTableSeeder extends Seeder
     for ($i = 0; $i < 10; $i++) {
       Question::create([
         'teacher_id' => 1,
-        'checklist_category_id' => rand(1, 3),
+        'checklist_id' => rand(1, 3),
         'question_type' => 3,
         // 'question' => $faker->sentence,
         'question' => 'Identification #' . $count++,

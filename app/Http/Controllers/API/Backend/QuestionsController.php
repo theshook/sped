@@ -31,7 +31,7 @@ class QuestionsController extends Controller
   public function store(Request $request)
   {
     $question = new Question;
-    $question->checklist_category_id = $request->checklist_category_id;
+    $question->checklist_id = $request->checklist_id;
     $question->teacher_id = $request->teacher_id;
     $question->question_type = $request->question_type;
     $question->question = $request->question;
@@ -92,7 +92,7 @@ class QuestionsController extends Controller
     $question = Question::find($id);
     if (!empty($question)) {
       $question = new Question;
-      $question->checklist_category_id = $request->checklist_category_id;
+      $question->checklist_id = $request->checklist_id;
       $question->teacher_id = $request->teacher_id;
       $question->question_type = $request->question_type;
       $question->question = $request->question;

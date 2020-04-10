@@ -15,7 +15,7 @@ class CreateQuestionsTable extends Migration
   {
     Schema::create('questions', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->unsignedBigInteger('checklist_category_id');
+      $table->unsignedBigInteger('checklist_id');
       $table->unsignedBigInteger('teacher_id');
       $table->integer('question_type');
       $table->string('question');
@@ -28,7 +28,7 @@ class CreateQuestionsTable extends Migration
       $table->softDeletes();
       $table->timestamps();
 
-      $table->foreign('checklist_category_id')->references('id')->on('checklist_categories');
+      $table->foreign('checklist_id')->references('id')->on('checklists');
       $table->foreign('teacher_id')->references('id')->on('teachers');
     });
   }

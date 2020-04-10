@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-container class="mt-2">
+      <!-- {{questions}} -->
       <b-card class="shadow-sm">
         <b-card-body>
           <b-row>
@@ -73,7 +74,7 @@
               >Identification</span>
             </template>
 
-            <template v-slot:cell(checklist)="data">{{ data.item.checklist.category.name }}</template>
+            <template v-slot:cell(checklist)="data">{{ data.item.checklist.content }}</template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
@@ -142,8 +143,8 @@
       <b-form>
         <b-form-group label="Category" label-class="text-sm">
           <b-form-select
-            v-model="$v.form.checklist_category_id.$model"
-            :state="validateState('checklist_category_id')"
+            v-model="$v.form.checklist_id.$model"
+            :state="validateState('checklist_id')"
             aria-describedby="input-category-feedback"
           >
             <b-form-select-option
@@ -304,8 +305,8 @@
       <b-form>
         <b-form-group label="Category" label-class="text-sm">
           <b-form-select
-            v-model="$v.form.checklist_category_id.$model"
-            :state="validateState('checklist_category_id')"
+            v-model="$v.form.checklist_id.$model"
+            :state="validateState('checklist_id')"
             aria-describedby="input-category-feedback"
           >
             <b-form-select-option
@@ -493,7 +494,7 @@ export default {
 
       // FORM
       form: {
-        checklist_category_id: null,
+        checklist_id: null,
         teacher_id: null,
         question_type: null,
         question: null,
@@ -521,7 +522,7 @@ export default {
   },
   validations: {
     form: {
-      checklist_category_id: {
+      checklist_id: {
         required
       },
       teacher_id: {
@@ -635,7 +636,7 @@ export default {
     add: function() {
       const questionsAPI = `${this.host}/questions`;
       const data = {
-        checklist_category_id: this.form.checklist_category_id,
+        checklist_id: this.form.checklist_id,
         teacher_id: this.form.teacher_id,
         question_type: this.form.question_type,
         question: this.form.question,
@@ -683,9 +684,7 @@ export default {
     edit: function(index) {
       this.edit_id = this.questions[index].id;
       this.edit_index = index;
-      this.form.checklist_category_id = this.questions[
-        index
-      ].checklist_category_id;
+      this.form.checklist_id = this.questions[index].checklist_id;
       this.form.teacher_id = this.questions[index].teacher_id;
       this.form.question_type = this.questions[index].question_type;
       this.form.question = this.questions[index].question;
@@ -710,7 +709,7 @@ export default {
     update: function() {
       const questionsAPI = `${this.host}/question/${this.edit_id}`;
       const data = {
-        checklist_category_id: this.form.checklist_category_id,
+        checklist_id: this.form.checklist_id,
         teacher_id: this.form.teacher_id,
         question_type: this.form.question_type,
         question: this.form.question,
@@ -721,9 +720,7 @@ export default {
         answer: this.form.answer
       };
 
-      this.questions[
-        this.edit_index
-      ].checklist_category_id = this.form.checklist_category_id;
+      this.questions[this.edit_index].checklist_id = this.form.checklist_id;
       this.questions[this.edit_index].teacher_id = this.form.teacher_id;
       this.questions[this.edit_index].question_type = this.form.question_type;
       this.questions[this.edit_index].question = this.form.question;
@@ -814,7 +811,7 @@ export default {
 
     resetForm: function() {
       this.$v.$reset();
-      this.form.checklist_category_id = null;
+      this.form.checklist_id = null;
       this.form.teacher_id = null;
       this.form.question_type = null;
       this.form.question = null;
