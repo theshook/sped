@@ -300,6 +300,7 @@
       ok-variant="success"
       ok-only
       @ok="submitUpdate"
+      @hidden="resetForm"
       button-size="sm"
     >
       <b-form>
@@ -717,7 +718,8 @@ export default {
         choice2: this.form.choice2,
         choice3: this.form.choice3,
         choice4: this.form.choice4,
-        answer: this.form.answer
+        answer: this.form.answer,
+        explanation: this.form.explanation,
       };
 
       this.questions[this.edit_index].checklist_id = this.form.checklist_id;
