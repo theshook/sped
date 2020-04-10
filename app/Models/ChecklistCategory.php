@@ -15,9 +15,5 @@ class ChecklistCategory extends Model
   {
     return $this->hasMany(Checklist::class, 'checklist_categories_id');
   }
-
-  public function questions()
-  {
-    return $this->hasMany(Question::class);
-  }
+ 
 }

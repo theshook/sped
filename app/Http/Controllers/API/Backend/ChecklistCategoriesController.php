@@ -19,7 +19,7 @@ class ChecklistCategoriesController extends Controller
     $search = $request->search;
     $limit = $request->limit;
 
-    return ($search) ? ChecklistCategory::with('questions')->where('name', 'like', "$search%")->orderBy('name', 'ASC')->paginate($limit) : ChecklistCategory::with('questions')->paginate($limit);
+    return ($search) ? ChecklistCategory::where('name', 'like', "$search%")->orderBy('name', 'ASC')->paginate($limit) : ChecklistCategory::paginate($limit);
   }
 
   public function index_raw()

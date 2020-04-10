@@ -73,7 +73,7 @@
               >Identification</span>
             </template>
 
-            <template v-slot:cell(category)="data">{{ data.item.category.name }}</template>
+            <template v-slot:cell(checklist)="data">{{ data.item.checklist.category.name }}</template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
@@ -478,7 +478,7 @@ export default {
           sortable: true
         },
         {
-          key: "category",
+          key: "checklist",
           label: "Category",
           sortable: true
         },
