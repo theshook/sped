@@ -13,10 +13,10 @@
             aria-describedby="input-email-feedback"
           ></b-form-input>
 
-          <b-form-invalid-feedback id="input-email-feedback"
-            >Email Address is required and must be
-            valid</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback id="input-email-feedback">
+            Email Address is required and must be
+            valid
+          </b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Password*" label-class="text-sm">
@@ -28,14 +28,10 @@
             aria-describedby="input-password-feedback"
           ></b-form-input>
 
-          <b-form-invalid-feedback id="input-password-feedback"
-            >Password is required</b-form-invalid-feedback
-          >
+          <b-form-invalid-feedback id="input-password-feedback">Password is required</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-button class="font-weight-bold py-2 mb-3" variant="primary" block
-          >Sign In</b-button
-        >
+        <b-button class="font-weight-bold py-2 mb-3" variant="primary" block>Sign In</b-button>
         <a href="#" class="text-sm">Forgot Password?</a>
       </b-form>
     </b-card>
