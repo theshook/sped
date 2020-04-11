@@ -22,7 +22,7 @@
     <div id="top"></div>
     <div class="container-fluid px-0" id="app">
       @include('partials.navbar-client')
-      <div class="container main-content">
+      <div class="container-fluid main-content">
         @yield('content')
       </div>
 
