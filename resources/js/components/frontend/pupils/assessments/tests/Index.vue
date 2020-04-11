@@ -1,102 +1,46 @@
 <template>
   <div>
-    <PageLoader v-if="show_loader" />
+    <section class="page-header-banner">
+      <div class="page-header-banner-content container">
+        <h1 class="text-center font-weight-bolder">Assessment Tests</h1>
 
-    <section v-else>
-      <b-form-row class="mb-4">
-        <b-col lg="6">
-          <h1 class="font-weight-bolder text-custom-dark">Assessment Tests</h1>
-        </b-col>
+        <br />
 
-        <b-col lg="6" class="text-right">
-          <b-input-group>
-            <b-form-input
-              v-model="search"
-              class="col-lg-6 text-sm border-custom-light shadow-sm py-4 px-3 ml-auto"
-              placeholder="Search"
-            ></b-form-input>
-
-            <template v-slot:append>
-              <b-button class="text-muted text-sm shadow-sm" variant="light">
-                <b-icon icon="search"></b-icon>
-              </b-button>
-
-              <b-button
-                class="text-muted text-sm shadow-sm"
-                variant="light"
-                v-b-toggle.filter-collapse
-              >
-                <b-icon icon="funnel"></b-icon>
-              </b-button>
-            </template>
-          </b-input-group>
-        </b-col>
-      </b-form-row>
-
-      <!-- FILTER COLLAPSE CARD -->
-      <b-collapse class="mb-3" id="filter-collapse">
-        <b-card class="shadow-sm" no-body>
-          <b-card-body>
-            <p class="text-muted">
-              <b-icon class="mr-2" icon="funnel"></b-icon>Filter Options
-            </p>
-
-            <div class="text-right pt-3">
-              <b-button class="border-light text-sm text-muted py-2 px-3" variant="light">Reset</b-button>
-              <b-button class="border-light text-sm bg-green py-2 px-3" variant="success">Apply</b-button>
-            </div>
-          </b-card-body>
-        </b-card>
-      </b-collapse>
-
-      <div v-if="assessment_categories.length">
-        <b-card
-          class="assessment-test-card shadow-sm mb-4"
-          v-for="(assessment, index) in assessment_categories"
-          :key="index"
-        >
-          <b-button class="text-decoration-none px-0" variant="link" v-b-modal.checklist-modal>
-            <h5>{{ assessment.title }}</h5>
-          </b-button>
-          <p class="assessment-test-description text-sm lh-1">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nihil
-            labore odit, voluptatum vel eaque itaque quidem delectus repudiandae
-            reprehenderit rerum adipisci rem beatae, recusandae nobis similique!
-            Recusandae sit suscipit commodi.
-          </p>
-        </b-card>
-
-        <b-container class="clearfix px-0" fluid>
-          <b-pagination
-            class="float-right"
-            v-model="current_page"
-            :per-page="Number(10)"
-            :total-rows="Number(assessment_categories.length)"
-            @change="getAssessmentTests"
-            aria-controls="assessment-tests-list"
-          ></b-pagination>
-        </b-container>
+        <b-form-input
+          v-model="search"
+          class="shadow-lg w-100 px-sm-3 px-lg-4 py-4"
+          placeholder="Search"
+        ></b-form-input>
       </div>
-
-      <div class="mt-5" v-else></div>
     </section>
 
-    <!-- CHOOSE ASSESSMENT CHECKLIST MODAL -->
-    <b-modal
-      id="checklist-modal"
-      size="small"
-      title="Choose category"
-      button-size="sm"
-      ok-only
-      ok-title="Proceed"
-      ok-variant="light"
-      @ok="proceedToTest"
-    >
-      <small class="text-muted">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus
-        illo quisquam voluptatum inventore, omnis officiis.
-      </small>
-    </b-modal>
+    <b-container>
+      <PageLoader v-if="show_loader" />
+
+      <section v-else>
+        <b-container class="no-data-found" v-if="!assessment_categories.length">
+          <h4 class="font-weight-bold">No results found</h4>
+          <p
+            class="text-muted"
+            v-if="search_err"
+          >It seems we can’t find any results based on your search.</p>
+          <p class="text-muted" v-else>No open assessment test(s) as of today.</p>
+        </b-container>
+
+        <div v-else>
+          <h1 class="font-weight-bolder mb-4">Psychological</h1>
+
+          <div class="card-deck" v-for="(i, index) in 3" :key="index">
+            <b-card class="border-light shadow-sm mb-3">
+              <h4 class="text-muted font-weight-bold">Level {{index + 1}}</h4>
+              <p
+                class="assessment-test-description text-sm lh-1"
+              >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, et nihil aspernatur officiis laborum ipsa?</p>
+            </b-card>
+          </div>
+        </div>
+      </section>
+    </b-container>
   </div>
 </template>
 
@@ -108,8 +52,10 @@ export default {
   components: { PageLoader },
   data() {
     return {
-      show_loader: true,
+      show_loader: false,
+      show_search: false,
       search: "",
+      search_err: false,
       current_page: 1,
       assessment_categories: [
         {
@@ -136,6 +82,10 @@ export default {
     getAssessmentTests: function() {},
 
     proceedToTest: function() {},
+
+    toggleShowSearch: function() {
+      this.show_search = !this.show_search;
+    },
 
     disableLoader: function() {
       setTimeout(() => {
