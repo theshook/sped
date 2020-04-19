@@ -16,5 +16,5 @@
 @endsection
 
 @section('content')
-<parent-login host="{{env('API_HOST')}}" />
+<parent-forgot-password host="{{env('API_HOST')}}" />
 @endsection

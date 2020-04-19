@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap");
 
 body {
-  /* font-family: Nunito !important; */
   font-family: "Poppins", sans-serif !important;
   background: #fcfcfc !important;
 }
@@ -20,12 +19,16 @@ a.btn-scroll-top {
 
 /* BS4 OVERRIDES */
 input:focus {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 /* TEXT SIZE */
 .text-sm {
   font-size: 0.9rem !important;
+}
+
+.text-md {
+  font-size: 1.35rem !important;
 }
 
 /* TEXT COLOR */
@@ -52,10 +55,23 @@ input:focus {
   color: #444 !important;
 }
 
+/* FORMS */
+form .btn-submit {
+  background: #66BB6A !important;
+  border: solid 1px #66BB6A !important;
+  transition: .2s ease;
+}
+
+form .btn-submit:hover,
+form .btn-submit:focus {
+  background: #81C784 !important;
+  border: solid 1px #81C784 !important;
+}
+
 /* MAIN CONTENT */
 .main-content {
   min-height: 100vh !important;
-  padding-top: 8.5rem;
+  padding-top: 10rem !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
@@ -94,7 +110,6 @@ footer {
   background: #010e28 !important;
   padding-top: 3rem;
   padding-bottom: 3rem;
-  margin-top: 3rem;
 }
 
 /* NO DATA/SEARCH CONTAINER */
@@ -125,7 +140,7 @@ footer {
   background: #010e28 !important;
   padding: 0.1rem 0 !important;
   border-bottom: solid 1px #fafafa !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
 }
 
 .top-nav p.top-nav-text {
@@ -137,26 +152,26 @@ footer {
 }
 
 .top-nav ul>li a:hover {
-  color: #0069ff !important;
+  color: #fff !important;
 }
 
 .navbar {
-  padding-top: 1rem !important;
-  padding-bottom: 1rem !important;
+  padding-top: .8rem !important;
+  padding-bottom: .8rem !important;
 }
 
 .navbar-brand {
   color: #666 !important;
-  font-weight: 700;
-  font-size: 1.35rem !important;
+  font-weight: 400;
+  font-size: 1rem !important;
 }
 
 .navbar .navbar-nav>li a {
   color: #031b4e !important;
   margin-left: 0.6rem;
   margin-right: 0.6rem;
-  font-size: 14px !important;
-  font-weight: 500 !important;
+  font-size: 11px !important;
+  /* font-weight: lighter !important; */
 }
 
 .navbar .navbar-nav>li a.active,
@@ -196,7 +211,9 @@ footer {
 
   /* MAIN CONTENT */
   .main-content {
-    padding-top: 9rem !important;
+    padding-top: 8rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
 
   /* ASSESSMENT TESTS LIST */

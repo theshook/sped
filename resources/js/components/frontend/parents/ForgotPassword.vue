@@ -1,9 +1,11 @@
 <template>
   <div>
-    <b-card class="col-lg-4 shadow-sm mx-auto mt-lg-5">
-      <h3>Log In</h3>
+    <b-card class="col-lg-4 shadow-sm mx-lg-auto mt-lg-5">
+      <h3>Forgot Password?</h3>
 
-      <b-form class="mt-lg-3 mt-sm-5">
+      <p class="text-muted">Send yourself password reset instructions.</p>
+
+      <b-form class="mt-sm-3">
         <b-form-group label="Email Address*" label-class="text-sm">
           <b-form-input
             class="text-sm form-control-lg py-4"
@@ -19,30 +21,10 @@
           </b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Password*" label-class="text-sm">
-          <b-form-input
-            class="text-sm form-control-lg py-4"
-            v-model="$v.form.password.$model"
-            :state="validateState('password')"
-            placeholder="Enter your password"
-            aria-describedby="input-password-feedback"
-          ></b-form-input>
-
-          <b-form-invalid-feedback id="input-password-feedback">Password is required</b-form-invalid-feedback>
-        </b-form-group>
-
-        <div class="d-flex">
-          <b-button
-            class="btn-submit font-weight-bold py-3 px-5 mb-3 mx-auto"
-            variant="success"
-          >Sign In</b-button>
-        </div>
-
-        <div class="text-center text-md">
-          <a href="#" class="text-sm text-muted mx-1">Create An Account</a>
-
-          <a href="#" class="text-sm text-muted mx-1">Forgot Password?</a>
-        </div>
+        <b-button
+          class="btn-submit font-weight-bold py-3 mb-3 float-right"
+          variant="primary"
+        >Send instructions</b-button>
       </b-form>
     </b-card>
   </div>
@@ -55,7 +37,7 @@ import {
   maxLength
 } from "vuelidate/lib/validators";
 export default {
-  name: "ParentLogin",
+  name: "ParentForgotPassword",
   props: ["host"],
   data() {
     return {

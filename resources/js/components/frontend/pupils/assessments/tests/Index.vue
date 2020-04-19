@@ -21,7 +21,7 @@
         <b-container class="no-data-found" v-if="!assessment_categories.length">
           <h4 class="font-weight-bold">No results found</h4>
           <p
-            class="text-muted"
+            class="text-black-50"
             v-if="search_err"
           >It seems we can’t find any results based on your search.</p>
           <p class="text-muted" v-else>No open assessment test(s) as of today.</p>
@@ -32,10 +32,11 @@
 
           <div class="card-deck" v-for="(i, index) in 3" :key="index">
             <b-card class="border-light shadow-sm mb-3">
-              <h4 class="text-muted font-weight-bold">Level {{index + 1}}</h4>
-              <p
-                class="assessment-test-description text-sm lh-1"
-              >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, et nihil aspernatur officiis laborum ipsa?</p>
+              <h4 class="text-black-50 font-weight-bold">Level {{ index + 1 }}</h4>
+              <p class="assessment-test-description text-sm lh-1">
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae,
+                et nihil aspernatur officiis laborum ipsa?
+              </p>
             </b-card>
           </div>
         </div>

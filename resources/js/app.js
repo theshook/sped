@@ -127,10 +127,15 @@ Vue.component(
 );
 
 /* ==================== FRONTEND ====================== */
-//FRONTEND (Parent intake form (fill-up))
+//FRONTEND (Parent)
 Vue.component(
   "parent-login",
   require("./components/frontend/Parents/Login.vue").default
+);
+
+Vue.component(
+  "parent-forgot-password",
+  require("./components/frontend/Parents/ForgotPassword.vue").default
 );
 
 Vue.component(
