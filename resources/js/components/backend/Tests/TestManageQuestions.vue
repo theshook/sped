@@ -273,9 +273,9 @@
               }}
             </template>
 
-            <template v-slot:cell(category)="data">
+            <template v-slot:cell(checklist)="data">
               {{
-              data.item.category.name
+              data.item.checklist.name
               }}
             </template>
 
@@ -393,7 +393,7 @@ export default {
           sortable: true
         },
         {
-          key: "category",
+          key: "checklist",
           label: "Category",
           sortable: true
         },

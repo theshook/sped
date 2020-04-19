@@ -13,7 +13,6 @@ class ChecklistCategory extends Model
 
   public function checklists()
   {
-    return $this->hasMany(Checklist::class, 'checklist_categories_id');
+    return $this->hasMany(Checklist::class);
   }
- 
 }

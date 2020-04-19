@@ -19,7 +19,7 @@ class TeacherQuestionsController extends Controller
     $search = $request->search;
     $limit = $request->limit;
 
-    return collect(Question::with('teacher')->orderBy('checklist_category_id', 'desc')->get())->where('teacher_id', $id);
+    return collect(Question::with('teacher', 'checklist')->get())->where('teacher_id', $id);
   }
 
   /**
