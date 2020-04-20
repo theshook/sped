@@ -1,7 +1,7 @@
 @extends('layouts.app-client-blank')
 
 @section('title')
-<title>UCLA::Parent - Log In</title>
+<title>UCLA::Parent - Register</title>
 @endsection
 
 @section('content')
