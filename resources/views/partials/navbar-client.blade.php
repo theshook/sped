@@ -57,14 +57,14 @@
         {{-- RIGHT PANE NAV --}}
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a href="#" class="nav-link link-to-announcements">
+            <a href="{{route('parent.register')}}" class="nav-link link-to-announcements">
               <span class="text-muted mr-2">Haven't registered yet?</span>
               Click here
             </a>
           </li>
 
           <li class="nav-item">
-            <a href="#" class="nav-link nav-link-fill mx-0">Login</a>
+            <a href="{{route('parent.login')}}" class="nav-link nav-link-fill mx-0">Login</a>
           </li>
         </ul>
       </div>
