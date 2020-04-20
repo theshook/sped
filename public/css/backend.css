@@ -1,0 +1,200 @@
+body {
+  font-family: "Poppins", sans-serif !important;
+  padding-right: 0 !important;
+  /* Fix for sweetalert adding padding right to the body */
+}
+
+/* BOLD TEXTS */
+.font-weight-bold {
+  font-weight: 700 !important;
+}
+
+/* CUSTOM BUTTON (BS4) */
+.btn-light {
+  color: #888 !important;
+  background: #fcfcfc !important;
+  border: solid 1px #eee !important;
+}
+
+.btn-light:hover {
+  background: #f1f1f1 !important;
+}
+
+/* TEXT */
+.text-sm {
+  font-size: 0.8rem !important;
+}
+
+/* PAGE CONTENT */
+.full-height {
+  min-height: 100vh !important;
+}
+
+.page-content {
+  padding-top: 7rem !important;
+}
+
+.page-header {
+  padding-bottom: 1rem !important;
+}
+
+.page-title {
+  color: #777 !important;
+  font-weight: bolder;
+}
+
+/* BREADCRUMB */
+.breadcrumb {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.breadcrumb>li {
+  font-size: 0.8rem !important;
+}
+
+/* TABLE */
+table>thead {
+  background: #fff !important;
+}
+
+table>thead th {
+  color: #777 !important;
+  padding: 0.9rem 0.7rem !important;
+  font-size: 0.8rem !important;
+}
+
+table>tbody tr>td {
+  color: #888 !important;
+  padding: 0.7rem !important;
+  border-top: solid 1px #f1f1f1 !important;
+  font-size: 0.8rem !important;
+}
+
+table>tbody tr>td button {
+  font-size: .8rem !important;
+}
+
+table>tbody tr.b-table-empty-row,
+table>tbody tr.b-table-busy-slot {
+  background: #fff !important;
+}
+
+table>tbody tr.b-table-empty-row td,
+table>tbody tr.b-table-busy-slot td {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+table>tbody tr.b-table-empty-row img {
+  max-width: 25%;
+  max-height: 25%;
+}
+
+/* MODAL */
+.modal .modal-title {
+  font-size: 1rem !important;
+}
+
+.modal .modal-body form fieldset .col-form-label {
+  font-size: 0.75rem !important;
+}
+
+.modal .modal-body form input {
+  font-size: 0.9rem !important;
+}
+
+.modal .modal-body form .invalid-feedback {
+  margin-top: 0.5rem !important;
+  font-size: 0.7rem !important;
+}
+
+.modal .modal-footer button {
+  font-size: 0.8rem !important;
+}
+
+/* SEARCH MODAL (BODYLESS) */
+#search-modal .modal-dialog {
+  margin-top: 5rem !important;
+}
+
+#search-modal .modal-content .modal-body {
+  background: #F7FAFC !important;
+  border-radius: .5rem !important;
+  padding: 0 !important;
+  padding-bottom: .2rem !important;
+}
+
+#search-modal .modal-content .modal-body input {
+  color: #777 !important;
+  padding: 1.35rem 1rem !important;
+  border: 0 !important;
+  border-radius: .4rem;
+  border-bottom: solid 1px #f1f1f1 !important;
+  font-size: 0.9rem !important;
+}
+
+#search-modal .modal-content .modal-body input:focus {
+  box-shadow: none !important;
+}
+
+#search-modal .modal-content .modal-body button {
+  font-size: .7rem !important;
+}
+
+/* PROFILE PICTURE PREVIEW */
+.prof-pic-preview {
+  height: 150px !important;
+  width: 160px !important;
+  border: solid 1px #eee;
+  border-radius: 50% !important;
+  margin: 0.7rem auto !important;
+}
+
+/* AVATAR */
+.avatar {
+  background: #f0f0f0;
+  color: #777 !important;
+  padding: 4rem 4.5rem !important;
+  border: solid 1px #f1f1f1;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 2rem !important;
+}
+
+/* SB-ADMIN OVERRIEDS */
+.navbar .navbar-nav li>a {
+  font-size: .9rem !important;
+}
+
+.sidebar {
+  background: #010e28 !important;
+}
+
+.sidebar-container .navbar-nav li>a span {
+  font-size: 0.8rem !important;
+}
+
+.sidebar-container ul#accordionSidebar {
+  min-height: 100vh !important;
+  height: 100% !important;
+}
+
+/* BS4 OVERRIDES */
+.card {
+  border: 0 !important;
+}
+
+.card-header {
+  background: #fff !important;
+  border-bottom: solid 1px #eee !important;
+}
+
+.card-header button {
+  font-size: 0.8rem !important;
+}
+
+.card-body {
+  padding-top: 0 !important;
+}
