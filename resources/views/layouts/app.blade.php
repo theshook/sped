@@ -10,15 +10,13 @@
 
     @yield('title')
 
-    {{-- <title>{{ config('app.name', 'Laravel') }}</title> --}}
-
     <!-- Fonts -->
-    {{-- <link rel="dns-prefetch" href="//fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"> --}}
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+	  <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/custom-styles.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/backend.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/fontawesome-5.11/css/all.min.css') }}" rel="stylesheet" type="text/css">
     @yield('link')
 </head>
@@ -55,7 +53,11 @@
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <script src="{{ asset('js/feather.min.js')}}"></script>
     <script src="{{ asset('plugins/fontawesome-5.11/js/all.min.js') }}"></script>
+    <script>
+      feather.replace();
+    </script>
     @yield('js')
 </body>
 
