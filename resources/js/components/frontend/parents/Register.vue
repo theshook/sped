@@ -26,10 +26,14 @@
 
       <div class="d-flex align-items-baseline mb-3">
         <b-form-checkbox class="mr-auto">
-          <small class="text-muted">Remember me</small>
+          <small class="text-muted">
+            I accept
+            <a href="#">Terms of Service</a>
+            and
+            <a href="#">Privacy Policy</a>
+            .
+          </small>
         </b-form-checkbox>
-
-        <a href="#" class="text-sm ml-auto">Forgot password?</a>
       </div>
 
       <b-button variant="primary" class="py-3 px-3 mb-3" block>Continue</b-button>
