@@ -1,50 +1,34 @@
 <template>
   <div>
-    <b-card class="col-lg-4 shadow-sm mx-auto mt-lg-5">
-      <h3>Log In</h3>
+    <b-form>
+      <h3 class="font-weight-bold">Parent log in</h3>
+      <small class="text-muted">Manage and view your child's documents.</small>
 
-      <b-form class="mt-lg-3 mt-sm-5">
-        <b-form-group label="Email Address*" label-class="text-sm">
-          <b-form-input
-            class="text-sm form-control-lg py-4"
-            v-model="$v.form.email.$model"
-            :state="validateState('email')"
-            placeholder="Enter your email address"
-            aria-describedby="input-email-feedback"
-          ></b-form-input>
+      <div class="input-box">
+        <label for="email" class="input-label">E-mail</label>
+        <b-form-input id="email" placeholder="Your e-mail"></b-form-input>
+      </div>
 
-          <b-form-invalid-feedback id="input-email-feedback">
-            Email Address is required and must be
-            valid
-          </b-form-invalid-feedback>
-        </b-form-group>
+      <div class="input-box">
+        <label for="password" class="input-label">Password</label>
+        <b-form-input type="password" id="password" placeholder="Your password"></b-form-input>
+      </div>
 
-        <b-form-group label="Password*" label-class="text-sm">
-          <b-form-input
-            class="text-sm form-control-lg py-4"
-            v-model="$v.form.password.$model"
-            :state="validateState('password')"
-            placeholder="Enter your password"
-            aria-describedby="input-password-feedback"
-          ></b-form-input>
+      <div class="d-flex align-items-baseline mb-3">
+        <b-form-checkbox class="mr-auto">
+          <small class="text-muted">Remember me</small>
+        </b-form-checkbox>
 
-          <b-form-invalid-feedback id="input-password-feedback">Password is required</b-form-invalid-feedback>
-        </b-form-group>
+        <a href="#" class="text-sm ml-auto">Forgot password?</a>
+      </div>
 
-        <div class="d-flex">
-          <b-button
-            class="btn-submit font-weight-bold py-3 px-5 mb-3 mx-auto"
-            variant="success"
-          >Sign In</b-button>
-        </div>
+      <b-button variant="primary" class="py-3 px-3 mb-3" block>Log In</b-button>
 
-        <div class="text-center text-md">
-          <a href="#" class="text-sm text-muted mx-1">Create An Account</a>
-
-          <a href="#" class="text-sm text-muted mx-1">Forgot Password?</a>
-        </div>
-      </b-form>
-    </b-card>
+      <p class="font-weight-bold text-muted text-sm">
+        Don't have an account?
+        <a href="#">Click here</a>
+      </p>
+    </b-form>
   </div>
 </template>
 <script>
@@ -82,7 +66,11 @@ export default {
     validateState: function(name) {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
-    }
+    },
+
+    validateForm: function() {},
+
+    login: function() {}
   }
 };
 </script>
