@@ -134,6 +134,11 @@ Vue.component(
 );
 
 Vue.component(
+  "parent-register",
+  require("./components/frontend/Parents/Register.vue").default
+);
+
+Vue.component(
   "parent-forgot-password",
   require("./components/frontend/Parents/ForgotPassword.vue").default
 );

@@ -1,8 +1,13 @@
 <template>
   <div>
     <b-form>
-      <h3 class="font-weight-bold">Parent log in</h3>
+      <h3 class="font-weight-bold">Parent register</h3>
       <small class="text-muted">Manage and view your child's documents.</small>
+
+      <div class="input-box">
+        <label for="name" class="input-label">Name</label>
+        <b-form-input id="name" placeholder="Your name"></b-form-input>
+      </div>
 
       <div class="input-box">
         <label for="email" class="input-label">E-mail</label>
@@ -14,19 +19,24 @@
         <b-form-input type="password" id="password" placeholder="Your password"></b-form-input>
       </div>
 
+      <div class="input-box">
+        <label for="cpassword" class="input-label">Confirm Password</label>
+        <b-form-input type="password" id="cpassword" placeholder="Re-type your password"></b-form-input>
+      </div>
+
       <div class="d-flex align-items-baseline mb-3">
         <b-form-checkbox class="mr-auto">
           <small class="text-muted">Remember me</small>
         </b-form-checkbox>
 
-        <a href="/parent/forgot/password" class="text-sm ml-auto">Forgot password?</a>
+        <a href="#" class="text-sm ml-auto">Forgot password?</a>
       </div>
 
-      <b-button variant="primary" class="py-3 px-3 mb-3" block>Log In</b-button>
+      <b-button variant="primary" class="py-3 px-3 mb-3" block>Continue</b-button>
 
       <p class="font-weight-bold text-muted text-sm">
-        Don't have an account?
-        <a href="/parent/register">Click here</a>
+        Already have an account?
+        <a href="/parent/login">Click here</a>
       </p>
     </b-form>
   </div>
@@ -70,7 +80,7 @@ export default {
 
     validateForm: function() {},
 
-    login: function() {}
+    register: function() {}
   }
 };
 </script>

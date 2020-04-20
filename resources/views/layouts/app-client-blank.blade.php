@@ -16,6 +16,10 @@
     <link href="{{ asset('plugins/fontawesome-5.11/css/all.min.css') }}" rel="stylesheet" type="text/css">
     @yield('link')
     @yield('style')
+
+    <style>
+      .main-content { padding-top: 0 !important; }
+    </style>
 </head>
 
 <body>

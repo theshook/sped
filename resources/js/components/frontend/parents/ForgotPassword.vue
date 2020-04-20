@@ -1,32 +1,19 @@
 <template>
   <div>
-    <b-card class="col-lg-4 shadow-sm mx-lg-auto mt-lg-5">
-      <h3>Forgot Password?</h3>
+    <b-form>
+      <h3>
+        <strong>Forgot</strong>
+        <span class="text-muted">your password?</span>
+      </h3>
+      <small class="text-muted">Reset your password.</small>
 
-      <p class="text-muted">Send yourself password reset instructions.</p>
+      <div class="input-box">
+        <label for="email" class="input-label">E-mail</label>
+        <b-form-input type="email" id="email" placeholder="Your e-mail"></b-form-input>
+      </div>
 
-      <b-form class="mt-sm-3">
-        <b-form-group label="Email Address*" label-class="text-sm">
-          <b-form-input
-            class="text-sm form-control-lg py-4"
-            v-model="$v.form.email.$model"
-            :state="validateState('email')"
-            placeholder="Enter your email address"
-            aria-describedby="input-email-feedback"
-          ></b-form-input>
-
-          <b-form-invalid-feedback id="input-email-feedback">
-            Email Address is required and must be
-            valid
-          </b-form-invalid-feedback>
-        </b-form-group>
-
-        <b-button
-          class="btn-submit font-weight-bold py-3 mb-3 float-right"
-          variant="primary"
-        >Send instructions</b-button>
-      </b-form>
-    </b-card>
+      <b-button variant="primary" class="py-3 px-3 my-3" block>Submit</b-button>
+    </b-form>
   </div>
 </template>
 <script>
@@ -42,8 +29,7 @@ export default {
   data() {
     return {
       form: {
-        email: null,
-        password: null
+        email: null
       }
     };
   },
@@ -53,9 +39,6 @@ export default {
       email: {
         required,
         email
-      },
-      password: {
-        required
       }
     }
   },
@@ -64,7 +47,11 @@ export default {
     validateState: function(name) {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
-    }
+    },
+
+    validateForm: function() {},
+
+    submit: function() {}
   }
 };
 </script>

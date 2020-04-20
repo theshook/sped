@@ -1,20 +1,28 @@
-@extends('layouts.app-client')
+@extends('layouts.app-client-blank')
 
 @section('title')
-<title>UCLA::Parent - LOGIN</title>
-@endsection
-
-@section('style')
-<style>
-  body {
-    background: url('/images/paint_blue_bg.jpg') !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-  }
-</style>
+<title>UCLA::Parent - Forgot Password</title>
 @endsection
 
 @section('content')
-<parent-forgot-password host="{{env('API_HOST')}}" />
+<div class="row full-height form-row-container">
+  <div class="col-sm-12 col-lg-5 left-pane">
+    <div class="d-flex align-items-baseline">
+      <h4 class="font-weight-bolder text-primary">UCLA</h4>
+
+      <a href="/" class="text-sm ml-auto">
+        <span class="fa fa-fw fa-long-arrow-alt-left"></span>
+        Back to home page
+      </a>
+    </div>
+
+    <div class="pt-5 mt-5">
+      <parent-forgot-password host="{{env('API_HOST')}}" />
+    </div>
+  </div>
+
+  <div class="col-lg-7 right-pane">
+
+  </div>
+</div>
 @endsection

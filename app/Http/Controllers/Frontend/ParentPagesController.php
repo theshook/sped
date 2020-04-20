@@ -11,6 +11,11 @@ class ParentPagesController extends Controller
     return view('pages.frontend.parents.login');
   }
 
+  public function register()
+  {
+    return view('pages.frontend.parents.register');
+  }
+
   public function forgot_password()
   {
     return view('pages.frontend.parents.forgot-password');
