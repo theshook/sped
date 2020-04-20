@@ -49,7 +49,7 @@ input:focus {
   border: 0 !important;
   border-bottom: solid 1px #ddd !important;
   border-radius: 0 !important;
-  font-size: .8rem !important;
+  font-size: .9rem !important;
   font-weight: 500;
   transition: .3s ease !important;
 }
@@ -119,6 +119,28 @@ form .btn-submit:focus {
 
 .full-height {
   min-height: 100vh !important;
+}
+
+.form-row-container .left-pane {
+  background: #fff !important;
+  padding: 3rem 7rem !important;
+}
+
+.form-row-container .right-pane {
+  background: url('/images/paint_blue_bg.jpg') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
+@media(max-width: 578px) {
+  .form-row-container .left-pane {
+    padding: 3rem 2rem !important;
+  }
+
+  .form-row-container .right-pane {
+    display: none !important;
+  }
 }
 
 .page-header-banner {
