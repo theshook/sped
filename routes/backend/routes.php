@@ -28,11 +28,15 @@ Route::get('/register', function () {
 Auth::routes();
 
 //ADMIN DASHBOARD
-Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
+Route::group(['middleware' => ['roles:admin']], function () {
+  //BACKEND (DASHBOARD)
+  Route::get('/dashboard', 'Backend\AdminPagesController@dashboard')->name('admin.dashboard');
+});
 
 Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
   Route::group(['middleware' => ['roles:admin,teachers,pediatrics,deped,parents']], function () {
 
+    /* ====================== ADMIN ====================== */
     Route::group(['middleware' => ['roles:admin']], function () {
       //BACKEND (Provinces)
       Route::get('/provinces', 'Backend\ProvincesController@index')->name('admin.provinces');
@@ -47,7 +51,10 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
       Route::get('/categories', 'Backend\PagesController@checklistCategoriesIndex')->name('admin.categories');
       Route::get('/checklists', 'Backend\PagesController@checklistsIndex')->name('admin.checklists');
     });
+    /* ====================== /ADMIN ====================== */
 
+
+    /* ====================== ADMIN-TEACHERS ====================== */
     Route::group(['middleware' => ['roles:admin,teachers']], function () {
       //BACKEND (Pupils)
       Route::get('/pupils', 'Backend\PupilsController@index')->name('admin.pupils');
@@ -66,5 +73,6 @@ Route::group(['prefix' => 'configure', 'middleware' => ['auth']], function () {
       Route::get('/report/printPDF', 'Backend\ReportsController@printPDF')->name('report.printpdf');
       Route::get('/report/viewPDF', 'Backend\ReportsController@viewPDF')->name('report.viewpdf');
     });
+    /* ====================== /ADMIN-TEACHERS ====================== */
   });
 });
