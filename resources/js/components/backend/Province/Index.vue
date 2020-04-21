@@ -23,7 +23,7 @@
             </div>
 
             <div class="ml-auto">
-              <b-button variant="primary" size="sm" class="mr-2" v-b-modal.add-modal>
+              <b-button variant="primary" size="sm" v-b-modal.add-modal>
                 <b-icon icon="pencil-square" class="mr-2"></b-icon>Add Province
               </b-button>
             </div>
@@ -152,7 +152,7 @@
       <div class="d-flex mt-1 px-2">
         <small class="text-muted mt-1 mr-auto">
           Press
-          <span class="badge badge-dark">ESC</span> to close
+          <span class="badge badge-primary">ESC</span> to close
         </small>
 
         <div class="ml-auto">
@@ -259,8 +259,6 @@ export default {
   name: "ProvincesIndex",
   data() {
     return {
-      host: process.env.MIX_API_HOST,
-
       table_busy: false,
       submit_disabled: false,
       breadcrumb_link: [
@@ -350,7 +348,7 @@ export default {
 
     getProvinces: function(page) {
       this.table_busy = true;
-      const provincesAPI = `${this.host}/provinces?search=${this.search}&limit=${this.limit}&page=${page}`;
+      const provincesAPI = `/provinces?search=${this.search}&limit=${this.limit}&page=${page}`;
       axios
         .get(provincesAPI)
         .then(response => {
@@ -380,7 +378,7 @@ export default {
     },
 
     add: function() {
-      const provincesAPI = `${this.host}/provinces`;
+      const provincesAPI = `/provinces`;
       const data = {
         name: this.form.name
       };
@@ -438,7 +436,7 @@ export default {
     },
 
     update: function() {
-      const provincesAPI = `${this.host}/province/${this.edit_id}`;
+      const provincesAPI = `province/${this.edit_id}`;
       const data = {
         name: this.form.name
       };
@@ -489,7 +487,7 @@ export default {
 
     destroy: function() {
       this.submit_disabled = true;
-      const provincesAPI = `${this.host}/province/${this.delete_id}`;
+      const provincesAPI = `/province/${this.delete_id}`;
       axios
         .delete(provincesAPI)
         .then(response => {
