@@ -1,35 +1,46 @@
 <template>
   <div>
     <b-container class="mt-2">
-      <b-card class="shadow-sm">
-        <b-card-body>
-          <b-row>
-            <b-col lg="6">
-              <h2 class="text-primary font-weight-bold">Schools</h2>
-            </b-col>
+      <div class="page-header">
+        <h2 class="font-weight-bold">Schools</h2>
 
-            <b-col lg="6">
-              <div class="d-flex justify-content-end align-baseline">
-                <b-button variant="primary" size="sm" v-b-modal.add-modal>
-                  <b-icon icon="pencil"></b-icon>
-                  <!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-                  Add School
+        <b-breadcrumb :items="breadcrumb_link"></b-breadcrumb>
+      </div>
+
+      <b-card class="shadow-sm" no-body>
+        <b-card-header>
+          <div class="d-flex align-items-end">
+            <div class="mr-auto">
+              <b-button-group>
+                <b-button variant="light" size="sm" class="text-sm border">
+                  <b-icon icon="trash" class="mr-2"></b-icon>View Trash
                 </b-button>
-              </div>
-            </b-col>
-          </b-row>
 
-          <b-row class="mb-2">
+                <b-button variant="light" size="sm" class="text-sm border" @click="resetSearch">
+                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh Table
+                </b-button>
+
+                <b-button variant="light" size="sm">
+                  <b-icon icon="funnel" class="mr-2"></b-icon>Filter
+                </b-button>
+
+                <b-button variant="light" size="sm" v-b-modal.search-modal>
+                  <b-icon icon="search" class="mr-2"></b-icon>Search
+                </b-button>
+              </b-button-group>
+            </div>
+
+            <div class="ml-auto">
+              <b-button variant="primary" size="sm" v-b-modal.add-modal>
+                <b-icon icon="pencil-square" class="mr-2"></b-icon>Add Teacher
+              </b-button>
+            </div>
+          </div>
+        </b-card-header>
+
+        <b-card-body>
+          <b-row class="mb-2 d-none">
             <b-col lg="6">
-              <!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
-							@change="getProvinces"
-							v-model="limit">
-								<b-form-select-option value="10" selected>10</b-form-select-option>
-								<b-form-select-option value="25">25</b-form-select-option>
-								<b-form-select-option value="50">50</b-form-select-option>
-								<b-form-select-option value="100">100</b-form-select-option>
-              </b-form-select>-->
-
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
                 <select
@@ -56,12 +67,12 @@
 
           <b-table
             borderless
-            striped
-            hover
             id="schools-table"
             :items="schools"
             :fields="schools_fields"
+            :busy="table_busy"
             responsive="md"
+            show-empty
           >
             <template v-slot:cell(name)="data">{{ data.item.name }}</template>
 
@@ -69,31 +80,64 @@
 
             <template v-slot:cell(index)="data">
               <b-btn-group>
-                <b-button
-                  v-b-modal.edit-modal
-                  size="sm"
-                  variant="warning"
-                  class="text-white"
-                  @click="edit(data.index)"
-                >
+                <b-button v-b-modal.edit-modal size="sm" variant="light" @click="edit(data.index)">
                   <b-icon icon="pencil"></b-icon>
                 </b-button>
 
                 <b-button
                   v-b-modal.delete-modal
                   size="sm"
-                  variant="danger"
+                  variant="light"
                   @click="remove(data.index)"
                 >
                   <b-icon icon="trash"></b-icon>
                 </b-button>
+
+                <b-button
+                  v-b-modal.school-teachers-modal
+                  size="sm"
+                  variant="light"
+                  @click="getTeacherList(data.index)"
+                >
+                  <b-icon icon="card-text" class="mr-2"></b-icon>Teachers List
+                </b-button>
+
+                <b-button size="sm" variant="light" @click="getPupilList(data.index)">
+                  <b-icon icon="card-text" class="mr-2"></b-icon>Pupils List
+                </b-button>
               </b-btn-group>
+            </template>
+
+            <template v-slot:table-busy>
+              <div class="text-center py-3">
+                <b-spinner variant="primary"></b-spinner>
+              </div>
+            </template>
+
+            <template v-slot:empty="scope">
+              <div class="text-center py-3">
+                <b-img
+                  :src="'/images/no_data_3.svg'"
+                  alt="No data banner"
+                  blank-color="#f1f1f1"
+                  rounted
+                  fluid
+                ></b-img>
+                <p class="text-muted mt-3 mb-1">{{ scope.emptyText }}</p>
+                <b-button variant="link" size="sm" @click="resetSearch">Reset search</b-button>
+              </div>
             </template>
           </b-table>
 
-          <b-container class="clearfix px-0" fluid>
+          <b-container class="d-flex px-0" fluid>
+            <small class="text-muted" v-if="schools.length">
+              Showing {{ response.from }} - {{ response.to }} of
+              {{ response.total }} entries
+            </small>
+
             <b-pagination
-              class="float-right"
+              v-if="schools.length"
+              class="ml-auto"
               size="sm"
               v-model="current_page"
               :per-page="Number(response.per_page)"
@@ -107,18 +151,44 @@
     </b-container>
 
     <!-- MODALS -->
+
+    <!-- SEARCH -->
+    <b-modal id="search-modal" class="bodyless-search-modal" hide-header hide-footer>
+      <b-form v-on:submit.prevent>
+        <b-form-input
+          v-model="search"
+          class="form-control"
+          placeholder="Search"
+          @input="searchSchool"
+          autofocus
+        ></b-form-input>
+      </b-form>
+
+      <div class="d-flex mt-1 px-2">
+        <small class="text-muted mt-1 mr-auto">
+          Press
+          <span class="badge badge-primary">ESC</span> to close
+        </small>
+
+        <div class="ml-auto">
+          <b-button variant="link" size="sm" @click="closeSearchModal">Close</b-button>
+        </div>
+      </div>
+    </b-modal>
+
     <!-- ADD -->
     <b-modal
       id="add-modal"
       title="Add School"
-      ok-title="Submit"
       ok-variant="success"
+      :ok-title="submit_disabled ? 'Adding' : 'Add'"
+      :ok-disabled="submit_disabled"
       ok-only
       @ok="submitAdd"
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
+      <b-form v-on:submit.prevent="submitAdd">
         <b-form-group label="Name" label-class="text-sm">
           <b-form-input
             v-model="$v.form.name.$model"
@@ -153,14 +223,15 @@
     <b-modal
       id="edit-modal"
       title="Update School Information"
-      ok-title="Submit"
       ok-variant="success"
+      :ok-title="submit_disabled ? 'Saving' : 'Save Changes'"
+      :ok-disabled="submit_disabled"
       ok-only
       @ok="submitUpdate"
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
+      <b-form v-on:submit.prevent="submitUpdate">
         <b-form-group label="Name" label-class="text-sm">
           <b-form-input
             v-model="$v.form.name.$model"
@@ -194,14 +265,35 @@
     <!-- DELETE CONFIRM -->
     <b-modal
       id="delete-modal"
-      title="Confirm"
-      ok-title="Continue"
+      title="Delete"
       ok-variant="danger"
-      @ok="destroy"
+      :ok-title="submit_disabled ? 'Deleting' : 'Delete'"
+      :ok-disabled="submit_disabled"
+      @ok="submitDestroy"
       ok-only
       button-size="sm"
     >
-      <p class="text-center text-muted mb-1">Are you sure you want to remove this school?</p>
+      <p class="text-sm text-center text-muted mb-1">Are you sure you want to remove this school?</p>
+    </b-modal>
+
+    <!-- SCHOOL TEACHERS LIST -->
+    <b-modal
+      id="school-teachers-modal"
+      :title="'Teachers in ' + school_title"
+      @hidden="resetSchoolTeachers"
+      body-class="pt-0"
+      hide-footer
+      scrollable
+    >
+      <div v-if="school_teachers.length">
+        <b-table borderless :fields="school_teacher_fields" :items="school_teachers">
+          <template v-slot:cell(name)="data">{{data.item.first_name}} {{data.item.last_name}}</template>
+        </b-table>
+      </div>
+
+      <div class="text-center py-3" v-else>
+        <p class="text-muted">No teachers listed to this school.</p>
+      </div>
     </b-modal>
   </div>
 </template>
@@ -213,7 +305,30 @@ export default {
   props: ["host"],
   data() {
     return {
-      schools: null,
+      table_busy: false,
+      submit_disabled: false,
+      breadcrumb_link: [
+        {
+          text: "Dashboard",
+          href: "/dashboard"
+        },
+        {
+          text: "Schools",
+          href: "#"
+        }
+      ],
+      schools: [],
+      schools_raw: [],
+      school_title: null,
+      school_teachers: [],
+      school_pupils: [],
+      school_teacher_fields: [
+        {
+          key: "name",
+          label: "Name",
+          sortable: true
+        }
+      ],
       schools_fields: [
         {
           key: "name",
@@ -231,7 +346,7 @@ export default {
         }
       ],
 
-      provinces: null,
+      provinces: [],
       provinces_list: [],
       search: "",
       limit: 10,
@@ -281,19 +396,34 @@ export default {
       return $dirty ? !$error : null;
     },
 
+    searchSchool: function() {
+      let search = this.search.toLowerCase();
+
+      if (!search) {
+        this.getSchools();
+      }
+
+      this.schools = this.schools_raw.filter(
+        school => school.name.toLowerCase().indexOf(search) > -1
+      );
+    },
+
     getSchools: function(page) {
-      const schoolsAPI = `${this.host}/schools?search=${this.search}&limit=${this.limit}&page=${page}`;
+      this.table_busy = true;
+      const schoolsAPI = `/schools?search=${this.search}&limit=${this.limit}&page=${page}`;
       axios
         .get(schoolsAPI)
         .then(response => {
-          this.schools = response.data.data;
-          this.response = response.data;
+          this.schools = response.data.paginated.data;
+          this.schools_raw = response.data.raw;
+          this.response = response.data.paginated;
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
+        .finally(() => (this.table_busy = false));
     },
 
     getProvinces: function() {
-      const provincesAPI = `${this.host}/provinces/raw`;
+      const provincesAPI = `/provinces/raw`;
       axios
         .get(provincesAPI)
         .then(response => {
@@ -302,67 +432,32 @@ export default {
         .catch(err => console.log(err));
     },
 
-    formatDate: function(index) {
-      const schools = this.schools;
-      //return schools[index].created_at.split('-')
-      const month = schools[index].created_at.split("-")[1];
-      const dateDay = schools[index].created_at.split("-")[2].split(" ")[0];
-      const dateYear = schools[index].created_at.split("-")[0];
-      let dateMonth = null;
-      switch (month) {
-        case "01":
-          dateMonth = "January";
-          break;
-        case "02":
-          dateMonth = "February";
-          break;
-        case "03":
-          dateMonth = "March";
-          break;
-        case "04":
-          dateMonth = "April";
-          break;
-        case "05":
-          dateMonth = "May";
-          break;
-        case "06":
-          dateMonth = "June";
-          break;
-        case "07":
-          dateMonth = "July";
-          break;
-        case "08":
-          dateMonth = "August";
-          break;
-        case "09":
-          dateMonth = "September";
-          break;
-        case "10":
-          dateMonth = "October";
-          break;
-        case "11":
-          dateMonth = "November";
-          break;
-        case "12":
-          dateMonth = "December";
-          break;
-      }
+    getTeacherList: function(index) {
+      this.school_title = this.schools[index].name;
+      this.school_teachers = this.schools[index].teachers;
 
-      return `${dateMonth} ${dateDay}, ${dateYear}`;
+      console.log(this.schools[index].teachers);
+    },
+
+    getPupilList: function(index) {
+      this.school_title = this.schools[index].name;
+      this.school_pupils = this.schools[index].pupils;
     },
 
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.add();
       }
     },
 
     add: function() {
-      const schoolsAPI = `${this.host}/schools`;
+      const schoolsAPI = `/schools`;
 
       const data = {
         province_id: this.form.province_id,
@@ -399,7 +494,8 @@ export default {
             text: err.response.data.errors,
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     edit: function(index) {
@@ -412,15 +508,17 @@ export default {
     submitUpdate: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.update();
       }
     },
 
     update: function() {
-      const schoolsAPI = `${this.host}/school/${this.edit_id}`;
+      const schoolsAPI = `/school/${this.edit_id}`;
       const data = {
         province_id: this.form.province_id,
         name: this.form.name
@@ -456,7 +554,8 @@ export default {
             text: err.response.data.errors.name[0],
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     remove: function(index) {
@@ -464,14 +563,22 @@ export default {
       this.delete_index = index;
     },
 
+    submitDestroy: function(event) {
+      event.preventDefault();
+      this.destroy();
+    },
+
     destroy: function() {
-      const schoolsAPI = `${this.host}/school/${this.delete_id}`;
+      this.submit_disabled = true;
+
+      const schoolsAPI = `/school/${this.delete_id}`;
       axios
         .delete(schoolsAPI)
         .then(response => {
           if (response.data.status == 201) {
             this.schools.splice(this.delete_index, 1);
             this.delete_index = null;
+            this.$bvModal.hide("delete-modal");
             swal.fire({
               icon: "success",
               title: "Deleted",
@@ -502,13 +609,28 @@ export default {
             text: err.response.data.errors.name[0],
             timer: 3000
           });
-        });
+        })
+        .finally(() => (this.submit_disabled = false));
     },
 
     resetForm: function() {
       this.$v.$reset();
       this.form.province_id = null;
       this.form.name = null;
+    },
+
+    resetSchoolTeachers: function() {
+      this.school_title = null;
+      this.school_teachers = [];
+    },
+
+    resetSearch: function() {
+      this.search = "";
+      this.getSchools();
+    },
+
+    closeSearchModal: function() {
+      this.$bvModal.hide("search-modal");
     }
   }
 };
