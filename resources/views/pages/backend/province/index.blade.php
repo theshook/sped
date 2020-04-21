@@ -5,5 +5,5 @@
 @endsection
 
 @section('content')
-	<provinces-index host="{{ env('API_HOST') }}" />
+	<provinces-index />
 @endsection
