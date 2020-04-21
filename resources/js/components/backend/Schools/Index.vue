@@ -32,7 +32,7 @@
 
             <div class="ml-auto">
               <b-button variant="primary" size="sm" v-b-modal.add-modal>
-                <b-icon icon="pencil-square" class="mr-2"></b-icon>Add Teacher
+                <b-icon icon="pencil-square" class="mr-2"></b-icon>Add School
               </b-button>
             </div>
           </div>
@@ -102,7 +102,12 @@
                   <b-icon icon="card-text" class="mr-2"></b-icon>Teachers List
                 </b-button>
 
-                <b-button size="sm" variant="light" @click="getPupilList(data.index)">
+                <b-button
+                  v-b-modal.school-pupils-modal
+                  size="sm"
+                  variant="light"
+                  @click="getPupilList(data.index)"
+                >
                   <b-icon icon="card-text" class="mr-2"></b-icon>Pupils List
                 </b-button>
               </b-btn-group>
@@ -295,6 +300,26 @@
         <p class="text-muted">No teachers listed to this school.</p>
       </div>
     </b-modal>
+
+    <!-- SCHOOL TEACHERS LIST -->
+    <b-modal
+      id="school-pupils-modal"
+      :title="'Pupils in ' + school_title"
+      @hidden="resetSchoolPupils"
+      body-class="pt-0"
+      hide-footer
+      scrollable
+    >
+      <div v-if="school_pupils.length">
+        <b-table borderless :fields="school_pupil_fields" :items="school_pupils">
+          <template v-slot:cell(name)="data">{{data.item.first_name}} {{data.item.last_name}}</template>
+        </b-table>
+      </div>
+
+      <div class="text-center py-3" v-else>
+        <p class="text-muted">No pupils listed to this school.</p>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -323,6 +348,13 @@ export default {
       school_teachers: [],
       school_pupils: [],
       school_teacher_fields: [
+        {
+          key: "name",
+          label: "Name",
+          sortable: true
+        }
+      ],
+      school_pupil_fields: [
         {
           key: "name",
           label: "Name",
@@ -435,13 +467,13 @@ export default {
     getTeacherList: function(index) {
       this.school_title = this.schools[index].name;
       this.school_teachers = this.schools[index].teachers;
-
-      console.log(this.schools[index].teachers);
     },
 
     getPupilList: function(index) {
       this.school_title = this.schools[index].name;
       this.school_pupils = this.schools[index].pupils;
+
+      console.log(this.schools[index].pupils);
     },
 
     submitAdd: function(event) {
@@ -622,6 +654,11 @@ export default {
     resetSchoolTeachers: function() {
       this.school_title = null;
       this.school_teachers = [];
+    },
+
+    resetSchoolPupils: function() {
+      this.school_title = null;
+      this.school_pupils = [];
     },
 
     resetSearch: function() {
