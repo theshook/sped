@@ -18,12 +18,9 @@ class ProvincesController extends Controller
    */
   public function index(Request $request)
   {
-    $user = auth()->user()->id;
-    //dd($user);
-    $search = $request->search;
     $limit = $request->limit;
 
-    $paginated = Province::where('name', 'like', "$search%")->paginate($limit);
+    $paginated = Province::with('schools')->paginate($limit);
     $raw = Province::all();
     $data = array(
       'paginated' => $paginated,
