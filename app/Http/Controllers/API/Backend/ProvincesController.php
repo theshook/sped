@@ -21,7 +21,7 @@ class ProvincesController extends Controller
     $limit = $request->limit;
 
     $paginated = Province::with('schools')->paginate($limit);
-    $raw = Province::all();
+    $raw = Province::with('schools')->get();
     $data = array(
       'paginated' => $paginated,
       'raw' => $raw
