@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top">
 	<!-- Sidebar Toggle (Topbar) -->
-	<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+	{{-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
 		<i class="fa fa-bars"></i>
-  </button>
+  </button> --}}
 
 	<!-- Topbar Search -->
 	{{-- <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -16,9 +16,16 @@
 		</div>
 	</form> --}}
 
-	<!-- Topbar Navbar -->
-	<ul class="navbar-nav ml-auto">
+  <!-- Topbar Navbar -->
+  <ul class="navbar-nav mr-auto d-lg-none">
+    <li class="nav-item">
+      <a href="#" class="nav-link" id="sidebarToggle">
+        <span class="fa fa-bars"></span>
+      </a>
+    </li>
+  </ul>
 
+	<ul class="navbar-nav ml-auto">
 		<!-- Nav Item - Search Dropdown (Visible Only XS) -->
 		<li class="nav-item dropdown no-arrow d-sm-none">
 			<a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
