@@ -16,7 +16,7 @@
                   <b-icon icon="trash" class="mr-2"></b-icon>View Trash
                 </b-button>
 
-                <b-button variant="light" size="sm" class="text-sm border" @click="getProvinces">
+                <b-button variant="light" size="sm" class="text-sm border" @click="resetSearch">
                   <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh Table
                 </b-button>
 
@@ -343,7 +343,6 @@ export default {
 
     searchProvince: function() {
       let search = this.search.toLowerCase();
-      let provinceArr = this.provinces;
 
       if (!search) {
         this.getProvinces();
