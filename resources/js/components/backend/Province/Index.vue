@@ -12,6 +12,14 @@
           <div class="d-flex align-items-end">
             <div class="mr-auto">
               <b-button-group>
+                <b-button variant="light" size="sm" class="text-sm border">
+                  <b-icon icon="trash" class="mr-2"></b-icon>View Trash
+                </b-button>
+
+                <b-button variant="light" size="sm" class="text-sm border" @click="getProvinces">
+                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh Table
+                </b-button>
+
                 <b-button variant="light" size="sm">
                   <b-icon icon="funnel" class="mr-2"></b-icon>Filter
                 </b-button>
@@ -139,7 +147,7 @@
 
     <!-- SEARCH -->
     <b-modal id="search-modal" class="bodyless-search-modal" hide-header hide-footer>
-      <b-form>
+      <b-form v-on:submit.prevent>
         <b-form-input
           v-model="search"
           class="form-control"
