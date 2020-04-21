@@ -81,6 +81,15 @@
                 >
                   <b-icon icon="trash"></b-icon>
                 </b-button>
+
+                <b-button
+                  v-b-modal.province-schools-modal
+                  size="sm"
+                  variant="light"
+                  @click="getSchoolsList(data.index)"
+                >
+                  <b-icon icon="card-text" class="mr-2"></b-icon>Schools List
+                </b-button>
               </b-btn-group>
             </template>
 
@@ -99,18 +108,20 @@
                   rounted
                   fluid
                 ></b-img>
-                <p class="text-muted mt-3 mb-0">{{ scope.emptyText }}</p>
+                <p class="text-muted mt-3 mb-1">{{ scope.emptyText }}</p>
+                <b-button variant="link" size="sm" @click="resetSearch">Reset search</b-button>
               </div>
             </template>
           </b-table>
 
           <b-container class="d-flex px-0" fluid>
-            <small class="text-muted">
+            <small class="text-muted" v-if="provinces.length">
               Showing {{ response.from }} - {{ response.to }} of
               {{ response.total }} entries
             </small>
 
             <b-pagination
+              v-if="provinces.length"
               class="ml-auto"
               size="sm"
               v-model="current_page"
@@ -128,13 +139,15 @@
 
     <!-- SEARCH -->
     <b-modal id="search-modal" class="bodyless-search-modal" hide-header hide-footer>
-      <b-form-input
-        v-model="search"
-        class="form-control"
-        placeholder="Search"
-        @input="searchProvince"
-        autofocus
-      ></b-form-input>
+      <b-form>
+        <b-form-input
+          v-model="search"
+          class="form-control"
+          placeholder="Search"
+          @input="searchProvince"
+          autofocus
+        ></b-form-input>
+      </b-form>
 
       <div class="d-flex mt-1 px-2">
         <small class="text-muted mt-1 mr-auto">
@@ -161,7 +174,7 @@
       button-size="sm"
     >
       <!-- -->
-      <b-form>
+      <b-form v-on:submit.prevent="submitAdd">
         <b-form-group label="Name" label-class="text-sm">
           <b-form-input
             v-model="$v.form.name.$model"
@@ -189,7 +202,7 @@
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form ref="form">
+      <b-form v-on:submit.prevent="submitUpdate">
         <input type="hidden" v-model="edit_id" />
         <b-form-group label="Name" label-class="text-sm">
           <b-form-input
@@ -219,6 +232,24 @@
     >
       <p class="text-sm text-center text-muted mb-1">Are you sure you want to remove this province?</p>
     </b-modal>
+
+    <!-- PROVINCE SCHOOLS LIST -->
+    <b-modal
+      id="province-schools-modal"
+      :title="'Schools in ' + province_title"
+      @hidden="resetProvinceSchool"
+      body-class="pt-0"
+      hide-footer
+      scrollable
+    >
+      <div v-if="province_schools.length">
+        <b-table borderless :fields="province_schools_fields" :items="province_schools"></b-table>
+      </div>
+
+      <div class="text-center py-3" v-else>
+        <p class="text-muted">No schools listed to this province.</p>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -226,9 +257,10 @@
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   name: "ProvincesIndex",
-  props: ["host"],
   data() {
     return {
+      host: process.env.MIX_API_HOST,
+
       table_busy: false,
       submit_disabled: false,
       breadcrumb_link: [
@@ -246,6 +278,15 @@ export default {
       current_page: 1,
       provinces: [],
       provinces_raw: [],
+      province_title: null,
+      province_schools: [],
+      province_schools_fields: [
+        {
+          key: "name",
+          label: "School name",
+          sortable: true
+        }
+      ],
       provinces_fields: [
         {
           key: "name",
@@ -319,6 +360,11 @@ export default {
         })
         .catch(err => console.log(err))
         .finally(() => (this.table_busy = false));
+    },
+
+    getSchoolsList: function(index) {
+      this.province_title = this.provinces[index].name;
+      this.province_schools = this.provinces[index].schools;
     },
 
     submitAdd: function(event) {
@@ -495,6 +541,16 @@ export default {
     resetForm: function() {
       this.$v.$reset();
       this.form.name = null;
+    },
+
+    resetSearch: function() {
+      this.search = "";
+      this.getProvinces();
+    },
+
+    resetProvinceSchool: function() {
+      this.province_title = null;
+      this.province_schools = [];
     },
 
     closeSearchModal: function() {
