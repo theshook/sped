@@ -16,8 +16,8 @@
       </a>
     </div>
 
-    <div class="pt-5 mt-5">
-      <parent-login host="{{env('API_HOST')}}" />
+    <div class="pt-5 mt-3">
+      <parent-login />
     </div>
   </div>
 

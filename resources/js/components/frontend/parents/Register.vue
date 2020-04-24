@@ -36,11 +36,17 @@
         </b-form-checkbox>
       </div>
 
-      <b-button variant="primary" class="py-3 px-3 mb-3" block>Continue</b-button>
+      <b-button variant="primary" class="py-3 px-3 mb-3" block>
+        Continue
+        <b-icon icon="arrow-right" class="ml-2"></b-icon>
+      </b-button>
 
-      <p class="font-weight-bold text-muted text-sm">
+      <p class="text-muted text-sm">
         Already have an account?
-        <a href="/parent/login">Click here</a>
+        <a
+          href="/parent/login"
+          class="font-weight-bold text-decoration-none"
+        >Click here</a>
       </p>
     </b-form>
   </div>
