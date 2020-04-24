@@ -98,7 +98,7 @@ Vue.component(
 //BACKEND (Tests - manage questions to test)
 Vue.component(
   "test-manage-questions",
-  require("./components/backend/Tests/TestManageQuestions.vue").default
+  require("./components/backend/Tests/Manage/Questions.vue").default
 ); //BACKEND (Tests - show)
 Vue.component(
   "test-show",
