@@ -56,7 +56,7 @@ input:focus {
 }
 
 .input-box input::placeholder {
-  color: #999 !important;
+  color: #ddd !important;
 }
 
 .input-box input:focus {

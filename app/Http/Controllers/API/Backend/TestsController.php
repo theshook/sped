@@ -73,7 +73,7 @@ class TestsController extends Controller
       'status' => 201,
       'test' => $test,
       'questions' => $test_questions,
-      'questions_id' => $test_questionsArr,
+      'questions_id' => $test_questionsArr ?? [],
       'teacher_questions' => $teacher_questions
     );
 
