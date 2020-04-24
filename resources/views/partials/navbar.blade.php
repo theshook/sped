@@ -17,7 +17,7 @@
 	</form> --}}
 
   <!-- Topbar Navbar -->
-  <ul class="navbar-nav mr-auto d-lg-none">
+  <ul class="navbar-nav mr-auto">
     <li class="nav-item">
       <a href="#" class="nav-link" id="sidebarToggle">
         <span class="fa fa-bars"></span>
