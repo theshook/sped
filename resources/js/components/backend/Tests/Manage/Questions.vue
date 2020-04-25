@@ -462,6 +462,7 @@ export default {
       }
 
       this.questions.splice(index, 1); // Remove question from test questions
+      this.questions_id.splice(index, 1); // Remove question from test questions id)
     },
 
     //CONFIRM ADDED TEACHER QUESTIONS TO TEST QUESTIONS
@@ -487,15 +488,15 @@ export default {
 
             swal.fire({
               icon: "success",
-              title: "Added",
-              text: "Test questions successfully added",
+              title: "Updated",
+              text: "Test questions successfully updated",
               timer: 3000
             });
           } else {
             swal.fire({
               icon: "error",
               title: "Error",
-              text: "Failed to add test questions",
+              text: "Failed to update test questions",
               timer: 3000
             });
           }
