@@ -108,7 +108,7 @@
                   variant="light"
                   @click="getPupilList(data.index)"
                 >
-                  <b-icon icon="card-text" class="mr-2"></b-icon>Pupils List
+                  <b-icon icon="people" class="mr-2"></b-icon>Pupils List
                 </b-button>
               </b-btn-group>
             </template>
