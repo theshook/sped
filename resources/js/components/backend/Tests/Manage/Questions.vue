@@ -20,7 +20,7 @@
 
       <b-form-row>
         <b-col lg="6">
-          <b-card class="shadow-sm mb-2" no-body>
+          <b-card class="shadow-sm mb-4" no-body>
             <b-card-header>
               <div class="d-lg-flex d-sm-block align-items-baseline">
                 <h6 class="text-black-50 mr-auto mb-0">Available Questions</h6>
@@ -34,7 +34,7 @@
             </b-card-header>
 
             <b-card-body>
-              <!-- Sorted teacher questions list from computed sortedTeacherQuestions() -->
+              <!-- Sorted teacher questions list seperated by question type -->
               <draggable
                 :list="sortedTeacherQuestions"
                 group="questions_group"
@@ -77,7 +77,10 @@
                   </b-row>
                 </div>
 
-                <div class="text-center py-5" v-if="!teacher_questions.length">
+                <div
+                  class="text-center py-5"
+                  v-if="!teacher_questions.length || !sortedTeacherQuestions.length"
+                >
                   <small class="text-muted mb-0">
                     <b-icon icon="file-earmark" class="mr-1"></b-icon>No questions available.
                   </small>
@@ -92,7 +95,7 @@
         </b-col>
 
         <b-col lg="6">
-          <b-card class="shadow-sm mb-2" no-body>
+          <b-card class="shadow-sm mb-4" no-body>
             <b-card-header>
               <div class="d-lg-flex d-sm-block align-items-baseline">
                 <h6 class="text-black-50 mr-auto mb-0">Added Questions</h6>
@@ -103,7 +106,12 @@
               </div>
             </b-card-header>
             <b-card-body>
-              <draggable :list="questions" group="questions_group" @change="log">
+              <draggable
+                :list="questions"
+                group="questions_group"
+                v-if="show_teacher_questions"
+                @change="log"
+              >
                 <div v-for="(question, index) in questions" :key="index">
                   <b-row class="py-3 border-bottom text-black-50">
                     <b-col lg="6">
@@ -146,6 +154,10 @@
                   </small>
                 </div>
               </draggable>
+
+              <div class="text-center py-5" v-else>
+                <b-spinner variant="primary"></b-spinner>
+              </div>
             </b-card-body>
           </b-card>
         </b-col>
@@ -215,23 +227,29 @@ export default {
       breadcrumb_link: [
         {
           text: "Dashboard",
-          href: "/dashboard"
+          href: "/configure/dashboard"
         },
         {
-          text: "Test",
-          href: "#"
+          text: "Tests",
+          href: "/configure/tests"
         },
 
         {
-          text: "Manage Question",
+          text: "Manage Questions",
           href: "#"
         }
       ],
       test: {},
       teacher_questions: [],
+      teacher_questions_id: [],
       question_type_filter: 1,
       questions: [],
+      questions_type_1: [],
+      questions_type_2: [],
+      questions_type_3: [],
+      unconfirmed_questions_id: [],
       questions_id: [],
+      questions_id_qeue: [],
       question_fields: [
         {
           label: "Question",
@@ -261,27 +279,23 @@ export default {
       // 1 = multiple choices || 2 = enumeration || 3 = identification
       switch (teacher_questions_filer) {
         case 1:
-          return this.teacher_questions.filter(
-            question => question.question_type === 1
-          );
+          return this.questions_type_1;
           break;
 
         case 2:
-          return this.teacher_questions.filter(
-            question => question.question_type === 2
-          );
+          return this.questions_type_2;
           break;
 
         case 3:
-          return this.teacher_questions.filter(
-            question => question.question_type === 3
-          );
+          return this.questions_type_3;
           break;
 
         default:
           return (this.teacher_questions = []);
       }
-    }
+    },
+
+    sortedTestQuestions: function() {}
   },
   mounted() {
     this.getTest();
@@ -292,19 +306,100 @@ export default {
       return $dirty ? !$error : null;
     },
 
-    getTest: function(page) {
+    getTest: async function(page) {
       this.show_teacher_questions = false;
       let testAPI = `/test/${this.test_id}`;
-      axios
+      await axios
         .get(testAPI)
         .then(response => {
           this.test = response.data.test;
-          this.questions_id = response.data.questions.id;
+          this.questions_id = JSON.parse(response.data.questions_id);
           this.questions = response.data.questions;
           this.teacher_questions = response.data.teacher_questions;
+
+          this.teacher_questions.forEach(question =>
+            this.teacher_questions_id.push(question.id)
+          );
+
+          this.sortQuestions();
+          this.removeDoubleQuestions();
         })
         .catch(err => console.log(err))
         .finally(() => (this.show_teacher_questions = true));
+    },
+
+    // SORT QUESTIONS BY TYPE (INDIVIDUAL ARRAYS)
+    sortQuestions: function() {
+      // MULTIPLE CHOICES
+      let question_type1 = this.teacher_questions.filter(
+        question => question.question_type === 1
+      );
+      this.questions_type_1 = question_type1;
+
+      // ENUMERATION
+      let question_type2 = this.teacher_questions.filter(
+        question => question.question_type === 2
+      );
+      this.questions_type_2 = question_type2;
+
+      // IDENTIFICATION
+      let question_type3 = this.teacher_questions.filter(
+        question => question.question_type === 3
+      );
+      this.questions_type_3 = question_type3;
+    },
+
+    // REMOVE QUESTION IF BOTH EXIST ON (AVAILABLE/ADDED)
+    removeDoubleQuestions: function() {
+      this.teacher_questions.forEach((teacher_question, index1) => {
+        this.questions_id.forEach((question_id, index2) => {
+          if (this.teacher_questions[index1].id === this.questions_id[index2]) {
+            this.teacher_questions.splice(index1, 1);
+          }
+        });
+      });
+
+      // FOR ADD QUESTIONS METHODS
+      // REMOVE QUESTION ID TO IT'S ARRAY (BY TYPE)
+
+      // MULTIPLE CHOICES
+      if (this.questions_type_1.length > 0 && this.question_type_filter == 1) {
+        this.questions_id.forEach((question_id, index1) => {
+          this.questions_type_1.forEach((question_type_1, index2) => {
+            if (
+              this.questions_id[index1] === this.questions_type_1[index2].id
+            ) {
+              this.questions_type_1.splice(index2, 1);
+            }
+          });
+        });
+      }
+
+      // ENUMERATION
+      if (this.questions_type_2.length > 0 && this.question_type_filter == 2) {
+        this.questions_id.forEach((question_id, index1) => {
+          this.questions_type_2.forEach((question_type_2, index2) => {
+            if (
+              this.questions_id[index1] === this.questions_type_2[index2].id
+            ) {
+              this.questions_type_2.splice(index2, 1);
+            }
+          });
+        });
+      }
+
+      // IDENTIFICATION
+      if (this.questions_type_3.length > 0 && this.question_type_filter == 3) {
+        this.questions_id.forEach((question_id, index1) => {
+          this.questions_type_3.forEach((question_type_3, index2) => {
+            if (
+              this.questions_id[index1] === this.questions_type_3[index2].id
+            ) {
+              this.questions_type_3.splice(index2, 1);
+            }
+          });
+        });
+      }
     },
 
     searchQuestion: function() {
@@ -321,19 +416,52 @@ export default {
 
     // ADD-REMOVE QUESTIONS FROM THE TEST
     addQuestion: function(index) {
-      let teacher_question_id = this.teacher_questions[index].id;
-      let teacher_question = this.teacher_questions[index];
+      let question = null;
+      switch (this.question_type_filter) {
+        case 1:
+          question = this.questions_type_1[index];
+          break;
 
-      this.questions.push(teacher_question); // Add browsed question to test questions list
+        case 2:
+          question = this.questions_type_2[index];
+          break;
+
+        case 3:
+          question = this.questions_type_3[index];
+          break;
+      }
+
+      const { id, question_type } = question;
+
+      this.questions_id.push(id);
+      this.unconfirmed_questions_id.push(id);
+      this.questions.push(question);
       this.teacher_questions.splice(index, 1); // Remove browsed question to teacher questions
+
+      this.removeDoubleQuestions();
     },
 
     removeQuestion: function(index) {
-      let question_id = this.questions[index].id;
       let question = this.questions[index];
+      const { id, question_type } = question;
 
-      this.teacher_questions.push(question); // Add question to teacher questions
-      this.questions.splice(index, 1); // Remove question to test questions
+      this.teacher_questions_id.push(id); // Add question id to teacher questions
+      // Check question type
+      switch (question_type) {
+        case 1:
+          this.questions_type_1.push(question);
+          break;
+
+        case 2:
+          this.questions_type_2.push(question);
+          break;
+
+        case 3:
+          this.questions_type_3.push(question);
+          break;
+      }
+
+      this.questions.splice(index, 1); // Remove question from test questions
     },
 
     //CONFIRM ADDED TEACHER QUESTIONS TO TEST QUESTIONS
@@ -344,6 +472,43 @@ export default {
 
     confirmAddedQuestions: function() {
       this.submit_disabled = true;
+      let testAPI = `/test/${this.test.id}`;
+
+      const data = {
+        questions_id: this.questions_id
+      };
+
+      axios
+        .put(testAPI, data)
+        .then(response => {
+          if (response.data.status == 201) {
+            this.getTest();
+            this.$bvModal.hide("confirm-added-questions-modal");
+
+            swal.fire({
+              icon: "success",
+              title: "Added",
+              text: "Test questions successfully added",
+              timer: 3000
+            });
+          } else {
+            swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to add test questions",
+              timer: 3000
+            });
+          }
+        })
+        .catch(err => {
+          swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            text: err.response.data.errors.name[0],
+            timer: 3000
+          });
+        })
+        .finally(() => (this.submit_disabled = false));
     },
 
     resetSearch: function() {
