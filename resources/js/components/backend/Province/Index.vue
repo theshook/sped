@@ -17,7 +17,8 @@
                 </b-button>
 
                 <b-button variant="light" size="sm" class="text-sm border" @click="resetSearch">
-                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh Table
+                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh
+                  Table
                 </b-button>
 
                 <b-button variant="light" size="sm">
@@ -190,10 +191,9 @@
             aria-describedby="invalid-input-name"
           ></b-form-input>
 
-          <b-form-invalid-feedback id="invalid-input-name">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="invalid-input-name"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -219,10 +219,9 @@
             aria-describedby="invalid-input-name"
           ></b-form-input>
 
-          <b-form-invalid-feedback id="invalid-input-name">
-            This field is required and must be atleast 3
-            characters.
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="invalid-input-name"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>

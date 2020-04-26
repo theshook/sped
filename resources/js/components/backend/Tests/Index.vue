@@ -17,7 +17,8 @@
                 </b-button>
 
                 <b-button variant="light" size="sm" class="text-sm border" @click="resetSearch">
-                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh Table
+                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh
+                  Table
                 </b-button>
 
                 <b-button variant="light" size="sm">
@@ -75,9 +76,11 @@
           >
             <template v-slot:cell(name)="data">{{ data.item.name }}</template>
 
-            <template
-              v-slot:cell(teacher)="data"
-            >{{ data.item.teacher.first_name + ' ' + data.item.teacher.last_name }}</template>
+            <template v-slot:cell(teacher)="data">
+              {{
+              data.item.teacher.first_name + " " + data.item.teacher.last_name
+              }}
+            </template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group class="rounded">
@@ -99,7 +102,8 @@
                 </b-button>
 
                 <b-button size="sm" variant="light" @click="manage(data.index)">
-                  <b-icon icon="filter-left" class="mr-2"></b-icon>Manage Questions
+                  <b-icon icon="filter-left" class="mr-2"></b-icon>Manage
+                  Questions
                 </b-button>
 
                 <b-button
@@ -215,10 +219,9 @@
             :state="validateState('title')"
             aria-describedby="input-title-feedback"
           ></b-form-input>
-          <b-form-invalid-feedback id="input-title-feedback">
-            This field is required and must be atleast 3
-            characters
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="input-title-feedback"
+          >This field is required and must be atleast 3 characters</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Description" label-class="text-sm">
@@ -229,10 +232,7 @@
             aria-describedby="input-description-feedback"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback>
-            This field is required and must be atleast 10
-            characters
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback>This field is required and must be atleast 10 characters</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -270,10 +270,9 @@
             :state="validateState('title')"
             aria-describedby="input-title-feedback"
           ></b-form-input>
-          <b-form-invalid-feedback id="input-title-feedback">
-            This field is required and must be atleast 3
-            characters
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            id="input-title-feedback"
+          >This field is required and must be atleast 3 characters</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Description" label-class="text-sm">
@@ -284,10 +283,7 @@
             aria-describedby="input-description-feedback"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback>
-            This field is required and must be atleast 10
-            characters
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback>This field is required and must be atleast 10 characters</b-form-invalid-feedback>
         </b-form-group>
       </b-form>
     </b-modal>
@@ -299,7 +295,7 @@
       ok-variant="danger"
       :ok-title="submit_disabled ? 'Deleting' : 'Delete'"
       :ok-disabled="submit_disabled"
-      @ok="destroy"
+      @ok="submitDestroy"
       ok-only
       button-size="sm"
     >
@@ -458,8 +454,10 @@ export default {
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.add();
       }
@@ -503,7 +501,8 @@ export default {
             text: err.response.data.errors,
             timer: 10000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     edit: function(index) {
@@ -517,11 +516,12 @@ export default {
     submitUpdate: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.update();
-        this.$bvModal.hide("edit-modal");
       }
     },
 
@@ -553,6 +553,7 @@ export default {
             this.tests[this.edit_index].title = this.form.title;
             this.tests[this.edit_index].description = this.form.description;
 
+            this.$bvModal.hide("edit-modal");
             this.resetForm();
 
             swal.fire({
@@ -577,7 +578,8 @@ export default {
             text: err.response.data.errors,
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     remove: function(index) {
@@ -585,7 +587,13 @@ export default {
       this.delete_index = index;
     },
 
+    submitDestroy: function(event) {
+      event.preventDefault();
+      this.destroy();
+    },
+
     destroy: function(index) {
+      this.submit_disabled = true;
       const testsAPI = `/test/${this.delete_id}`;
       axios
         .delete(testsAPI)
@@ -616,7 +624,8 @@ export default {
             text: err.response.data.errors.name[0],
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     resetForm: function() {
