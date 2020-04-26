@@ -182,7 +182,7 @@
       button-size="sm"
     >
       <!-- -->
-      <b-form v-on:submit.prevent="submitAdd">
+      <b-form @keyup.enter="submitAdd">
         <b-form-group label="Name" label-class="text-sm">
           <b-form-input
             v-model="$v.form.name.$model"
@@ -210,7 +210,7 @@
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form v-on:submit.prevent="submitUpdate">
+      <b-form @keyup.enter="submitUpdate">
         <input type="hidden" v-model="edit_id" />
         <b-form-group label="Name" label-class="text-sm">
           <b-form-input
