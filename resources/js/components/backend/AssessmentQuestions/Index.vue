@@ -16,7 +16,12 @@
                   <b-icon icon="trash" class="mr-2"></b-icon>View Trash
                 </b-button>
 
-                <b-button variant="light" size="sm" class="text-sm border" @click="resetSearch">
+                <b-button
+                  variant="light"
+                  size="sm"
+                  class="text-sm border"
+                  @click="resetSearch"
+                >
                   <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh
                   Table
                 </b-button>
@@ -60,7 +65,12 @@
 
             <b-col lg="6" class="d-flex justify-content-end align-content-end">
               <b-form class="col-sm-12 col-md-6 px-0">
-                <b-form-input size="sm" v-model="search" @input="getQuestions" placeholder="Search"></b-form-input>
+                <b-form-input
+                  size="sm"
+                  v-model="search"
+                  @input="getQuestions"
+                  placeholder="Search"
+                ></b-form-input>
               </b-form>
             </b-col>
           </b-row>
@@ -74,28 +84,40 @@
             responsive="md"
             show-empty
           >
-            <template v-slot:cell(question)="data">{{ data.item.question }}</template>
+            <template v-slot:cell(question)="data">{{
+              data.item.question
+            }}</template>
 
             <template v-slot:cell(question_type)="data">
               <span
                 class="badge badge-primary mb-0 p-1"
                 v-if="data.item.question_type === 1"
-              >Multiple choices</span>
+                >Multiple choices</span
+              >
               <span
                 class="badge badge-info mb-0 p-1"
                 v-if="data.item.question_type === 2"
-              >Enumeration</span>
+                >Enumeration</span
+              >
               <span
                 class="badge badge-secondary mb-0 p-1"
                 v-if="data.item.question_type === 3"
-              >Identification</span>
+                >Identification</span
+              >
             </template>
 
-            <template v-slot:cell(checklist)="data">{{ data.item.checklist.content }}</template>
+            <template v-slot:cell(checklist)="data">{{
+              data.item.checklist.content
+            }}</template>
 
             <template v-slot:cell(index)="data">
               <b-btn-group class="rounded">
-                <b-button v-b-modal.edit-modal size="sm" variant="light" @click="edit(data.index)">
+                <b-button
+                  v-b-modal.edit-modal
+                  size="sm"
+                  variant="light"
+                  @click="edit(data.index)"
+                >
                   <b-icon icon="pencil"></b-icon>
                 </b-button>
 
@@ -126,7 +148,9 @@
                   fluid
                 ></b-img>
                 <p class="text-muted mt-3 mb-1">{{ scope.emptyText }}</p>
-                <b-button variant="link" size="sm" @click="resetSearch">Reset search</b-button>
+                <b-button variant="link" size="sm" @click="resetSearch"
+                  >Reset search</b-button
+                >
               </div>
             </template>
           </b-table>
@@ -155,7 +179,12 @@
     <!-- MODALS -->
 
     <!-- SEARCH -->
-    <b-modal id="search-modal" class="bodyless-search-modal" hide-header hide-footer>
+    <b-modal
+      id="search-modal"
+      class="bodyless-search-modal"
+      hide-header
+      hide-footer
+    >
       <b-form v-on:submit.prevent>
         <b-form-input
           v-model="search"
@@ -173,7 +202,9 @@
         </small>
 
         <div class="ml-auto">
-          <b-button variant="link" size="sm" @click="closeSearchModal">Close</b-button>
+          <b-button variant="link" size="sm" @click="closeSearchModal"
+            >Close</b-button
+          >
         </div>
       </div>
     </b-modal>
@@ -202,9 +233,12 @@
               v-for="category in checklistCategories"
               :key="category.id"
               :value="category.id"
-            >{{ category.name }}</b-form-select-option>
+              >{{ category.name }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-category-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Teacher" label-class="text-sm">
@@ -217,9 +251,12 @@
               v-for="teacher in teachers"
               :key="teacher.id"
               :value="teacher.id"
-            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
+              >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-teacher-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Question type" label-class="text-sm">
@@ -230,84 +267,58 @@
             @change="checkQuestionType"
           >
             <template v-slot:first>
-              <b-form-select-option :value="null" disabled>Choose</b-form-select-option>
+              <b-form-select-option :value="null" disabled
+                >Choose</b-form-select-option
+              >
             </template>
-            <b-form-select-option :value="1">Multiple choices</b-form-select-option>
+            <b-form-select-option :value="1"
+              >Multiple choices</b-form-select-option
+            >
             <b-form-select-option :value="2">Enumeration</b-form-select-option>
-            <b-form-select-option :value="3">Identification</b-form-select-option>
+            <b-form-select-option :value="3"
+              >Identification</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-teacher-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <section v-if="show_question_fields && form.question_type !== null">
           <b-form-group label="Question" label-class="text-sm">
-            <b-form-textarea
+            <ckeditor
+              :editor="editor"
               v-model="$v.form.question.$model"
-              :state="validateState('question')"
-              aria-describedby="invalid-input-question"
-            ></b-form-textarea>
-
-            <b-form-invalid-feedback id="invalid-input-question">
-              This field is required and must be atleast 10
-              characters.
-            </b-form-invalid-feedback>
+            ></ckeditor>
           </b-form-group>
 
           <section v-if="form.question_type == 1">
             <b-form-group label="Choice #1" label-class="text-sm">
-              <b-form-textarea
+              <ckeditor
+                :editor="editor"
                 v-model="$v.form.choice1.$model"
-                :state="validateState('choice1')"
-                aria-describedby="invalid-input-choice1"
-                rows="4"
-              ></b-form-textarea>
-
-              <b-form-invalid-feedback id="invalid-input-choice1">
-                This field is required and must be atleast 3
-                characters.
-              </b-form-invalid-feedback>
+              ></ckeditor>
             </b-form-group>
 
             <b-form-group label="Choice #2" label-class="text-sm">
-              <b-form-textarea
+              <ckeditor
+                :editor="editor"
                 v-model="$v.form.choice2.$model"
-                :state="validateState('choice2')"
-                aria-describedby="invalid-input-choice2"
-                rows="4"
-              ></b-form-textarea>
-
-              <b-form-invalid-feedback id="invalid-input-choice2">
-                This field is required and must be atleast 3
-                characters.
-              </b-form-invalid-feedback>
+              ></ckeditor>
             </b-form-group>
 
             <b-form-group label="Choice #3" label-class="text-sm">
-              <b-form-textarea
+              <ckeditor
+                :editor="editor"
                 v-model="$v.form.choice3.$model"
-                :state="validateState('choice3')"
-                aria-describedby="invalid-input-choice3"
-                rows="4"
-              ></b-form-textarea>
-
-              <b-form-invalid-feedback id="invalid-input-choice3">
-                This field is required and must be atleast 3
-                characters.
-              </b-form-invalid-feedback>
+              ></ckeditor>
             </b-form-group>
 
             <b-form-group label="Choice #4" label-class="text-sm">
-              <b-form-textarea
+              <ckeditor
+                :editor="editor"
                 v-model="$v.form.choice4.$model"
-                :state="validateState('choice4')"
-                aria-describedby="invalid-input-choice4"
-                rows="4"
-              ></b-form-textarea>
-
-              <b-form-invalid-feedback id="invalid-input-choice4">
-                This field is required and must be atleast 3
-                characters.
-              </b-form-invalid-feedback>
+              ></ckeditor>
             </b-form-group>
           </section>
 
@@ -320,8 +331,7 @@
             ></b-form-textarea>
 
             <b-form-invalid-feedback id="invalid-input-answer">
-              This field is required and must be atleast 3
-              characters.
+              This field is required and must be atleast 3 characters.
             </b-form-invalid-feedback>
           </b-form-group>
 
@@ -332,11 +342,13 @@
               rows="2"
             ></b-form-textarea>
 
-            <b-form-text class="text-muted text-small">* This field is optional</b-form-text>
+            <b-form-text class="text-muted text-small"
+              >* This field is optional</b-form-text
+            >
 
-            <b-form-invalid-feedback
-              id="invalid-input-explanation"
-            >This field must be atleast 3 characters.</b-form-invalid-feedback>
+            <b-form-invalid-feedback id="invalid-input-explanation"
+              >This field must be atleast 3 characters.</b-form-invalid-feedback
+            >
           </b-form-group>
         </section>
       </b-form>
@@ -366,9 +378,12 @@
               v-for="category in checklistCategories"
               :key="category.id"
               :value="category.id"
-            >{{ category.name }}</b-form-select-option>
+              >{{ category.name }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-category-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-category-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Teacher" label-class="text-sm">
@@ -381,9 +396,12 @@
               v-for="teacher in teachers"
               :key="teacher.id"
               :value="teacher.id"
-            >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option>
+              >{{ teacher.name }} - {{ teacher.school }}</b-form-select-option
+            >
           </b-form-select>
-          <b-form-invalid-feedback id="input-teacher-feedback">This field is required</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="input-teacher-feedback"
+            >This field is required</b-form-invalid-feedback
+          >
         </b-form-group>
 
         <b-form-group label="Question" label-class="text-sm">
@@ -394,8 +412,7 @@
           ></b-form-textarea>
 
           <b-form-invalid-feedback id="invalid-input-question">
-            This field is required and must be atleast 10
-            characters.
+            This field is required and must be atleast 10 characters.
           </b-form-invalid-feedback>
         </b-form-group>
 
@@ -409,8 +426,7 @@
             ></b-form-textarea>
 
             <b-form-invalid-feedback id="invalid-input-choice1">
-              This field is required and must be atleast 3
-              characters.
+              This field is required and must be atleast 3 characters.
             </b-form-invalid-feedback>
           </b-form-group>
 
@@ -423,8 +439,7 @@
             ></b-form-textarea>
 
             <b-form-invalid-feedback id="invalid-input-choice2">
-              This field is required and must be atleast 3
-              characters.
+              This field is required and must be atleast 3 characters.
             </b-form-invalid-feedback>
           </b-form-group>
 
@@ -437,8 +452,7 @@
             ></b-form-textarea>
 
             <b-form-invalid-feedback id="invalid-input-choice3">
-              This field is required and must be atleast 3
-              characters.
+              This field is required and must be atleast 3 characters.
             </b-form-invalid-feedback>
           </b-form-group>
 
@@ -451,8 +465,7 @@
             ></b-form-textarea>
 
             <b-form-invalid-feedback id="invalid-input-choice4">
-              This field is required and must be atleast 3
-              characters.
+              This field is required and must be atleast 3 characters.
             </b-form-invalid-feedback>
           </b-form-group>
         </section>
@@ -466,8 +479,7 @@
           ></b-form-textarea>
 
           <b-form-invalid-feedback id="invalid-input-answer">
-            This field is required and must be atleast 3
-            characters.
+            This field is required and must be atleast 3 characters.
           </b-form-invalid-feedback>
         </b-form-group>
 
@@ -478,9 +490,9 @@
             rows="2"
           ></b-form-textarea>
 
-          <b-form-invalid-feedback
-            id="invalid-input-explanation"
-          >This field must be atleast 3 characters.</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="invalid-input-explanation"
+            >This field must be atleast 3 characters.</b-form-invalid-feedback
+          >
         </b-form-group>
       </b-form>
     </b-modal>
@@ -496,7 +508,9 @@
       ok-only
       button-size="sm"
     >
-      <p class="text-center text-muted mb-1">Are you sure you want to remove this province?</p>
+      <p class="text-center text-muted mb-1">
+        Are you sure you want to remove this province?
+      </p>
     </b-modal>
   </div>
 </template>
@@ -509,11 +523,15 @@ import {
   minLength,
   maxLength
 } from "vuelidate/lib/validators";
+
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 export default {
   name: "TeacherQuestionsIndex",
   props: ["host"],
   data() {
     return {
+      editor: ClassicEditor,
+
       submit_disabled: false,
       table_busy: false,
       breadcrumb_link: [
