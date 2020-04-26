@@ -1,35 +1,45 @@
 <template>
   <div>
     <b-container class="mt-2">
-      <b-card class="shadow-sm">
-        <b-card-body>
-          <b-row>
-            <b-col lg="6">
-              <h2 class="text-primary font-weight-bold">Teachers</h2>
-            </b-col>
+      <div class="page-header">
+        <h2 class="font-weight-bold">Teachers</h2>
 
-            <b-col lg="6">
-              <div class="d-flex justify-content-end align-baseline">
-                <b-button variant="primary" size="sm" v-b-modal.add-modal>
-                  <b-icon icon="pencil"></b-icon>
-                  <!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-                  Add Teacher
+        <b-breadcrumb :items="breadcrumb_link"></b-breadcrumb>
+      </div>
+
+      <b-card class="shadow-sm" no-body>
+        <b-card-header>
+          <div class="d-flex align-items-end">
+            <div class="mr-auto">
+              <b-button-group>
+                <b-button variant="light" size="sm" class="text-sm border">
+                  <b-icon icon="trash" class="mr-2"></b-icon>View Trash
                 </b-button>
-              </div>
-            </b-col>
-          </b-row>
 
-          <b-row class="mb-2">
+                <b-button variant="light" size="sm" class="text-sm border" @click="getTeachers">
+                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh Table
+                </b-button>
+
+                <b-button variant="light" size="sm">
+                  <b-icon icon="funnel" class="mr-2"></b-icon>Filter
+                </b-button>
+
+                <b-button variant="light" size="sm" v-b-modal.search-modal>
+                  <b-icon icon="search" class="mr-2"></b-icon>Search
+                </b-button>
+              </b-button-group>
+            </div>
+
+            <div class="ml-auto">
+              <b-button variant="primary" size="sm" v-b-modal.add-modal>
+                <b-icon icon="pencil-square" class="mr-2"></b-icon>Add Teacher
+              </b-button>
+            </div>
+          </div>
+        </b-card-header>
+        <b-card-body>
+          <b-row class="mb-2 d-none">
             <b-col lg="6">
-              <!-- <b-form-select MY BUG EWAN KO PAREHAS NAMAN SA BABA HAHAHAHA
-							@change="getTeachers"
-							v-model="limit">
-								<b-form-select-option value="10" selected>10</b-form-select-option>
-								<b-form-select-option value="25">25</b-form-select-option>
-								<b-form-select-option value="50">50</b-form-select-option>
-								<b-form-select-option value="100">100</b-form-select-option>
-              </b-form-select>-->
-
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
                 <select
@@ -56,48 +66,77 @@
 
           <b-table
             borderless
-            striped
-            hover
-            id="teacher-table"
+            id="teachers-table"
             :items="teachers"
             :fields="teachers_fields"
+            :busy="table_busy"
             responsive="md"
+            show-empty
           >
-            <template v-slot:cell(name)="data">{{ data.item.name }}</template>
+            <template v-slot:cell(name)="data">{{ data.item.first_name }} {{data.item.last_name}}</template>
 
             <template v-slot:cell(index)="data">
-              <b-btn-group>
-                <b-button
-                  v-b-modal.edit-modal
-                  size="sm"
-                  variant="warning"
-                  class="text-white"
-                  @click="edit(data.index)"
-                >
+              <b-btn-group class="rounded">
+                <b-button v-b-modal.edit-modal size="sm" variant="light" @click="edit(data.index)">
                   <b-icon icon="pencil"></b-icon>
                 </b-button>
 
                 <b-button
                   v-b-modal.delete-modal
                   size="sm"
-                  variant="danger"
+                  variant="light"
                   @click="remove(data.index)"
                 >
                   <b-icon icon="trash"></b-icon>
                 </b-button>
+
+                <!-- <b-button
+                  v-b-modal.province-schools-modal
+                  size="sm"
+                  variant="light"
+                  @click="getSchoolsList(data.index)"
+                >
+                  <b-icon icon="card-text" class="mr-2"></b-icon>Schools List
+                </b-button>-->
               </b-btn-group>
+            </template>
+
+            <template v-slot:table-busy>
+              <div class="text-center py-3">
+                <b-spinner variant="primary"></b-spinner>
+              </div>
+            </template>
+
+            <template v-slot:empty="scope">
+              <div class="text-center py-3">
+                <b-img
+                  :src="'/images/no_data_3.svg'"
+                  alt="No data banner"
+                  blank-color="#f1f1f1"
+                  rounted
+                  fluid
+                ></b-img>
+                <p class="text-muted mt-3 mb-1">{{ scope.emptyText }}</p>
+                <b-button variant="link" size="sm" @click="resetSearch">Reset search</b-button>
+              </div>
             </template>
           </b-table>
 
-          <b-container class="clearfix px-0" fluid>
+          <b-container class="d-flex px-0" fluid>
+            <small class="text-muted" v-if="teachers.length">
+              Showing {{ response.from }} - {{ response.to }} of
+              {{ response.total }} entries
+            </small>
+
             <b-pagination
-              class="float-right"
+              v-if="teachers.length"
+              class="ml-auto"
               size="sm"
               v-model="current_page"
               :per-page="Number(response.per_page)"
               :total-rows="Number(response.total)"
               @change="getTeachers"
-              aria-controls="teacher-table"
+              aria-controls="teachers-table"
             ></b-pagination>
           </b-container>
         </b-card-body>
@@ -105,25 +144,54 @@
     </b-container>
 
     <!-- MODALS -->
+
+    <!-- SEARCH -->
+    <b-modal id="search-modal" class="bodyless-search-modal" hide-header hide-footer>
+      <b-form v-on:submit.prevent>
+        <b-form-input
+          v-model="search"
+          class="form-control"
+          placeholder="Search"
+          @input="searchTeachers"
+          autofocus
+        ></b-form-input>
+      </b-form>
+
+      <div class="d-flex mt-1 px-2">
+        <small class="text-muted mt-1 mr-auto">
+          Press
+          <span class="badge badge-primary">ESC</span> to close
+        </small>
+
+        <div class="ml-auto">
+          <b-button variant="link" size="sm" @click="closeSearchModal">Close</b-button>
+        </div>
+      </div>
+    </b-modal>
+
     <!-- ADD -->
     <b-modal
-      size="lg"
       id="add-modal"
       title="Add Teacher"
-      ok-title="Submit"
       ok-variant="success"
+      :ok-title="submit_disabled ? 'Adding' : 'Add'"
+      :ok-disabled="submit_disabled"
       ok-only
       @ok="submitAdd"
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
-        <b-form-group label="School" label-class="text-sm">
+      <b-form @keyup.enter="submitAdd">
+        <b-form-group label="School" label-class="text-sm" class="mb-1">
           <b-form-select
             v-model="$v.form.school_id.$model"
             :state="validateState('school_id')"
             aria-describedby="input-school-feedback"
           >
+            <template v-slot:first>
+              <b-form-select-option :value="null" diabled>--</b-form-select-option>
+            </template>
+
             <b-form-select-option
               v-for="school in schools"
               :key="school.id"
@@ -134,53 +202,31 @@
           <b-form-invalid-feedback id="input-school-feedback">This field is required.</b-form-invalid-feedback>
         </b-form-group>
 
-        <label class="text-sm">Full name</label>
-        <b-form-row>
-          <b-col lg="4" no-gutters>
-            <b-form-group>
-              <b-form-input
-                v-model="$v.form.first_name.$model"
-                :state="validateState('first_name')"
-                aria-describedby="input-fname-feedback"
-                placeholder="First name"
-              ></b-form-input>
+        <b-form-group label="First name" label-class="text-sm">
+          <b-form-input
+            v-model="$v.form.first_name.$model"
+            :state="validateState('first_name')"
+            aria-describedby="input-fname-feedback"
+            placeholder="First name"
+          ></b-form-input>
 
-              <b-form-invalid-feedback
-                id="input-fname-feedback"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
-            </b-form-group>
-          </b-col>
+          <b-form-invalid-feedback
+            id="input-fname-feedback"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
 
-          <b-col lg="4" no-gutters>
-            <b-form-group>
-              <b-form-input
-                v-model="$v.form.middle_name.$model"
-                :state="validateState('middle_name')"
-                aria-describedby="input-mname-feedback"
-                placeholder="Middle name"
-              ></b-form-input>
+        <b-form-group label="Middle name" label-class="text-sm">
+          <b-form-input
+            v-model="$v.form.middle_name.$model"
+            :state="validateState('middle_name')"
+            aria-describedby="input-mname-feedback"
+            placeholder="Middle name"
+          ></b-form-input>
 
-              <b-form-invalid-feedback
-                id="input-mname-feedback"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
-            </b-form-group>
-          </b-col>
-
-          <b-col lg="4" no-gutters>
-            <b-form-group>
-              <b-form-input
-                v-model="$v.form.last_name.$model"
-                :state="validateState('last_name')"
-                aria-describedby="input-lname-feedback"
-                placeholder="Last name"
-              ></b-form-input>
-
-              <b-form-invalid-feedback
-                id="input-lname-feedback"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
+          <b-form-invalid-feedback
+            id="input-mname-feedback"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
       </b-form>
     </b-modal>
 
@@ -196,8 +242,8 @@
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
-        <b-form-group label="School" label-class="text-sm">
+      <b-form @keyup.enter="submitUpdate">
+        <b-form-group label="School" label-class="text-sm" class="mb-1">
           <b-form-select
             v-model="$v.form.school_id.$model"
             :state="validateState('school_id')"
@@ -213,53 +259,31 @@
           <b-form-invalid-feedback id="input-school-feedback">This field is required.</b-form-invalid-feedback>
         </b-form-group>
 
-        <label class="text-sm">Full name</label>
-        <b-form-row>
-          <b-col lg="4" no-gutters>
-            <b-form-group>
-              <b-form-input
-                v-model="$v.form.first_name.$model"
-                :state="validateState('first_name')"
-                aria-describedby="input-fname-feedback"
-                placeholder="First name"
-              ></b-form-input>
+        <b-form-group label="First name" label-class="text-sm">
+          <b-form-input
+            v-model="$v.form.first_name.$model"
+            :state="validateState('first_name')"
+            aria-describedby="input-fname-feedback"
+            placeholder="First name"
+          ></b-form-input>
 
-              <b-form-invalid-feedback
-                id="input-fname-feedback"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
-            </b-form-group>
-          </b-col>
+          <b-form-invalid-feedback
+            id="input-fname-feedback"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
 
-          <b-col lg="4" no-gutters>
-            <b-form-group>
-              <b-form-input
-                v-model="$v.form.middle_name.$model"
-                :state="validateState('middle_name')"
-                aria-describedby="input-mname-feedback"
-                placeholder="Middle name"
-              ></b-form-input>
+        <b-form-group label="Middle name" label-class="text-sm">
+          <b-form-input
+            v-model="$v.form.middle_name.$model"
+            :state="validateState('middle_name')"
+            aria-describedby="input-mname-feedback"
+            placeholder="Middle name"
+          ></b-form-input>
 
-              <b-form-invalid-feedback
-                id="input-mname-feedback"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
-            </b-form-group>
-          </b-col>
-
-          <b-col lg="4" no-gutters>
-            <b-form-group>
-              <b-form-input
-                v-model="$v.form.last_name.$model"
-                :state="validateState('last_name')"
-                aria-describedby="input-lname-feedback"
-                placeholder="Last name"
-              ></b-form-input>
-
-              <b-form-invalid-feedback
-                id="input-lname-feedback"
-              >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
+          <b-form-invalid-feedback
+            id="input-mname-feedback"
+          >This field is required and must be atleast 3 characters.</b-form-invalid-feedback>
+        </b-form-group>
       </b-form>
     </b-modal>
 
@@ -267,13 +291,14 @@
     <b-modal
       id="delete-modal"
       title="Confirm"
-      ok-title="Continue"
+      :ok-title="submit_disabled ? 'Deleting' : 'Delete'"
+      :ok-disabled="submit_disabled"
       ok-variant="danger"
-      @ok="destroy"
+      @ok="submitDestroy"
       ok-only
       button-size="sm"
     >
-      <p class="text-center text-muted mb-1">Are you sure you want to remove this province?</p>
+      <p class="text-sm text-center text-muted mb-1">Are you sure you want to remove this teacher?</p>
     </b-modal>
   </div>
 </template>
@@ -285,10 +310,23 @@ export default {
   props: ["host"],
   data() {
     return {
+      table_busy: false,
+      submit_disabled: false,
+      breadcrumb_link: [
+        {
+          text: "Dashboard",
+          href: "/dashboard"
+        },
+        {
+          text: "Teachers",
+          href: "#"
+        }
+      ],
       search: "",
       limit: 10,
       current_page: 1,
-      teachers: null,
+      teachers: [],
+      teachers_raw: [],
       teachers_fields: [
         {
           key: "first_name",
@@ -354,9 +392,9 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    this.getTeachers();
-    this.getSchools();
+  async mounted() {
+    await this.getTeachers();
+    await this.getSchools();
   },
   methods: {
     validateState: function(name) {
@@ -365,18 +403,21 @@ export default {
     },
 
     getTeachers: function(page) {
-      const teachersAPI = `${this.host}/teachers?search=${this.search}&limit=${this.limit}&page=${page}`;
+      this.table_busy = true;
+      const teachersAPI = `/teachers?search=${this.search}&limit=${this.limit}&page=${page}`;
       axios
         .get(teachersAPI)
         .then(response => {
-          this.teachers = response.data.data;
-          this.response = response.data;
+          this.teachers = response.data.paginated.data;
+          this.teachers_raw = response.data.raw;
+          this.response = response.data.paginated;
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
+        .finally(() => (this.table_busy = false));
     },
 
     getSchools: function() {
-      const schoolsAPI = `${this.host}/schools/raw`;
+      const schoolsAPI = `/schools/raw`;
       axios
         .get(schoolsAPI)
         .then(response => {
@@ -389,67 +430,32 @@ export default {
         .catch(err => console.log(err));
     },
 
-    formatDate: function(index) {
-      const teachers = this.teachers;
-      //return teachers[index].created_at.split('-')
-      const month = teachers[index].created_at.split("-")[1];
-      const dateDay = teachers[index].created_at.split("-")[2].split(" ")[0];
-      const dateYear = teachers[index].created_at.split("-")[0];
-      let dateMonth = null;
-      switch (month) {
-        case "01":
-          dateMonth = "January";
-          break;
-        case "02":
-          dateMonth = "February";
-          break;
-        case "03":
-          dateMonth = "March";
-          break;
-        case "04":
-          dateMonth = "April";
-          break;
-        case "05":
-          dateMonth = "May";
-          break;
-        case "06":
-          dateMonth = "June";
-          break;
-        case "07":
-          dateMonth = "July";
-          break;
-        case "08":
-          dateMonth = "August";
-          break;
-        case "09":
-          dateMonth = "September";
-          break;
-        case "10":
-          dateMonth = "October";
-          break;
-        case "11":
-          dateMonth = "November";
-          break;
-        case "12":
-          dateMonth = "December";
-          break;
+    searchTeachers: function() {
+      let search = this.search.toLowerCase();
+
+      if (!search) {
+        this.getTeachers();
       }
 
-      return `${dateMonth} ${dateDay}, ${dateYear}`;
+      this.teachers = this.teachers_raw.filter(
+        teacher => teacher.first_name.toLowerCase().indexOf(search) > -1
+      );
     },
 
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.add();
       }
     },
 
     add: function() {
-      const teachersAPI = `${this.host}/teachers`;
+      const teachersAPI = `/teachers`;
       const data = {
         school_id: this.form.school_id,
         first_name: this.form.first_name,
@@ -480,7 +486,8 @@ export default {
             });
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
+        .finally(() => (this.submit_disabled = false));
     },
 
     edit: function(index) {
@@ -496,15 +503,17 @@ export default {
     submitUpdate: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.update();
       }
     },
 
     update: function() {
-      const teachersAPI = `${this.host}/teacher/${this.edit_id}`;
+      const teachersAPI = `/teacher/${this.edit_id}`;
       const data = {
         school_id: this.form.school_id,
         first_name: this.form.first_name,
@@ -545,7 +554,8 @@ export default {
             text: err.response.data.errors,
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     remove: function(index) {
@@ -553,14 +563,21 @@ export default {
       this.delete_index = index;
     },
 
-    destroy: function(index) {
-      const teachersAPI = `${this.host}/teacher/${this.delete_id}`;
+    submitDestroy: function(event) {
+      event.preventDefault();
+      this.submit_disabled = true;
+      this.destroy();
+    },
+
+    destroy: function() {
+      const teachersAPI = `/teacher/${this.delete_id}`;
       axios
         .delete(teachersAPI)
         .then(response => {
           if (response.data.status == 201) {
             this.teachers.splice(this.delete_index, 1);
             this.delete_index = null;
+            this.$bvModal.hide("delete-modal");
             swal.fire({
               icon: "success",
               title: "Deleted",
@@ -568,6 +585,7 @@ export default {
               timer: 3000
             });
           } else {
+            this.$bvModal.hide("delete-modal");
             swal.fire({
               icon: "error",
               title: "Error",
@@ -583,7 +601,8 @@ export default {
             text: err.response.data.errors,
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     resetForm: function() {
@@ -592,6 +611,15 @@ export default {
       this.form.first_name = null;
       this.form.last_name = null;
       this.form.middle_name = null;
+    },
+
+    resetSearch: function() {
+      this.search = "";
+      this.getTeachers();
+    },
+
+    closeSearchModal: function() {
+      this.$bvModal.hide("search-modal");
     }
   }
 };

@@ -16,14 +16,17 @@ class TeachersController extends Controller
    */
   public function index(Request $request)
   {
-    $search = $request->search;
     $limit = $request->limit;
 
-    return ($search) ? Teacher::with('school')::where('first_name', 'like', "$search%")
-      ->orWhere('last_name', 'like', "$search%")
-      ->orWhere('middle_name', 'like', "$search%")
-      ->paginate($limit)
-      : Teacher::with('school')->paginate($limit);
+    $paginated = Teacher::with('school')->paginate($limit);
+    $raw = Teacher::with('school')->get();
+
+    $data = array(
+      'paginated' => $paginated,
+      'raw' => $raw
+    );
+
+    return $data;
   }
 
   public function raw()
