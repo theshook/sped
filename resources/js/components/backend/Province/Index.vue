@@ -332,8 +332,8 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    this.getProvinces();
+  async mounted() {
+    await this.getProvinces();
   },
   methods: {
     validateState: function(name) {

@@ -418,9 +418,9 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    this.getSchools();
-    this.getProvinces();
+  async mounted() {
+    await this.getSchools();
+    await this.getProvinces();
   },
   methods: {
     validateState: function(name) {
