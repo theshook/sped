@@ -1,26 +1,45 @@
 <template>
   <div>
     <b-container class="mt-2">
-      <!-- {{questions}} -->
-      <b-card class="shadow-sm">
-        <b-card-body>
-          <b-row>
-            <b-col lg="6">
-              <h2 class="text-primary font-weight-bold">Questions</h2>
-            </b-col>
+      <div class="page-header">
+        <h2 class="font-weight-bold">Questions</h2>
 
-            <b-col lg="6">
-              <div class="d-flex justify-content-end align-baseline">
-                <b-button variant="primary" size="sm" v-b-modal.add-modal>
-                  <b-icon icon="pencil"></b-icon>
-                  <!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-                  Add Question
+        <b-breadcrumb :items="breadcrumb_link"></b-breadcrumb>
+      </div>
+
+      <b-card class="shadow-sm" no-body>
+        <b-card-header>
+          <div class="d-flex align-items-end">
+            <div class="mr-auto">
+              <b-button-group>
+                <b-button variant="light" size="sm" class="text-sm border">
+                  <b-icon icon="trash" class="mr-2"></b-icon>View Trash
                 </b-button>
-              </div>
-            </b-col>
-          </b-row>
 
-          <b-row class="mb-2">
+                <b-button variant="light" size="sm" class="text-sm border" @click="resetSearch">
+                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh
+                  Table
+                </b-button>
+
+                <b-button variant="light" size="sm">
+                  <b-icon icon="funnel" class="mr-2"></b-icon>Filter
+                </b-button>
+
+                <b-button variant="light" size="sm" v-b-modal.search-modal>
+                  <b-icon icon="search" class="mr-2"></b-icon>Search
+                </b-button>
+              </b-button-group>
+            </div>
+
+            <div class="ml-auto">
+              <b-button variant="primary" size="sm" v-b-modal.add-modal>
+                <b-icon icon="pencil-square" class="mr-2"></b-icon>Add Question
+              </b-button>
+            </div>
+          </div>
+        </b-card-header>
+        <b-card-body>
+          <b-row class="mb-2 d-none">
             <b-col lg="6">
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
@@ -48,9 +67,7 @@
 
           <b-table
             borderless
-            striped
-            hover
-            id="question-table"
+            id="province-table"
             :items="questions"
             :fields="questions_fields"
             :busy="table_busy"
@@ -77,21 +94,15 @@
             <template v-slot:cell(checklist)="data">{{ data.item.checklist.content }}</template>
 
             <template v-slot:cell(index)="data">
-              <b-btn-group>
-                <b-button
-                  v-b-modal.edit-modal
-                  size="sm"
-                  variant="warning"
-                  class="text-white"
-                  @click="edit(data.index)"
-                >
+              <b-btn-group class="rounded">
+                <b-button v-b-modal.edit-modal size="sm" variant="light" @click="edit(data.index)">
                   <b-icon icon="pencil"></b-icon>
                 </b-button>
 
                 <b-button
                   v-b-modal.delete-modal
                   size="sm"
-                  variant="danger"
+                  variant="light"
                   @click="remove(data.index)"
                 >
                   <b-icon icon="trash"></b-icon>
@@ -101,26 +112,40 @@
 
             <template v-slot:table-busy>
               <div class="text-center py-3">
-                <b-spinner type="grow" variant="primary"></b-spinner>
+                <b-spinner variant="primary"></b-spinner>
               </div>
             </template>
 
             <template v-slot:empty="scope">
               <div class="text-center py-3">
-                <p class="text-muted mb-0">{{ scope.emptyText }}</p>
+                <b-img
+                  :src="'/images/no_data_3.svg'"
+                  alt="No data banner"
+                  blank-color="#f1f1f1"
+                  rounted
+                  fluid
+                ></b-img>
+                <p class="text-muted mt-3 mb-1">{{ scope.emptyText }}</p>
+                <b-button variant="link" size="sm" @click="resetSearch">Reset search</b-button>
               </div>
             </template>
           </b-table>
 
-          <b-container class="clearfix px-0" fluid>
+          <b-container class="d-flex px-0" fluid>
+            <small class="text-muted" v-if="questions.length">
+              Showing {{ response.from }} - {{ response.to }} of
+              {{ response.total }} entries
+            </small>
+
             <b-pagination
-              class="float-right"
+              v-if="questions.length"
+              class="ml-auto"
               size="sm"
               v-model="current_page"
               :per-page="Number(response.per_page)"
               :total-rows="Number(response.total)"
               @change="getQuestions"
-              aria-controls="question-table"
+              aria-controls="questions-table"
             ></b-pagination>
           </b-container>
         </b-card-body>
@@ -128,19 +153,45 @@
     </b-container>
 
     <!-- MODALS -->
+
+    <!-- SEARCH -->
+    <b-modal id="search-modal" class="bodyless-search-modal" hide-header hide-footer>
+      <b-form v-on:submit.prevent>
+        <b-form-input
+          v-model="search"
+          class="form-control"
+          placeholder="Search"
+          @input="searchQuestions"
+          autofocus
+        ></b-form-input>
+      </b-form>
+
+      <div class="d-flex mt-1 px-2">
+        <small class="text-muted mt-1 mr-auto">
+          Press
+          <span class="badge badge-primary">ESC</span> to close
+        </small>
+
+        <div class="ml-auto">
+          <b-button variant="link" size="sm" @click="closeSearchModal">Close</b-button>
+        </div>
+      </div>
+    </b-modal>
+
     <!-- ADD -->
     <b-modal
       scrollable
       id="add-modal"
       title="Add Question"
-      ok-title="Submit"
+      :ok-title="submit_disabled ? 'Adding' : 'Add'"
+      :ok-disabled="submit_disabled"
       ok-variant="success"
       ok-only
       @ok="submitAdd"
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
+      <b-form @keyup.enter="submitAdd">
         <b-form-group label="Category" label-class="text-sm">
           <b-form-select
             v-model="$v.form.checklist_id.$model"
@@ -296,14 +347,15 @@
       scrollable
       id="edit-modal"
       title="Update Question"
-      ok-title="Submit"
+      :ok-title="submit_disabled ? 'Saving' : 'Save Changes'"
+      :ok-disabled="submit_disabled"
       ok-variant="success"
       ok-only
       @ok="submitUpdate"
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
+      <b-form @keyup.enter="submitUpdate">
         <b-form-group label="Category" label-class="text-sm">
           <b-form-select
             v-model="$v.form.checklist_id.$model"
@@ -437,9 +489,10 @@
     <b-modal
       id="delete-modal"
       title="Confirm"
-      ok-title="Continue"
+      :ok-title="submit_disabled ? 'Deleting' : 'Delete'"
+      :ok-disabled="submit_disabled"
       ok-variant="danger"
-      @ok="destroy"
+      @ok="submitDestroy"
       ok-only
       button-size="sm"
     >
@@ -461,13 +514,25 @@ export default {
   props: ["host"],
   data() {
     return {
+      submit_disabled: false,
       table_busy: false,
+      breadcrumb_link: [
+        {
+          text: "Dashboard",
+          href: "/dashboard"
+        },
+        {
+          text: "Questions",
+          href: "#"
+        }
+      ],
       search: "",
       limit: 10,
       current_page: 1,
       teachers: [],
       checklists: [],
-      questions: null,
+      questions: [],
+      questions_raw: [],
       questions_fields: [
         {
           key: "question",
@@ -585,19 +650,20 @@ export default {
 
     getQuestions: function(page) {
       this.table_busy = true;
-      const questionsAPI = `${this.host}/questions?search=${this.search}&limit=${this.limit}&page=${page}`;
+      const questionsAPI = `/questions?search=${this.search}&limit=${this.limit}&page=${page}`;
       axios
         .get(questionsAPI)
         .then(response => {
-          this.questions = response.data.data;
-          this.response = response.data;
+          this.questions_raw = response.data.raw;
+          this.questions = response.data.paginated.data;
+          this.response = response.data.paginated;
         })
         .catch(err => console.log(err))
         .finally(() => (this.table_busy = false));
     },
 
     getTeachers: function() {
-      let teachersAPI = `${this.host}/teachers/raw`;
+      let teachersAPI = `/teachers/raw`;
       axios
         .get(teachersAPI)
         .then(response => {
@@ -615,7 +681,7 @@ export default {
     },
 
     getChecklistCategories: function() {
-      let checklistCategoriesAPI = `${this.host}/checklists/categories/raw`;
+      let checklistCategoriesAPI = `/checklists/categories/raw`;
       axios
         .get(checklistCategoriesAPI)
         .then(response => {
@@ -624,18 +690,32 @@ export default {
         .catch(err => console.log(err.response));
     },
 
+    searchQuestions: function() {
+      let search = this.search.toLowerCase();
+
+      if (!search) {
+        this.getQuestions();
+      }
+
+      this.questions = this.questions_raw.filter(
+        questions => questions.question.toLowerCase().indexOf(search) > -1
+      );
+    },
+
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.add();
       }
     },
 
     add: function() {
-      const questionsAPI = `${this.host}/questions`;
+      const questionsAPI = `/questions`;
       const data = {
         checklist_id: this.form.checklist_id,
         teacher_id: this.form.teacher_id,
@@ -664,6 +744,7 @@ export default {
               timer: 3000
             });
           } else {
+            this.$bvModal.hide("add-modal");
             swal.fire({
               icon: "error",
               title: "Error",
@@ -679,7 +760,8 @@ export default {
             text: err.response.data.errors,
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     edit: function(index) {
@@ -700,15 +782,17 @@ export default {
     submitUpdate: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
+      this.submit_disabled = true;
       if (this.$v.form.$anyError) {
         return;
+        this.submit_disabled = false;
       } else {
         this.update();
       }
     },
 
     update: function() {
-      const questionsAPI = `${this.host}/question/${this.edit_id}`;
+      const questionsAPI = `/question/${this.edit_id}`;
       const data = {
         checklist_id: this.form.checklist_id,
         teacher_id: this.form.teacher_id,
@@ -719,7 +803,7 @@ export default {
         choice3: this.form.choice3,
         choice4: this.form.choice4,
         answer: this.form.answer,
-        explanation: this.form.explanation,
+        explanation: this.form.explanation
       };
 
       this.questions[this.edit_index].checklist_id = this.form.checklist_id;
@@ -747,6 +831,7 @@ export default {
               timer: 3000
             });
           } else {
+            this.$bvModal.hide("edit-modal");
             swal.fire({
               icon: "error",
               title: "Error",
@@ -762,7 +847,8 @@ export default {
             text: err.response.data.errors,
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     remove: function(index) {
@@ -770,14 +856,21 @@ export default {
       this.delete_index = index;
     },
 
+    submitDestroy: function(event) {
+      event.preventDefault();
+      this.destroy();
+    },
+
     destroy: function(index) {
-      const questionsAPI = `${this.host}/question/${this.delete_id}`;
+      this.submit_disabled = true;
+      const questionsAPI = `/question/${this.delete_id}`;
       axios
         .delete(questionsAPI)
         .then(response => {
           if (response.data.status == 201) {
             this.questions.splice(this.delete_index, 1);
             this.delete_index = null;
+            this.$bvModal.hide("delete-modal");
             swal.fire({
               icon: "success",
               title: "Deleted",
@@ -785,6 +878,7 @@ export default {
               timer: 3000
             });
           } else {
+            this.$bvModal.hide("delete-modal");
             swal.fire({
               icon: "error",
               title: "Error",
@@ -800,7 +894,8 @@ export default {
             text: err.response.data,
             timer: 3000
           })
-        );
+        )
+        .finally(() => (this.submit_disabled = false));
     },
 
     checkQuestionType: function() {
@@ -823,6 +918,15 @@ export default {
       this.form.choice4 = null;
       this.form.answer = null;
       this.form.explanation = null;
+    },
+
+    resetSearch: function() {
+      this.search = "";
+      this.getQuestions();
+    },
+
+    closeSearchModal: function() {
+      this.$bvModal.hide("search-modal");
     }
   }
 };
