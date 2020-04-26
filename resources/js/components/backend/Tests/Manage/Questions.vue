@@ -322,7 +322,7 @@ export default {
           );
 
           this.sortQuestions();
-          this.removeDoubleQuestions();
+          this.initialRemoveDoubleQuestions();
         })
         .catch(err => console.log(err))
         .finally(() => (this.show_teacher_questions = true));
@@ -331,26 +331,23 @@ export default {
     // SORT QUESTIONS BY TYPE (INDIVIDUAL ARRAYS)
     sortQuestions: function() {
       // MULTIPLE CHOICES
-      let question_type1 = this.teacher_questions.filter(
+      this.questions_type_1 = this.teacher_questions.filter(
         question => question.question_type === 1
       );
-      this.questions_type_1 = question_type1;
 
       // ENUMERATION
-      let question_type2 = this.teacher_questions.filter(
+      this.questions_type_2 = this.teacher_questions.filter(
         question => question.question_type === 2
       );
-      this.questions_type_2 = question_type2;
 
       // IDENTIFICATION
-      let question_type3 = this.teacher_questions.filter(
+      this.questions_type_3 = this.teacher_questions.filter(
         question => question.question_type === 3
       );
-      this.questions_type_3 = question_type3;
     },
 
     // REMOVE QUESTION IF BOTH EXIST ON (AVAILABLE/ADDED)
-    removeDoubleQuestions: function() {
+    initialRemoveDoubleQuestions: function() {
       this.teacher_questions.forEach((teacher_question, index1) => {
         this.questions_id.forEach((question_id, index2) => {
           if (this.teacher_questions[index1].id === this.questions_id[index2]) {
@@ -358,7 +355,9 @@ export default {
           }
         });
       });
+    },
 
+    removeDoubleQuestions: function() {
       // FOR ADD QUESTIONS METHODS
       // REMOVE QUESTION ID TO IT'S ARRAY (BY TYPE)
 
@@ -414,7 +413,7 @@ export default {
       );
     },
 
-    // ADD-REMOVE QUESTIONS FROM THE TEST
+    // ADD QUESTIONS FROM THE TEST
     addQuestion: function(index) {
       let question = null;
       switch (this.question_type_filter) {
@@ -441,6 +440,7 @@ export default {
       this.removeDoubleQuestions();
     },
 
+    // REMOVE QUESTION FROM THE TEST
     removeQuestion: function(index) {
       let question = this.questions[index];
       const { id, question_type } = question;
