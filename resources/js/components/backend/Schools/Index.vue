@@ -618,6 +618,7 @@ export default {
               timer: 3000
             });
           } else if (response.data.status == 400) {
+            this.$bvModal.hide("delete-modal");
             swal.fire({
               icon: "error",
               title: "Failed",
