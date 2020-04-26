@@ -18,10 +18,17 @@ class TestsController extends Controller
    */
   public function index(Request $request)
   {
-    $search = $request->search;
     $limit = $request->limit;
 
-    return ($search) ? Test::with('teacher')->where('title', 'like', "%$search%")->paginate($limit) : Test::with('teacher')->paginate($limit);
+    $raw = Test::with('teacher')->get();
+    $paginated = Test::with('teacher')->paginate($limit);
+
+    $data = array(
+      'raw' => $raw,
+      'paginated' => $paginated
+    );
+
+    return $data;
   }
 
   /**
