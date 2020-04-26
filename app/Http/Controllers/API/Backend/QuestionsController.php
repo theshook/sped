@@ -16,10 +16,16 @@ class QuestionsController extends Controller
    */
   public function index(Request $request)
   {
-    $search = $request->search;
     $limit = $request->limit;
 
-    return ($search) ? Question::with('teacher', 'checklist')->where('question', 'like', "%$search%")->orderBy('question_type', 'desc')->paginate($limit) : Question::with('teacher', 'checklist')->orderBy('question_type', 'desc')->paginate($limit);
+    $paginated = Question::with('teacher', 'checklist')->paginate($limit);
+    $raw = Question::with('teacher', 'checklist')->get();
+    $data = array(
+      'paginated' => $paginated,
+      'raw' => $raw
+    );
+
+    return $data;
   }
 
   /**
