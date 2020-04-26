@@ -1,25 +1,44 @@
 <template>
   <div>
     <b-container class="mt-2">
-      <b-card class="shadow-sm">
-        <b-card-body>
-          <b-row>
-            <b-col lg="6">
-              <h2 class="text-primary font-weight-bold">Tests</h2>
-            </b-col>
+      <div class="page-header">
+        <h2 class="font-weight-bold">Tests</h2>
 
-            <b-col lg="6">
-              <div class="d-flex justify-content-end align-baseline">
-                <b-button variant="primary" size="sm" v-b-modal.add-modal>
-                  <b-icon icon="pencil"></b-icon>
-                  <!-- <span class="fa fa-fw fa-plus-circle"></span> -->
-                  Add Test
+        <b-breadcrumb :items="breadcrumb_link"></b-breadcrumb>
+      </div>
+
+      <b-card class="shadow-sm" no-body>
+        <b-card-header>
+          <div class="d-flex align-items-end">
+            <div class="mr-auto">
+              <b-button-group>
+                <b-button variant="light" size="sm" class="text-sm border">
+                  <b-icon icon="trash" class="mr-2"></b-icon>View Trash
                 </b-button>
-              </div>
-            </b-col>
-          </b-row>
 
-          <b-row class="mb-2">
+                <b-button variant="light" size="sm" class="text-sm border" @click="resetSearch">
+                  <b-icon icon="arrow-repeat" class="mr-2"></b-icon>Refresh Table
+                </b-button>
+
+                <b-button variant="light" size="sm">
+                  <b-icon icon="funnel" class="mr-2"></b-icon>Filter
+                </b-button>
+
+                <b-button variant="light" size="sm" v-b-modal.search-modal>
+                  <b-icon icon="search" class="mr-2"></b-icon>Search
+                </b-button>
+              </b-button-group>
+            </div>
+
+            <div class="ml-auto">
+              <b-button variant="primary" size="sm" v-b-modal.add-modal>
+                <b-icon icon="pencil-square" class="mr-2"></b-icon>Add Test
+              </b-button>
+            </div>
+          </div>
+        </b-card-header>
+        <b-card-body>
+          <b-row class="mb-2 d-none">
             <b-col lg="6">
               <b-form class="text-muted text-md" inline>
                 <small>Show</small>
@@ -47,12 +66,12 @@
 
           <b-table
             borderless
-            striped
-            hover
-            id="province-table"
+            id="tests-table"
             :items="tests"
             :fields="tests_fields"
+            :busy="table_busy"
             responsive="md"
+            show-empty
           >
             <template v-slot:cell(name)="data">{{ data.item.name }}</template>
 
@@ -61,45 +80,76 @@
             >{{ data.item.teacher.first_name + ' ' + data.item.teacher.last_name }}</template>
 
             <template v-slot:cell(index)="data">
-              <b-btn-group>
-                <b-button
-                  v-b-modal.edit-modal
-                  size="sm"
-                  variant="warning"
-                  class="text-white"
-                  @click="edit(data.index)"
-                >
+              <b-btn-group class="rounded">
+                <b-button v-b-modal.edit-modal size="sm" variant="light" @click="edit(data.index)">
                   <b-icon icon="pencil"></b-icon>
                 </b-button>
 
                 <b-button
                   v-b-modal.delete-modal
                   size="sm"
-                  variant="danger"
+                  variant="light"
                   @click="remove(data.index)"
                 >
                   <b-icon icon="trash"></b-icon>
                 </b-button>
 
-                <b-button size="sm" variant="primary" @click="view(data.index)">View</b-button>
+                <b-button size="sm" variant="light" @click="view(data.index)">
+                  <b-icon icon="eye" class="mr-2"></b-icon>View
+                </b-button>
 
-                <b-button size="sm" variant="info" @click="manage(data.index)">
-                  <!-- <b-icon class="mr-1" icon="eye"></b-icon> -->
-                  Manage questions
+                <b-button size="sm" variant="light" @click="manage(data.index)">
+                  <b-icon icon="filter-left" class="mr-2"></b-icon>Manage Questions
+                </b-button>
+
+                <b-button
+                  v-b-tooltip.hover.right
+                  title="Publish as Assessment Test"
+                  size="sm"
+                  variant="success"
+                  @click="publish(data.index)"
+                >
+                  <b-icon icon="layers" class="mr-2"></b-icon>Publish
                 </b-button>
               </b-btn-group>
             </template>
+
+            <template v-slot:table-busy>
+              <div class="text-center py-3">
+                <b-spinner variant="primary"></b-spinner>
+              </div>
+            </template>
+
+            <template v-slot:empty="scope">
+              <div class="text-center py-3">
+                <b-img
+                  :src="'/images/no_data_3.svg'"
+                  alt="No data banner"
+                  blank-color="#f1f1f1"
+                  rounted
+                  fluid
+                ></b-img>
+                <p class="text-muted mt-3 mb-1">{{ scope.emptyText }}</p>
+                <b-button variant="link" size="sm" @click="resetSearch">Reset search</b-button>
+              </div>
+            </template>
           </b-table>
 
-          <b-container class="clearfix px-0" fluid>
+          <b-container class="d-flex px-0" fluid>
+            <small class="text-muted" v-if="tests.length">
+              Showing {{ response.from }} - {{ response.to }} of
+              {{ response.total }} entries
+            </small>
+
             <b-pagination
-              class="float-right"
+              v-if="tests.length"
+              class="ml-auto"
               size="sm"
               v-model="current_page"
               :per-page="Number(response.per_page)"
               :total-rows="Number(response.total)"
               @change="getTests"
-              aria-controls="province-table"
+              aria-controls="tests-table"
             ></b-pagination>
           </b-container>
         </b-card-body>
@@ -107,18 +157,44 @@
     </b-container>
 
     <!-- MODALS -->
+
+    <!-- SEARCH -->
+    <b-modal id="search-modal" class="bodyless-search-modal" hide-header hide-footer>
+      <b-form v-on:submit.prevent>
+        <b-form-input
+          v-model="search"
+          class="form-control"
+          placeholder="Search"
+          @input="searchTest"
+          autofocus
+        ></b-form-input>
+      </b-form>
+
+      <div class="d-flex mt-1 px-2">
+        <small class="text-muted mt-1 mr-auto">
+          Press
+          <span class="badge badge-primary">ESC</span> to close
+        </small>
+
+        <div class="ml-auto">
+          <b-button variant="link" size="sm" @click="closeSearchModal">Close</b-button>
+        </div>
+      </div>
+    </b-modal>
+
     <!-- ADD -->
     <b-modal
       id="add-modal"
       title="Add Test"
-      ok-title="Submit"
       ok-variant="success"
+      :ok-title="submit_disabled ? 'Adding' : 'Add'"
+      :ok-disabled="submit_disabled"
       ok-only
       @ok="submitAdd"
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
+      <b-form @keyup.enter="submitAdd">
         <b-form-group label="Teacher" label-class="text-sm">
           <b-form-select
             v-model="$v.form.teacher_id.$model"
@@ -165,14 +241,15 @@
     <b-modal
       id="edit-modal"
       title="Update Province Information"
-      ok-title="Save Changes"
       ok-variant="success"
+      :ok-title="submit_disabled ? 'Saving' : 'Save Changes'"
+      :ok-disabled="submit_disabled"
       ok-only
       @ok="submitUpdate"
       @hidden="resetForm"
       button-size="sm"
     >
-      <b-form>
+      <b-form @keyup.enter="submitUpdate">
         <b-form-group label="Teacher" label-class="text-sm">
           <b-form-select
             v-model="$v.form.teacher_id.$model"
@@ -219,8 +296,9 @@
     <b-modal
       id="delete-modal"
       title="Confirm"
-      ok-title="Continue"
       ok-variant="danger"
+      :ok-title="submit_disabled ? 'Deleting' : 'Delete'"
+      :ok-disabled="submit_disabled"
       @ok="destroy"
       ok-only
       button-size="sm"
@@ -237,11 +315,24 @@ export default {
   props: ["host"],
   data() {
     return {
+      submit_disabled: false,
+      table_busy: false,
+      breadcrumb_link: [
+        {
+          text: "Dashboard",
+          href: "/dashboard"
+        },
+        {
+          text: "Tests",
+          href: "#"
+        }
+      ],
       search: "",
       limit: 10,
       current_page: 1,
       teachers: [],
-      tests: null,
+      tests: [],
+      tests_raw: [],
       tests_fields: [
         {
           key: "title",
@@ -296,9 +387,9 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    this.getTests();
-    this.getTeachers();
+  async mounted() {
+    await this.getTests();
+    await this.getTeachers();
   },
   methods: {
     validateState: function(name) {
@@ -307,32 +398,49 @@ export default {
     },
 
     getTests: function(page) {
-      const testsAPI = `${this.host}/tests?search=${this.search}&limit=${this.limit}`;
+      this.table_busy = true;
+      const testsAPI = `/tests?search=${this.search}&limit=${this.limit}`;
       axios
         .get(testsAPI)
         .then(response => {
-          this.tests = response.data.data;
-          this.response = response.data;
+          this.tests_raw = response.data.raw.data;
+          this.tests = response.data.paginated.data;
+          this.response = response.data.paginated;
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
+        .finally(() => (this.table_busy = false));
     },
 
     getTeachers: function() {
-      let teachersAPI = `${this.host}/teachers/raw`;
+      let teachersAPI = `/teachers/raw`;
       axios
         .get(teachersAPI)
         .then(response => {
           let teacherArr = response.data;
-          for (let i = 0; i < teacherArr.length; i++) {
-            let teacher = `${teacherArr[i].first_name} ${teacherArr[i].last_name}`;
+
+          teacherArr.forEach(teacher => {
+            let fullName = `${teacher.first_name} ${teacher.last_name}`;
+
             this.teachers.push({
-              id: teacherArr[i].id,
-              name: teacher,
-              school: teacherArr[i].school.name
+              id: teacher.id,
+              name: fullName,
+              school: teacher.school.name
             });
-          }
+          });
         })
         .catch(err => console.log(err.response));
+    },
+
+    searchTest: function() {
+      let search = this.search.toLowerCase();
+
+      if (!search) {
+        this.getTests();
+      }
+
+      this.tests = this.tests_raw.filter(
+        test => test.title.toLowerCase().indexOf(search) > -1
+      );
     },
 
     view: function(index) {
@@ -345,6 +453,8 @@ export default {
       window.location = `/configure/test/${id}/manage`;
     },
 
+    publish: function(index) {},
+
     submitAdd: function(event) {
       event.preventDefault();
       this.$v.form.$touch();
@@ -356,7 +466,7 @@ export default {
     },
 
     add: function() {
-      const testsAPI = `${this.host}/tests`;
+      const testsAPI = `/tests`;
       const data = {
         teacher_id: this.form.teacher_id,
         title: this.form.title,
@@ -416,7 +526,7 @@ export default {
     },
 
     update: function() {
-      const testsAPI = `${this.host}/test/${this.edit_id}`;
+      const testsAPI = `/test/${this.edit_id}`;
       const data = {
         teacher_id: this.form.teacher_id,
         title: this.form.title,
@@ -476,7 +586,7 @@ export default {
     },
 
     destroy: function(index) {
-      const testsAPI = `${this.host}/test/${this.delete_id}`;
+      const testsAPI = `/test/${this.delete_id}`;
       axios
         .delete(testsAPI)
         .then(response => {
@@ -514,6 +624,15 @@ export default {
       this.form.teacher_id = null;
       this.form.title = null;
       this.form.description = null;
+    },
+
+    resetSearch: function() {
+      this.search = "";
+      this.getProvinces();
+    },
+
+    closeSearchModal: function() {
+      this.$bvModal.hide("search-modal");
     }
   }
 };
